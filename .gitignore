@@ -1,0 +1,9 @@
+# MATLAB
+*.autosave
+*.asv
+*.m~
+*.mat
+*.mex*
+*.slxc
+slprj/
+_associates/
