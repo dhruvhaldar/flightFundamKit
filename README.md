@@ -94,4 +94,4 @@ V_stall = stall_speed(10000, rho, 20, 1.5);
 ```
 
 ## License
-This project is created for educational purposes related to the SD2601 course.
+MIT License
