@@ -1,4 +1,4 @@
-# SD2601 Flight Fundamentals Toolkit
+# FlightFundamKit : SD2601 Fundamentals of Flight toolkit
 
 This project is a computational toolkit developed to accompany the **SD2601 Fundamentals of Flight** course at KTH. It provides Octave/MATLAB implementations of key concepts in atmospheric flight, aerodynamics, and aircraft performance, directly addressing the intended learning outcomes of the course.
 
