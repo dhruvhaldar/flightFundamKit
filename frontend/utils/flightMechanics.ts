@@ -2,7 +2,7 @@ export function stdAtm(h: number | number[]) {
   // Standard Atmosphere Constants
   const T0 = 288.15;       // Sea level temperature (K)
   const P0 = 101325;       // Sea level pressure (Pa)
-  const rho0 = 1.225;      // Sea level density (kg/m^3)
+  // rho0 is 1.225 kg/m^3
   const g = 9.80665;       // Gravity acceleration (m/s^2)
   const R = 287.05;        // Gas constant for air (J/(kg*K))
   const L = -0.0065;       // Temperature lapse rate (K/m)
