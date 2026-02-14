@@ -60,27 +60,34 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     const data = []
     const altitudes = [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000]
 
+    // Optimization: Hoist stdAtm(0) outside the loop to avoid redundant calls
+    const { rho: rho_sl } = stdAtm(0) as { rho: number }
+
     for (const h of altitudes) {
       const { rho } = stdAtm(h) as { rho: number }
-      const { rho: rho_sl } = stdAtm(0) as { rho: number }
 
       // Find max RC at this altitude
       const V_stall_h = stallSpeed(W, rho, S, CL_max)
       const V_scan_end = 80
 
-      let max_RC = -Infinity
-
-      // Simple scan to find max RC
+      // Optimization: Vectorize V scan to reduce function call overhead
+      const V_vals = []
       for (let j = 0; j <= 20; j++) {
-        const V = V_stall_h + (j / 20) * (V_scan_end - V_stall_h)
-        const { Pr } = powerRequired(rho, V, S, CD0, k, W) as { Pr: number }
-
-        const sigma = rho / rho_sl
-        const Pa_h = Pa_sl * sigma * eta_prop
-
-        const rc = rateOfClimb(Pa_h, Pr, W) as number
-        if (rc > max_RC) max_RC = rc
+        V_vals.push(V_stall_h + (j / 20) * (V_scan_end - V_stall_h))
       }
+
+      // Bulk calculation for Power Required
+      // powerRequired returns { Pr, Tr, CL, CD }[] when input V is array
+      const powerResults = powerRequired(rho, V_vals, S, CD0, k, W) as { Pr: number }[]
+      const Pr_vals = powerResults.map(r => r.Pr)
+
+      const sigma = rho / rho_sl
+      const Pa_h = Pa_sl * sigma * eta_prop
+
+      // rateOfClimb supports array input for Pr
+      const rc_vals = rateOfClimb(Pa_h, Pr_vals, W) as number[]
+
+      const max_RC = Math.max(...rc_vals)
 
       data.push({
         h,
