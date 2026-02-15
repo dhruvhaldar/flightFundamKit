@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,8 +12,29 @@ interface AircraftParametersProps {
 }
 
 export default function AircraftParameters({ params, setParams }: AircraftParametersProps) {
+  // Local state for immediate input feedback
+  const [localParams, setLocalParams] = useState<AircraftParams>(params)
+
+  // Debounce effect: Update parent state only after user stops typing for 500ms
+  // This prevents expensive recalculations in PerformanceCharts on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Avoid redundant updates if values haven't changed
+      if (JSON.stringify(localParams) !== JSON.stringify(params)) {
+        setParams(localParams)
+      }
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [localParams, params, setParams])
+
+  // Sync local state if parent params update externally
+  useEffect(() => {
+    setLocalParams(params)
+  }, [params])
+
   const handleChange = (key: keyof AircraftParams, value: number) => {
-    setParams({ ...params, [key]: value })
+    setLocalParams(prev => ({ ...prev, [key]: value }))
   }
 
   return (
@@ -27,7 +49,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
             <Input
               id="m"
               type="number"
-              value={params.m}
+              value={localParams.m}
               onChange={(e) => handleChange("m", Number(e.target.value))}
             />
           </div>
@@ -36,7 +58,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
             <Input
               id="S"
               type="number"
-              value={params.S}
+              value={localParams.S}
               onChange={(e) => handleChange("S", Number(e.target.value))}
             />
           </div>
@@ -45,7 +67,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
             <Input
               id="b"
               type="number"
-              value={params.b}
+              value={localParams.b}
               onChange={(e) => handleChange("b", Number(e.target.value))}
             />
           </div>
@@ -55,7 +77,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
               id="e"
               type="number"
               step="0.01"
-              value={params.e}
+              value={localParams.e}
               onChange={(e) => handleChange("e", Number(e.target.value))}
             />
           </div>
@@ -65,7 +87,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
               id="CD0"
               type="number"
               step="0.001"
-              value={params.CD0}
+              value={localParams.CD0}
               onChange={(e) => handleChange("CD0", Number(e.target.value))}
             />
           </div>
@@ -74,7 +96,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
             <Input
               id="P_bhp"
               type="number"
-              value={params.P_bhp}
+              value={localParams.P_bhp}
               onChange={(e) => handleChange("P_bhp", Number(e.target.value))}
             />
           </div>
@@ -84,7 +106,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
               id="eta_prop"
               type="number"
               step="0.01"
-              value={params.eta_prop}
+              value={localParams.eta_prop}
               onChange={(e) => handleChange("eta_prop", Number(e.target.value))}
             />
           </div>
@@ -94,7 +116,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
               id="CL_max"
               type="number"
               step="0.1"
-              value={params.CL_max}
+              value={localParams.CL_max}
               onChange={(e) => handleChange("CL_max", Number(e.target.value))}
             />
           </div>
@@ -104,7 +126,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
               id="SFC"
               type="number"
               step="0.01"
-              value={params.SFC}
+              value={localParams.SFC}
               onChange={(e) => handleChange("SFC", Number(e.target.value))}
             />
           </div>
