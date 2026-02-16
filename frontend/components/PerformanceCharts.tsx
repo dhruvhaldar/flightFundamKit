@@ -39,20 +39,20 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     const V_stall = stallSpeed(W, rho_sl, S, CL_max)
     const V_end = 80 // m/s, arbitrary upper limit like in main_project.m
 
-    const data = []
-    // Generate 50 points
+    // Optimization: Vectorize V calculation to avoid repetitive function calls
+    const V_vals = []
     for (let i = 0; i <= 50; i++) {
-      const V = V_stall + (i / 50) * (V_end - V_stall)
-      const { Pr } = powerRequired(rho_sl, V, S, CD0, k, W) as { Pr: number }
-      const Pa = Pa_sl * eta_prop // Constant for prop
-
-      data.push({
-        V: Number(V.toFixed(1)),
-        Pr_kW: Number((Pr / 1000).toFixed(2)),
-        Pa_kW: Number((Pa / 1000).toFixed(2))
-      })
+      V_vals.push(V_stall + (i / 50) * (V_end - V_stall))
     }
-    return data
+
+    const powerResults = powerRequired(rho_sl, V_vals, S, CD0, k, W) as { Pr: number }[]
+    const Pa = Pa_sl * eta_prop // Constant for prop
+
+    return V_vals.map((V, i) => ({
+      V: Number(V.toFixed(1)),
+      Pr_kW: Number((powerResults[i].Pr / 1000).toFixed(2)),
+      Pa_kW: Number((Pa / 1000).toFixed(2))
+    }))
   }, [W, S, CL_max, CD0, k, Pa_sl, eta_prop])
 
   // Rate of Climb Data (vs Altitude)
@@ -63,8 +63,12 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     // Optimization: Hoist stdAtm(0) outside the loop to avoid redundant calls
     const { rho: rho_sl } = stdAtm(0) as { rho: number }
 
-    for (const h of altitudes) {
-      const { rho } = stdAtm(h) as { rho: number }
+    // Optimization: Batch call stdAtm for all altitudes
+    const atmData = stdAtm(altitudes) as { rho: number }[]
+
+    for (let i = 0; i < altitudes.length; i++) {
+      const h = altitudes[i]
+      const { rho } = atmData[i]
 
       // Find max RC at this altitude
       const V_stall_h = stallSpeed(W, rho, S, CL_max)
