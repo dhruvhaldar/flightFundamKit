@@ -15,10 +15,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { AircraftParams } from "@/types"
 import {
   stallSpeed,
-  powerRequired,
-  rateOfClimb,
   stdAtm
 } from "@/utils/flightMechanics"
+
+// Optimization: Pre-calculate constant atmosphere data to avoid redundant calls on every render
+const ALTITUDES = [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000]
+const ATM_DATA = stdAtm(ALTITUDES) as { rho: number }[]
+const RHO_SL = (stdAtm(0) as { rho: number }).rho
 
 interface PerformanceChartsProps {
   params: AircraftParams
@@ -35,63 +38,62 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
   // Power Curve Data (Sea Level)
   const powerData = useMemo(() => {
-    const { rho: rho_sl } = stdAtm(0) as { rho: number }
-    const V_stall = stallSpeed(W, rho_sl, S, CL_max)
+    const V_stall = stallSpeed(W, RHO_SL, S, CL_max)
     const V_end = 80 // m/s, arbitrary upper limit like in main_project.m
+    const Pa = Pa_sl * eta_prop
 
-    // Optimization: Vectorize V calculation to avoid repetitive function calls
-    const V_vals = []
+    // Optimization: Single loop with inlined physics to avoid array allocation
+    const data = []
     for (let i = 0; i <= 50; i++) {
-      V_vals.push(V_stall + (i / 50) * (V_end - V_stall))
+      const V = V_stall + (i / 50) * (V_end - V_stall)
+
+      // Inline powerRequired logic (Pr only) to avoid object allocation
+      const q = 0.5 * RHO_SL * V * V
+      const CL = W / (q * S)
+      const CD = CD0 + k * CL * CL
+      const Tr = q * S * CD
+      const Pr = Tr * V
+
+      data.push({
+        V: Number(V.toFixed(1)),
+        Pr_kW: Number((Pr / 1000).toFixed(2)),
+        Pa_kW: Number((Pa / 1000).toFixed(2))
+      })
     }
-
-    const powerResults = powerRequired(rho_sl, V_vals, S, CD0, k, W) as { Pr: number }[]
-    const Pa = Pa_sl * eta_prop // Constant for prop
-
-    return V_vals.map((V, i) => ({
-      V: Number(V.toFixed(1)),
-      Pr_kW: Number((powerResults[i].Pr / 1000).toFixed(2)),
-      Pa_kW: Number((Pa / 1000).toFixed(2))
-    }))
+    return data
   }, [W, S, CL_max, CD0, k, Pa_sl, eta_prop])
 
   // Rate of Climb Data (vs Altitude)
   const climbData = useMemo(() => {
     const data = []
-    const altitudes = [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000]
 
-    // Optimization: Hoist stdAtm(0) outside the loop to avoid redundant calls
-    const { rho: rho_sl } = stdAtm(0) as { rho: number }
-
-    // Optimization: Batch call stdAtm for all altitudes
-    const atmData = stdAtm(altitudes) as { rho: number }[]
-
-    for (let i = 0; i < altitudes.length; i++) {
-      const h = altitudes[i]
-      const { rho } = atmData[i]
+    for (let i = 0; i < ALTITUDES.length; i++) {
+      const h = ALTITUDES[i]
+      const { rho } = ATM_DATA[i]
 
       // Find max RC at this altitude
       const V_stall_h = stallSpeed(W, rho, S, CL_max)
-      const V_scan_end = 80
+      const V_end = 80
 
-      // Optimization: Vectorize V scan to reduce function call overhead
-      const V_vals = []
-      for (let j = 0; j <= 20; j++) {
-        V_vals.push(V_stall_h + (j / 20) * (V_scan_end - V_stall_h))
-      }
-
-      // Bulk calculation for Power Required
-      // powerRequired returns { Pr, Tr, CL, CD }[] when input V is array
-      const powerResults = powerRequired(rho, V_vals, S, CD0, k, W) as { Pr: number }[]
-      const Pr_vals = powerResults.map(r => r.Pr)
-
-      const sigma = rho / rho_sl
+      const sigma = rho / RHO_SL
       const Pa_h = Pa_sl * sigma * eta_prop
+      let max_RC = -Infinity
 
-      // rateOfClimb supports array input for Pr
-      const rc_vals = rateOfClimb(Pa_h, Pr_vals, W) as number[]
+      // Optimization: Inline loop to avoid array allocation
+      for (let j = 0; j <= 20; j++) {
+        const V = V_stall_h + (j / 20) * (V_end - V_stall_h)
 
-      const max_RC = Math.max(...rc_vals)
+        // Inline Power Required logic
+        const q = 0.5 * rho * V * V
+        const CL = W / (q * S)
+        const CD = CD0 + k * CL * CL
+        const Tr = q * S * CD
+        const Pr = Tr * V
+
+        // Inline Rate of Climb logic
+        const rc = (Pa_h - Pr) / W
+        if (rc > max_RC) max_RC = rc
+      }
 
       data.push({
         h,
