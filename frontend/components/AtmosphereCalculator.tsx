@@ -4,7 +4,15 @@ import { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 import { stdAtm } from "@/utils/flightMechanics"
+
+const ALTITUDE_PRESETS = [
+  { label: "Sea Level", value: "0" },
+  { label: "1,000 m", value: "1000" },
+  { label: "5,000 m", value: "5000" },
+  { label: "Cruise (11 km)", value: "11000" },
+]
 
 export default function AtmosphereCalculator() {
   const [altitudeStr, setAltitudeStr] = useState<string>("0")
@@ -41,6 +49,20 @@ export default function AtmosphereCalculator() {
             <p id="altitude-desc" className="text-sm text-muted-foreground">
               Enter altitude in meters to see atmospheric properties.
             </p>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {ALTITUDE_PRESETS.map((preset) => (
+                <Button
+                  key={preset.value}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAltitudeStr(preset.value)}
+                  aria-label={`Set altitude to ${preset.label}`}
+                  className="h-8 text-xs"
+                >
+                  {preset.label}
+                </Button>
+              ))}
+            </div>
           </div>
 
           {result ? (
