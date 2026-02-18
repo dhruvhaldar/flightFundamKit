@@ -1,13 +1,19 @@
-export function stdAtm(h: number | number[]) {
-  // Standard Atmosphere Constants
-  const T0 = 288.15;       // Sea level temperature (K)
-  const P0 = 101325;       // Sea level pressure (Pa)
-  // rho0 is 1.225 kg/m^3
-  const g = 9.80665;       // Gravity acceleration (m/s^2)
-  const R = 287.05;        // Gas constant for air (J/(kg*K))
-  const L = -0.0065;       // Temperature lapse rate (K/m)
-  const gamma = 1.4;       // Ratio of specific heats for air
+// Standard Atmosphere Constants
+const T0 = 288.15;       // Sea level temperature (K)
+const P0 = 101325;       // Sea level pressure (Pa)
+// rho0 is 1.225 kg/m^3
+const g = 9.80665;       // Gravity acceleration (m/s^2)
+const R = 287.05;        // Gas constant for air (J/(kg*K))
+const L = -0.0065;       // Temperature lapse rate (K/m)
+const gamma = 1.4;       // Ratio of specific heats for air
 
+// Pre-calculated constants for optimization
+const G_over_LR = -g / (L * R);
+const T_trop = T0 + L * 11000;
+const P_trop = P0 * Math.pow(T_trop / T0, G_over_LR);
+const G_over_RT_trop = -g / (R * T_trop);
+
+export function stdAtm(h: number | number[]) {
   const isArray = Array.isArray(h);
   const altitudes = isArray ? h : [h];
 
@@ -17,15 +23,12 @@ export function stdAtm(h: number | number[]) {
     if (curr_h <= 11000) {
       // Troposphere
       T = T0 + L * curr_h;
-      P = P0 * Math.pow(T / T0, -g / (L * R));
+      P = P0 * Math.pow(T / T0, G_over_LR);
       rho = P / (R * T);
     } else {
       // Stratosphere (Lower) - Simplified: Isothermal
-      const T_trop = T0 + L * 11000;
-      const P_trop = P0 * Math.pow(T_trop / T0, -g / (L * R));
-
       T = T_trop;
-      P = P_trop * Math.exp((-g / (R * T_trop)) * (curr_h - 11000));
+      P = P_trop * Math.exp(G_over_RT_trop * (curr_h - 11000));
       rho = P / (R * T);
     }
 
@@ -45,7 +48,7 @@ export function dragPolar(CL: number | number[], CD0: number, k: number) {
   const isArray = Array.isArray(CL);
   const CLs = isArray ? CL : [CL];
 
-  const results = CLs.map(cl => CD0 + k * Math.pow(cl, 2));
+  const results = CLs.map(cl => CD0 + k * cl * cl);
 
   if (isArray) return results;
   return results[0];
@@ -56,7 +59,7 @@ export function liftCoeff(W: number, rho: number, V: number | number[], S: numbe
   const Vs = isArray ? V : [V];
 
   const results = Vs.map(v => {
-    const q = 0.5 * rho * Math.pow(v, 2);
+    const q = 0.5 * rho * v * v;
     return W / (q * S);
   });
 
@@ -69,9 +72,9 @@ export function powerRequired(rho: number, V: number | number[], S: number, CD0:
   const Vs = isArray ? V : [V];
 
   const results = Vs.map(v => {
-    const q = 0.5 * rho * Math.pow(v, 2);
+    const q = 0.5 * rho * v * v;
     const CL = W / (q * S);
-    const CD = CD0 + k * Math.pow(CL, 2);
+    const CD = CD0 + k * CL * CL;
     const Tr = q * S * CD;
     const Pr = Tr * v;
     return { Pr, Tr, CL, CD };
