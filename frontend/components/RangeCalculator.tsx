@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,11 +13,29 @@ interface RangeCalculatorProps {
 }
 
 export default function RangeCalculator({ params }: RangeCalculatorProps) {
-  const [fuelMass, setFuelMass] = useState<number>(150)
-  const [cruiseAltitude, setCruiseAltitude] = useState<number>(2000)
+  const [fuelMassStr, setFuelMassStr] = useState<string>("150")
+  const [cruiseAltitudeStr, setCruiseAltitudeStr] = useState<string>("2000")
   const [result, setResult] = useState<{ glideRange: number; breguetRange: number; LDmax: number } | null>(null)
 
+  // Validation
+  const fuelMass = parseFloat(fuelMassStr)
+  const cruiseAltitude = parseFloat(cruiseAltitudeStr)
+
+  const validationError = useMemo(() => {
+    if (isNaN(fuelMass)) return null
+    if (fuelMass < 0) return "Fuel mass cannot be negative."
+    if (fuelMass >= params.m) {
+      return `Fuel mass must be less than aircraft mass (${params.m} kg).`
+    }
+    return null
+  }, [fuelMass, params.m])
+
+  const isValidFuel = !isNaN(fuelMass) && !validationError
+  const isValidAlt = !isNaN(cruiseAltitude) && cruiseAltitude >= 0
+
   const calculate = () => {
+    if (!isValidFuel || !isValidAlt) return
+
     const { m, S, b, e, CD0, SFC, eta_prop } = params
     const g = 9.80665
 
@@ -37,20 +55,6 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
     const Wi = m * g
     const Wf = (m - fuelMass) * g
 
-    // SFC Conversion: lb/hp/hr -> N / (W*s) * g ?
-    // Wait, range_breguet expects SFC in "Power SFC (N / (W * s) or 1/m)" for prop.
-    // MATLAB code: SFC_si = (0.2041 / (745.7 * 3600)) * g;
-    // 0.45 lb/hp/hr -> 0.2041 kg/hp/hr -> ...
-    // Let's replicate the conversion factor.
-    // 1 lb = 0.453592 kg
-    // 1 hp = 745.7 W
-    // 1 hr = 3600 s
-    // SFC (lb/hp/hr) * 0.453592 / 745.7 / 3600 -> kg/(W*s)
-    // Then multiply by g to get N/(W*s) ?? Or does range_breguet expect kg based?
-    // range_breguet docs: "SFC ... For Prop: Power SFC (N / (W * s) or 1/m)"
-    // If SFC is mass flow per power (kg/W/s), then * g gives weight flow per power (N/W/s).
-    // So yes, multiply by g.
-
     const SFC_kg_Ws = (SFC * 0.453592) / (745.7 * 3600)
     const SFC_si = SFC_kg_Ws * g
 
@@ -63,37 +67,90 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
     })
   }
 
+  const ALTITUDE_PRESETS = [
+    { label: "Sea Level", value: "0" },
+    { label: "Cruise (2km)", value: "2000" },
+    { label: "High (5km)", value: "5000" },
+  ]
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Range & Endurance Calculator</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="fuelMass">Fuel Mass (kg)</Label>
-          <Input
-            type="number"
-            id="fuelMass"
-            value={fuelMass}
-            onChange={(e) => setFuelMass(Number(e.target.value))}
-          />
-        </div>
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="cruiseAltitude">Cruise Altitude (m)</Label>
-          <Input
-            type="number"
-            id="cruiseAltitude"
-            value={cruiseAltitude}
-            onChange={(e) => setCruiseAltitude(Number(e.target.value))}
-          />
-        </div>
-        <Button onClick={calculate}>Calculate</Button>
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label htmlFor="fuelMass">Fuel Mass (kg)</Label>
+            <Input
+              type="number"
+              id="fuelMass"
+              value={fuelMassStr}
+              onChange={(e) => setFuelMassStr(e.target.value)}
+              className={validationError ? "border-red-500 focus-visible:ring-red-500" : ""}
+              aria-invalid={!!validationError}
+              aria-describedby={validationError ? "fuel-error" : undefined}
+            />
+            {validationError && (
+              <p id="fuel-error" className="text-sm text-red-500 font-medium">
+                {validationError}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Max available: {params.m} kg (Total Mass)
+            </p>
+          </div>
 
-        {result && (
-          <div className="mt-4 space-y-2">
-            <p><strong>Max L/D Ratio:</strong> {result.LDmax.toFixed(2)}</p>
-            <p><strong>Best Glide Range:</strong> {(result.glideRange / 1000).toFixed(2)} km</p>
-            <p><strong>Max Range (Breguet):</strong> {(result.breguetRange / 1000).toFixed(2)} km</p>
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label htmlFor="cruiseAltitude">Cruise Altitude (m)</Label>
+            <Input
+              type="number"
+              id="cruiseAltitude"
+              value={cruiseAltitudeStr}
+              onChange={(e) => setCruiseAltitudeStr(e.target.value)}
+            />
+            <div className="flex flex-wrap gap-2 pt-1">
+              {ALTITUDE_PRESETS.map((preset) => (
+                <Button
+                  key={preset.value}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCruiseAltitudeStr(preset.value)}
+                  className="h-7 text-xs"
+                >
+                  {preset.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <Button
+          onClick={calculate}
+          disabled={!isValidFuel || !isValidAlt}
+          className="w-full sm:w-auto"
+        >
+          Calculate Range
+        </Button>
+
+        {result ? (
+          <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+            <div className="flex justify-between items-center border-b pb-2">
+              <span className="text-sm font-medium">Max L/D Ratio</span>
+              <span className="font-bold">{result.LDmax.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center border-b pb-2">
+              <span className="text-sm font-medium">Best Glide Range</span>
+              <span className="font-bold">{(result.glideRange / 1000).toFixed(1)} km</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">Max Range (Breguet)</span>
+              <span className="font-bold text-primary">{(result.breguetRange / 1000).toFixed(1)} km</span>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
+            <p className="text-sm">Enter fuel and altitude parameters to estimate aircraft range capabilities.</p>
           </div>
         )}
       </CardContent>
