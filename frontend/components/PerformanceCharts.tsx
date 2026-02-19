@@ -42,17 +42,19 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     const V_end = 80 // m/s, arbitrary upper limit like in main_project.m
     const Pa = Pa_sl * eta_prop
 
-    // Optimization: Single loop with inlined physics to avoid array allocation
+    // Optimization: Pre-calculate constants for Power Required formula to avoid redundant math in loop
+    // Pr = Tr * V = (q * S * CD) * V
+    // Pr = (0.5 * rho * V^2 * S * (CD0 + k * CL^2)) * V
+    // ... simplifies to: Pr = parasiteConst * V^3 + inducedConst / V
+    const parasiteConst = 0.5 * RHO_SL * S * CD0
+    const inducedConst = (2 * k * Math.pow(W, 2)) / (RHO_SL * S)
+
     const data = []
     for (let i = 0; i <= 50; i++) {
       const V = V_stall + (i / 50) * (V_end - V_stall)
 
-      // Inline powerRequired logic (Pr only) to avoid object allocation
-      const q = 0.5 * RHO_SL * V * V
-      const CL = W / (q * S)
-      const CD = CD0 + k * CL * CL
-      const Tr = q * S * CD
-      const Pr = Tr * V
+      // Optimized Power Required calculation
+      const Pr = parasiteConst * Math.pow(V, 3) + inducedConst / V
 
       data.push({
         V: Number(V.toFixed(1)),
@@ -79,16 +81,16 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       const Pa_h = Pa_sl * sigma * eta_prop
       let max_RC = -Infinity
 
+      // Optimization: Pre-calculate constants for this altitude
+      const parasiteConst = 0.5 * rho * S * CD0
+      const inducedConst = (2 * k * Math.pow(W, 2)) / (rho * S)
+
       // Optimization: Inline loop to avoid array allocation
       for (let j = 0; j <= 20; j++) {
         const V = V_stall_h + (j / 20) * (V_end - V_stall_h)
 
-        // Inline Power Required logic
-        const q = 0.5 * rho * V * V
-        const CL = W / (q * S)
-        const CD = CD0 + k * CL * CL
-        const Tr = q * S * CD
-        const Pr = Tr * V
+        // Optimized Power Required calculation
+        const Pr = parasiteConst * Math.pow(V, 3) + inducedConst / V
 
         // Inline Rate of Climb logic
         const rc = (Pa_h - Pr) / W
