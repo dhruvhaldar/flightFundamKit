@@ -9,3 +9,7 @@
 ## 2025-06-03 - Flight Mechanics Constants Optimization
 **Learning:** `stdAtm` function was redefining multiple constants (T0, P0, g, etc.) and recalculating derived values (exponents) on every call. Hoisting these to module scope and pre-calculating invariant constants reduced execution time by ~39% in benchmarks.
 **Action:** When implementing mathematical models or physics simulations, always hoist constant definitions and pre-calculate invariant derived values to avoid redundant computation.
+
+## 2025-06-03 - [Optimized Physics Loop]
+**Learning:** Re-calculating intermediate physics variables (CL, CD, q) inside a loop is wasteful when only the final result is needed. By algebraically simplifying the model into constants (parasite & induced power terms) outside the loop, we reduced operations per iteration from ~15 to ~5.
+**Action:** Always look for algebraic simplifications in tight loops, especially when physics constants can be pre-calculated.
