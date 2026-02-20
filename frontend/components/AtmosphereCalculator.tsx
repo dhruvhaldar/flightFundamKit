@@ -53,10 +53,12 @@ export default function AtmosphereCalculator() {
               {ALTITUDE_PRESETS.map((preset) => (
                 <Button
                   key={preset.value}
-                  variant="outline"
+                  type="button"
+                  variant={altitudeStr === preset.value ? "default" : "outline"}
                   size="sm"
                   onClick={() => setAltitudeStr(preset.value)}
                   aria-label={`Set altitude to ${preset.label}`}
+                  aria-pressed={altitudeStr === preset.value}
                   className="h-8 text-xs"
                 >
                   {preset.label}
