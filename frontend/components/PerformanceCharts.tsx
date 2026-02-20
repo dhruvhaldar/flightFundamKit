@@ -79,23 +79,23 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
       const sigma = rho / RHO_SL
       const Pa_h = Pa_sl * sigma * eta_prop
-      let max_RC = -Infinity
 
       // Optimization: Pre-calculate constants for this altitude
       const parasiteConst = 0.5 * rho * S * CD0
       const inducedConst = (2 * k * Math.pow(W, 2)) / (rho * S)
 
-      // Optimization: Inline loop to avoid array allocation
-      for (let j = 0; j <= 20; j++) {
-        const V = V_stall_h + (j / 20) * (V_end - V_stall_h)
+      // Optimization: Analytical solution for max Rate of Climb
+      // Max RC occurs at minimum Power Required (since Pa is constant with V)
+      // Pr = A*V^3 + B/V => dPr/dV = 3*A*V^2 - B/V^2 = 0 => V_mp = (B / (3*A))^0.25
+      const V_mp = Math.pow(inducedConst / (3 * parasiteConst), 0.25)
 
-        // Optimized Power Required calculation
-        const Pr = parasiteConst * Math.pow(V, 3) + inducedConst / V
+      // Check if V_mp is within flight envelope
+      let V_best = V_mp
+      if (V_best < V_stall_h) V_best = V_stall_h
+      if (V_best > V_end) V_best = V_end
 
-        // Inline Rate of Climb logic
-        const rc = (Pa_h - Pr) / W
-        if (rc > max_RC) max_RC = rc
-      }
+      const Pr_best = parasiteConst * Math.pow(V_best, 3) + inducedConst / V_best
+      const max_RC = (Pa_h - Pr_best) / W
 
       data.push({
         h,

@@ -13,3 +13,7 @@
 ## 2025-06-03 - [Optimized Physics Loop]
 **Learning:** Re-calculating intermediate physics variables (CL, CD, q) inside a loop is wasteful when only the final result is needed. By algebraically simplifying the model into constants (parasite & induced power terms) outside the loop, we reduced operations per iteration from ~15 to ~5.
 **Action:** Always look for algebraic simplifications in tight loops, especially when physics constants can be pre-calculated.
+
+## 2025-06-03 - Analytical vs. Numerical Optimization
+**Learning:** Iterative loops (brute-force search) were used to find maxima (e.g., max Rate of Climb) in `PerformanceCharts.tsx`. This is O(N) where N is the number of steps. Replacing this with an analytical solution (derivative of power curve) reduced complexity to O(1) and improved accuracy by eliminating discretization errors.
+**Action:** Always check if a loop-based optimization (finding min/max) can be replaced by a direct analytical solution, especially for well-defined physics models like drag polars.
