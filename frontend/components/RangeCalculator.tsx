@@ -113,9 +113,11 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               {ALTITUDE_PRESETS.map((preset) => (
                 <Button
                   key={preset.value}
-                  variant="outline"
+                  type="button"
+                  variant={cruiseAltitudeStr === preset.value ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCruiseAltitudeStr(preset.value)}
+                  aria-pressed={cruiseAltitudeStr === preset.value}
                   className="h-7 text-xs"
                 >
                   {preset.label}

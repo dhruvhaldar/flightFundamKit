@@ -5,3 +5,7 @@
 ## 2024-05-24 - Technical Calculator UX
 **Learning:** For technical inputs like "Cruise Altitude" or "Fuel Mass", users appreciate presets (e.g., "Sea Level", "Cruise") and clear validation boundaries (e.g., "Max Fuel < Total Mass") rather than raw number fields. An empty state describing the output adds clarity before calculation.
 **Action:** Always include presets for common technical values and validate constraints relative to other parameters (e.g., fuel vs. mass) with clear error messages.
+
+## 2024-05-24 - Shadcn UI Button Visibility
+**Learning:** Shadcn UI components (like Button) rely heavily on CSS variables (`--primary`, `--primary-foreground`) for their `default` variant. If these are missing (e.g., in a minimal Tailwind v4 setup), the buttons become invisible (no background) but still take up space, leading to a confusing UX where "active" states look broken.
+**Action:** When using Shadcn UI components, always verify that the base CSS variables are defined in the global stylesheet, especially when migrating to or using Tailwind v4's `@theme` syntax. Ensure active states have clear visual distinction (e.g., filled background vs outline).
