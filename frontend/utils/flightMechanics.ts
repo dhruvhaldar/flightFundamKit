@@ -14,30 +14,30 @@ const P_trop = P0 * Math.pow(T_trop / T0, G_over_LR);
 const G_over_RT_trop = -g / (R * T_trop);
 
 export function stdAtm(h: number | number[]) {
-  const isArray = Array.isArray(h);
-  const altitudes = isArray ? h : [h];
+  // Optimized: Handle scalar inputs directly to avoid array allocation overhead
+  if (Array.isArray(h)) {
+    return h.map(calculateStdAtm);
+  }
+  return calculateStdAtm(h);
+}
 
-  const results = altitudes.map((curr_h) => {
-    let T, P, rho;
+function calculateStdAtm(curr_h: number) {
+  let T, P, rho;
 
-    if (curr_h <= 11000) {
-      // Troposphere
-      T = T0 + L * curr_h;
-      P = P0 * Math.pow(T / T0, G_over_LR);
-      rho = P / (R * T);
-    } else {
-      // Stratosphere (Lower) - Simplified: Isothermal
-      T = T_trop;
-      P = P_trop * Math.exp(G_over_RT_trop * (curr_h - 11000));
-      rho = P / (R * T);
-    }
+  if (curr_h <= 11000) {
+    // Troposphere
+    T = T0 + L * curr_h;
+    P = P0 * Math.pow(T / T0, G_over_LR);
+    rho = P / (R * T);
+  } else {
+    // Stratosphere (Lower) - Simplified: Isothermal
+    T = T_trop;
+    P = P_trop * Math.exp(G_over_RT_trop * (curr_h - 11000));
+    rho = P / (R * T);
+  }
 
-    const a = Math.sqrt(gamma * R * T);
-    return { T, P, rho, a };
-  });
-
-  if (isArray) return results;
-  return results[0];
+  const a = Math.sqrt(gamma * R * T);
+  return { T, P, rho, a };
 }
 
 export function stallSpeed(W: number, rho: number, S: number, CL_max: number) {
@@ -45,60 +45,62 @@ export function stallSpeed(W: number, rho: number, S: number, CL_max: number) {
 }
 
 export function dragPolar(CL: number | number[], CD0: number, k: number) {
-  const isArray = Array.isArray(CL);
-  const CLs = isArray ? CL : [CL];
-
-  const results = CLs.map(cl => CD0 + k * cl * cl);
-
-  if (isArray) return results;
-  return results[0];
+  // Optimized: Handle scalar inputs directly to avoid array allocation overhead
+  if (Array.isArray(CL)) {
+    return CL.map(cl => CD0 + k * cl * cl);
+  }
+  return CD0 + k * CL * CL;
 }
 
 export function liftCoeff(W: number, rho: number, V: number | number[], S: number) {
-  const isArray = Array.isArray(V);
-  const Vs = isArray ? V : [V];
-
-  const results = Vs.map(v => {
-    const q = 0.5 * rho * v * v;
-    return W / (q * S);
-  });
-
-  if (isArray) return results;
-  return results[0];
+  // Optimized: Handle scalar inputs directly to avoid array allocation overhead
+  if (Array.isArray(V)) {
+    return V.map(v => {
+      const q = 0.5 * rho * v * v;
+      return W / (q * S);
+    });
+  }
+  const q = 0.5 * rho * V * V;
+  return W / (q * S);
 }
 
 export function powerRequired(rho: number, V: number | number[], S: number, CD0: number, k: number, W: number) {
-  const isArray = Array.isArray(V);
-  const Vs = isArray ? V : [V];
-
-  const results = Vs.map(v => {
-    const q = 0.5 * rho * v * v;
-    const CL = W / (q * S);
-    const CD = CD0 + k * CL * CL;
-    const Tr = q * S * CD;
-    const Pr = Tr * v;
-    return { Pr, Tr, CL, CD };
-  });
-
-  if (isArray) return results;
-  return results[0];
+  // Optimized: Handle scalar inputs directly to avoid array allocation overhead
+  if (Array.isArray(V)) {
+    return V.map(v => {
+      const q = 0.5 * rho * v * v;
+      const CL = W / (q * S);
+      const CD = CD0 + k * CL * CL;
+      const Tr = q * S * CD;
+      const Pr = Tr * v;
+      return { Pr, Tr, CL, CD };
+    });
+  }
+  const q = 0.5 * rho * V * V;
+  const CL = W / (q * S);
+  const CD = CD0 + k * CL * CL;
+  const Tr = q * S * CD;
+  const Pr = Tr * V;
+  return { Pr, Tr, CL, CD };
 }
 
 export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: number) {
   const isPaArray = Array.isArray(Pa);
   const isPrArray = Array.isArray(Pr);
 
-  // Assuming Pa and Pr are matched in length if both arrays
-  const PaArray = isPaArray ? Pa : (isPrArray ? Array(Pr.length).fill(Pa) : [Pa]);
-  const PrArray = isPrArray ? Pr : (isPaArray ? Array(Pa.length).fill(Pr) : [Pr]);
+  // Optimized: Handle scalar inputs directly to avoid array allocation overhead
+  if (!isPaArray && !isPrArray) {
+    return ((Pa as number) - (Pr as number)) / W;
+  }
 
-  const results = PaArray.map((pa, i) => {
+  // Assuming Pa and Pr are matched in length if both arrays
+  const PaArray = isPaArray ? (Pa as number[]) : (isPrArray ? Array((Pr as number[]).length).fill(Pa) : [Pa]);
+  const PrArray = isPrArray ? (Pr as number[]) : (isPaArray ? Array((Pa as number[]).length).fill(Pr) : [Pr]);
+
+  return PaArray.map((pa, i) => {
     const pr = PrArray[i];
     return (pa - pr) / W;
   });
-
-  if (isPaArray || isPrArray) return results;
-  return results[0];
 }
 
 export function glidingRange(h_start: number, h_end: number, CL: number, CD: number) {
