@@ -9,3 +9,7 @@
 ## 2024-05-24 - Shadcn UI Button Visibility
 **Learning:** Shadcn UI components (like Button) rely heavily on CSS variables (`--primary`, `--primary-foreground`) for their `default` variant. If these are missing (e.g., in a minimal Tailwind v4 setup), the buttons become invisible (no background) but still take up space, leading to a confusing UX where "active" states look broken.
 **Action:** When using Shadcn UI components, always verify that the base CSS variables are defined in the global stylesheet, especially when migrating to or using Tailwind v4's `@theme` syntax. Ensure active states have clear visual distinction (e.g., filled background vs outline).
+
+## 2025-05-24 - Inline Validation for Technical Parameters
+**Learning:** For complex technical parameters (like aerodynamics), users benefit immensely from immediate inline validation (e.g., "Mass > 0") that blocks invalid state from propagating to charts/calculations, rather than waiting for a "Calculate" button or seeing broken graphs.
+**Action:** Implement derived validation logic that checks local input state before debouncing updates to the parent. Pair this with a "Reset to Defaults" action to give users a safe way to recover from invalid configurations.
