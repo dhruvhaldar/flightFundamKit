@@ -11,7 +11,7 @@ import {
   Legend,
   ResponsiveContainer
 } from "recharts"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { AircraftParams } from "@/types"
 import {
   stallSpeed,
@@ -65,6 +65,12 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     return data
   }, [W, S, CL_max, CD0, k, Pa_sl, eta_prop])
 
+  // Analysis for Power Curve
+  const minPowerPoint = useMemo(() => {
+    if (!powerData.length) return null
+    return powerData.reduce((min, p) => (p.Pr_kW < min.Pr_kW ? p : min), powerData[0])
+  }, [powerData])
+
   // Rate of Climb Data (vs Altitude)
   const climbData = useMemo(() => {
     const data = []
@@ -105,6 +111,20 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     return data
   }, [W, S, CL_max, CD0, k, Pa_sl, eta_prop])
 
+  // Analysis for Climb Curve
+  const maxClimbPoint = useMemo(() => {
+    if (!climbData.length) return null
+    return climbData.reduce((max, p) => (p.RC > max.RC ? p : max), climbData[0])
+  }, [climbData])
+
+  const ceilingPoint = useMemo(() => {
+    if (!climbData.length) return null
+    // Find the altitude where RC drops close to zero or is the last positive value
+    const positiveRC = climbData.filter(d => d.RC > 0.5) // Service ceiling def: < 0.5 m/s (approx 100 fpm)
+    if (positiveRC.length === 0) return climbData[0]
+    return positiveRC[positiveRC.length - 1]
+  }, [climbData])
+
   return (
     <div className="space-y-8">
       <Card>
@@ -131,6 +151,13 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
             </ResponsiveContainer>
           </div>
         </CardContent>
+        <CardFooter>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">Insight:</span> Most efficient cruise speed is{" "}
+            <span className="font-bold text-foreground">{minPowerPoint?.V} m/s</span> requiring{" "}
+            <span className="font-bold text-foreground">{minPowerPoint?.Pr_kW} kW</span> power.
+          </p>
+        </CardFooter>
       </Card>
 
       <Card>
@@ -156,6 +183,18 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
             </ResponsiveContainer>
           </div>
         </CardContent>
+        <CardFooter>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">Insight:</span> Max climb rate is{" "}
+            <span className="font-bold text-foreground">{maxClimbPoint?.RC} m/s</span> at sea level.
+            {ceilingPoint && ceilingPoint.h < 5000 && (
+              <> Service ceiling is approx <span className="font-bold text-foreground">{ceilingPoint.h} m</span>.</>
+            )}
+            {ceilingPoint && ceilingPoint.h >= 5000 && (
+               <> Climb rate remains positive up to <span className="font-bold text-foreground">{ceilingPoint.h} m</span>.</>
+            )}
+          </p>
+        </CardFooter>
       </Card>
     </div>
   )
