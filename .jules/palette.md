@@ -13,3 +13,7 @@
 ## 2025-05-24 - Inline Validation for Technical Parameters
 **Learning:** For complex technical parameters (like aerodynamics), users benefit immensely from immediate inline validation (e.g., "Mass > 0") that blocks invalid state from propagating to charts/calculations, rather than waiting for a "Calculate" button or seeing broken graphs.
 **Action:** Implement derived validation logic that checks local input state before debouncing updates to the parent. Pair this with a "Reset to Defaults" action to give users a safe way to recover from invalid configurations.
+
+## 2025-05-27 - Chart Accessibility
+**Learning:** Complex charts (Recharts) are inherently inaccessible to screen readers; adding dynamic, data-driven text summaries provides immediate value to all users, not just screen reader users.
+**Action:** Always extract key insights (min/max/trends) from chart data and display them as plain text summaries below the visual chart.
