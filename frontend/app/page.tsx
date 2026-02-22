@@ -1,12 +1,28 @@
 "use client"
 
 import { useState } from "react"
+import dynamic from "next/dynamic"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import AtmosphereCalculator from "@/components/AtmosphereCalculator"
 import AircraftParameters from "@/components/AircraftParameters"
-import PerformanceCharts from "@/components/PerformanceCharts"
 import RangeCalculator from "@/components/RangeCalculator"
 import { AircraftParams } from "@/types"
+
+// Lazy load PerformanceCharts to reduce initial bundle size as it contains heavy Recharts library
+// and is not visible on initial load.
+const PerformanceCharts = dynamic(() => import("@/components/PerformanceCharts"), {
+  loading: () => (
+    <div className="space-y-8">
+      <div className="rounded-lg border bg-card text-card-foreground shadow-sm h-[400px] flex items-center justify-center">
+        <p className="text-muted-foreground animate-pulse">Loading Power Curve...</p>
+      </div>
+      <div className="rounded-lg border bg-card text-card-foreground shadow-sm h-[400px] flex items-center justify-center">
+        <p className="text-muted-foreground animate-pulse">Loading Climb Rate...</p>
+      </div>
+    </div>
+  ),
+  ssr: false,
+})
 
 export default function Home() {
   const [params, setParams] = useState<AircraftParams>({

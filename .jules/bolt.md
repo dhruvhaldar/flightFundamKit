@@ -21,3 +21,7 @@
 ## 2025-06-03 - Scalar vs Array Allocation in Vectorized Functions
 **Learning:** Functions designed to handle both scalar and array inputs (e.g., `stdAtm`) often default to wrapping scalars in an array and using `.map()`, causing unnecessary allocation and iteration overhead. Optimizing these functions to handle scalar inputs directly (without array wrapping) improved performance by ~4.5x for single-value calls.
 **Action:** When implementing or using dual-mode (scalar/vector) utility functions, always add a dedicated code path for scalar inputs to avoid the overhead of array creation and iteration.
+
+## 2025-06-03 - Next.js Lazy Loading for Heavy Components
+**Learning:** Large libraries like `recharts` significantly increase the initial JavaScript bundle size. Using `next/dynamic` to lazy load components that depend on these libraries (especially those not immediately visible, like in tabs) reduces the initial load time.
+**Action:** Always check if heavy components can be lazy loaded, especially if they are behind user interaction (e.g., tabs, modals).
