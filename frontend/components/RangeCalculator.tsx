@@ -8,6 +8,12 @@ import { Button } from "@/components/ui/button"
 import { AircraftParams } from "@/types"
 import { glidingRange, rangeBreguet } from "@/utils/flightMechanics"
 
+const ALTITUDE_PRESETS = [
+  { label: "Sea Level", value: "0" },
+  { label: "Cruise (2km)", value: "2000" },
+  { label: "High (5km)", value: "5000" },
+]
+
 interface RangeCalculatorProps {
   params: AircraftParams
 }
@@ -66,12 +72,6 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
       LDmax: LDmax
     })
   }
-
-  const ALTITUDE_PRESETS = [
-    { label: "Sea Level", value: "0" },
-    { label: "Cruise (2km)", value: "2000" },
-    { label: "High (5km)", value: "5000" },
-  ]
 
   return (
     <Card>

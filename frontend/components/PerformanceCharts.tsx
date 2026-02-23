@@ -47,19 +47,20 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     // Pr = (0.5 * rho * V^2 * S * (CD0 + k * CL^2)) * V
     // ... simplifies to: Pr = parasiteConst * V^3 + inducedConst / V
     const parasiteConst = 0.5 * RHO_SL * S * CD0
-    const inducedConst = (2 * k * Math.pow(W, 2)) / (RHO_SL * S)
+    const inducedConst = (2 * k * (W * W)) / (RHO_SL * S)
 
     const data = []
     for (let i = 0; i <= 50; i++) {
       const V = V_stall + (i / 50) * (V_end - V_stall)
 
       // Optimized Power Required calculation
-      const Pr = parasiteConst * Math.pow(V, 3) + inducedConst / V
+      // V^3 is faster as V * V * V
+      const Pr = parasiteConst * (V * V * V) + inducedConst / V
 
       data.push({
-        V: Number(V.toFixed(1)),
-        Pr_kW: Number((Pr / 1000).toFixed(2)),
-        Pa_kW: Number((Pa / 1000).toFixed(2))
+        V: Math.round(V * 10) / 10,
+        Pr_kW: Math.round((Pr / 1000) * 100) / 100,
+        Pa_kW: Math.round((Pa / 1000) * 100) / 100
       })
     }
     return data
@@ -88,7 +89,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
       // Optimization: Pre-calculate constants for this altitude
       const parasiteConst = 0.5 * rho * S * CD0
-      const inducedConst = (2 * k * Math.pow(W, 2)) / (rho * S)
+      const inducedConst = (2 * k * (W * W)) / (rho * S)
 
       // Optimization: Analytical solution for max Rate of Climb
       // Max RC occurs at minimum Power Required (since Pa is constant with V)
@@ -100,12 +101,12 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       if (V_best < V_stall_h) V_best = V_stall_h
       if (V_best > V_end) V_best = V_end
 
-      const Pr_best = parasiteConst * Math.pow(V_best, 3) + inducedConst / V_best
+      const Pr_best = parasiteConst * (V_best * V_best * V_best) + inducedConst / V_best
       const max_RC = (Pa_h - Pr_best) / W
 
       data.push({
         h,
-        RC: Number(max_RC.toFixed(2))
+        RC: Math.round(max_RC * 100) / 100
       })
     }
     return data
