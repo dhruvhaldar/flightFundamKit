@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { stdAtm } from "@/utils/flightMechanics"
+import { Check, Copy } from "lucide-react"
 
 const ALTITUDE_PRESETS = [
   { label: "Sea Level", value: "0" },
@@ -13,6 +14,35 @@ const ALTITUDE_PRESETS = [
   { label: "5,000 m", value: "5000" },
   { label: "Cruise (11 km)", value: "11000" },
 ]
+
+function CopyButton({ value, label }: { value: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (copied) {
+      const timeout = setTimeout(() => setCopied(false), 2000)
+      return () => clearTimeout(timeout)
+    }
+  }, [copied])
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value)
+    setCopied(true)
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-6 w-6 ml-2 text-muted-foreground hover:text-foreground"
+      onClick={handleCopy}
+      title="Copy to clipboard"
+      aria-label={`Copy ${label} value of ${value}`}
+    >
+      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+    </Button>
+  )
+}
 
 export default function AtmosphereCalculator() {
   const [altitudeStr, setAltitudeStr] = useState<string>("0")
@@ -40,6 +70,7 @@ export default function AtmosphereCalculator() {
             <Label htmlFor="altitude">Altitude (m)</Label>
             <Input
               type="number"
+              step="any"
               id="altitude"
               value={altitudeStr}
               onChange={(e) => setAltitudeStr(e.target.value)}
@@ -72,8 +103,9 @@ export default function AtmosphereCalculator() {
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Temperature</dt>
-                  <dd className="text-2xl font-bold tracking-tight">
-                    {result.T.toFixed(2)} <span className="text-sm font-normal text-muted-foreground">K</span>
+                  <dd className="text-2xl font-bold tracking-tight flex items-center">
+                    {result.T.toFixed(2)} <span className="text-sm font-normal text-muted-foreground ml-1">K</span>
+                    <CopyButton value={result.T.toFixed(2)} label="Temperature" />
                   </dd>
                   <p className="text-xs text-muted-foreground">
                     {(result.T - 273.15).toFixed(1)} °C
@@ -81,23 +113,27 @@ export default function AtmosphereCalculator() {
                 </div>
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Pressure</dt>
-                  <dd className="text-2xl font-bold tracking-tight">
-                    {(result.P / 100).toFixed(2)} <span className="text-sm font-normal text-muted-foreground">hPa</span>
+                  <dd className="text-2xl font-bold tracking-tight flex items-center">
+                    {(result.P / 100).toFixed(2)} <span className="text-sm font-normal text-muted-foreground ml-1">hPa</span>
+                    <CopyButton value={(result.P / 100).toFixed(2)} label="Pressure (hPa)" />
                   </dd>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
                     {result.P.toFixed(0)} Pa
+                    <CopyButton value={result.P.toFixed(0)} label="Pressure (Pa)" />
                   </p>
                 </div>
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Density</dt>
-                  <dd className="text-2xl font-bold tracking-tight">
-                    {result.rho.toFixed(4)} <span className="text-sm font-normal text-muted-foreground">kg/m³</span>
+                  <dd className="text-2xl font-bold tracking-tight flex items-center">
+                    {result.rho.toFixed(4)} <span className="text-sm font-normal text-muted-foreground ml-1">kg/m³</span>
+                    <CopyButton value={result.rho.toFixed(4)} label="Density" />
                   </dd>
                 </div>
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Speed of Sound</dt>
-                  <dd className="text-2xl font-bold tracking-tight">
-                    {result.a.toFixed(1)} <span className="text-sm font-normal text-muted-foreground">m/s</span>
+                  <dd className="text-2xl font-bold tracking-tight flex items-center">
+                    {result.a.toFixed(1)} <span className="text-sm font-normal text-muted-foreground ml-1">m/s</span>
+                    <CopyButton value={result.a.toFixed(1)} label="Speed of Sound" />
                   </dd>
                 </div>
               </dl>
