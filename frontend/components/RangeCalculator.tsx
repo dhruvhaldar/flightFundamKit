@@ -84,20 +84,22 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
             <Label htmlFor="fuelMass">Fuel Mass (kg)</Label>
             <Input
               type="number"
+              step="any"
               id="fuelMass"
               value={fuelMassStr}
               onChange={(e) => setFuelMassStr(e.target.value)}
-              className={validationError ? "border-red-500 focus-visible:ring-red-500" : ""}
+              onKeyDown={(e) => e.key === "Enter" && calculate()}
+              className={validationError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={!!validationError}
-              aria-describedby={validationError ? "fuel-error" : undefined}
+              aria-describedby={validationError ? "fuel-error" : "fuel-helper"}
             />
             {validationError && (
-              <p id="fuel-error" className="text-sm text-red-500 font-medium">
+              <p id="fuel-error" className="text-sm text-destructive font-medium">
                 {validationError}
               </p>
             )}
-            <p className="text-xs text-muted-foreground">
-              Max available: {params.m} kg (Total Mass)
+            <p id="fuel-helper" className="text-xs text-muted-foreground">
+              Max available: {params.m} kg {!isNaN(fuelMass) ? `(${((fuelMass / params.m) * 100).toFixed(1)}% of MTOW)` : "(Total Mass)"}
             </p>
           </div>
 
@@ -105,9 +107,11 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
             <Label htmlFor="cruiseAltitude">Cruise Altitude (m)</Label>
             <Input
               type="number"
+              step="any"
               id="cruiseAltitude"
               value={cruiseAltitudeStr}
               onChange={(e) => setCruiseAltitudeStr(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && calculate()}
             />
             <div className="flex flex-wrap gap-2 pt-1">
               {ALTITUDE_PRESETS.map((preset) => (
@@ -136,7 +140,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
         </Button>
 
         {result ? (
-          <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+          <div className="rounded-lg border bg-muted/50 p-4 space-y-3" aria-live="polite">
             <div className="flex justify-between items-center border-b pb-2">
               <span className="text-sm font-medium">Max L/D Ratio</span>
               <span className="font-bold">{result.LDmax.toFixed(2)}</span>
