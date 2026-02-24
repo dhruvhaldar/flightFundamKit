@@ -17,3 +17,7 @@
 ## 2025-05-27 - Chart Accessibility
 **Learning:** Complex charts (Recharts) are inherently inaccessible to screen readers; adding dynamic, data-driven text summaries provides immediate value to all users, not just screen reader users.
 **Action:** Always extract key insights (min/max/trends) from chart data and display them as plain text summaries below the visual chart.
+
+## 2025-05-27 - Calculator Interaction Patterns
+**Learning:** Users instinctively press 'Enter' to trigger calculations in input fields, even outside of formal <form> elements.
+**Action:** Always add an `onKeyDown` handler to inputs in interactive tools to trigger the primary action (e.g., calculation) on 'Enter' key press.
