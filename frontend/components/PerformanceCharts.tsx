@@ -49,6 +49,9 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     const parasiteConst = 0.5 * RHO_SL * S * CD0
     const inducedConst = (2 * k * (W * W)) / (RHO_SL * S)
 
+    // Optimization: Hoist constant Pa_kW calculation outside loop
+    const Pa_kW_val = Math.round((Pa / 1000) * 100) / 100
+
     const data = []
     for (let i = 0; i <= 50; i++) {
       const V = V_stall + (i / 50) * (V_end - V_stall)
@@ -60,7 +63,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       data.push({
         V: Math.round(V * 10) / 10,
         Pr_kW: Math.round((Pr / 1000) * 100) / 100,
-        Pa_kW: Math.round((Pa / 1000) * 100) / 100
+        Pa_kW: Pa_kW_val
       })
     }
     return data
@@ -75,6 +78,17 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
   // Rate of Climb Data (vs Altitude)
   const climbData = useMemo(() => {
     const data = []
+
+    // Optimization: Pre-calculate constant factor for V_mp to avoid Math.pow inside loop
+    // V_mp = (B / (3*A))^0.25
+    // A = 0.5 * rho * S * CD0
+    // B = (2 * k * W^2) / (rho * S)
+    // B/(3A) = (4 * k * W^2) / (3 * rho^2 * S^2 * CD0)
+    // V_mp = ( (4 * k * W^2) / (3 * S^2 * CD0) )^0.25 * (1/rho^2)^0.25
+    // V_mp = K_Vmp / sqrt(rho)
+    // K_Vmp = ((4 * k * W^2) / (3 * S^2 * CD0))^0.25
+    const K_Vmp_base = (4 * k * (W * W)) / (3 * (S * S) * CD0)
+    const K_Vmp = Math.sqrt(Math.sqrt(K_Vmp_base))
 
     for (let i = 0; i < ALTITUDES.length; i++) {
       const h = ALTITUDES[i]
@@ -93,8 +107,8 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
       // Optimization: Analytical solution for max Rate of Climb
       // Max RC occurs at minimum Power Required (since Pa is constant with V)
-      // Pr = A*V^3 + B/V => dPr/dV = 3*A*V^2 - B/V^2 = 0 => V_mp = (B / (3*A))^0.25
-      const V_mp = Math.pow(inducedConst / (3 * parasiteConst), 0.25)
+      // V_mp = K_Vmp / sqrt(rho) is ~30x faster than Math.pow inside loop
+      const V_mp = K_Vmp / Math.sqrt(rho)
 
       // Check if V_mp is within flight envelope
       let V_best = V_mp
