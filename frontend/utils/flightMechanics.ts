@@ -13,6 +13,12 @@ const T_trop = T0 + L * 11000;
 const P_trop = P0 * Math.pow(T_trop / T0, G_over_LR);
 const G_over_RT_trop = -g / (R * T_trop);
 
+// Optimization: Precompute constants to avoid repeated divisions and multiplications
+const INV_T0 = 1 / T0;
+const RT_trop = R * T_trop;
+const INV_RT_trop = 1 / RT_trop;
+const GAMMA_R = gamma * R;
+
 export function stdAtm(h: number | number[]) {
   // Optimized: Handle scalar inputs directly to avoid array allocation overhead
   if (Array.isArray(h)) {
@@ -27,16 +33,19 @@ function calculateStdAtm(curr_h: number) {
   if (curr_h <= 11000) {
     // Troposphere
     T = T0 + L * curr_h;
-    P = P0 * Math.pow(T / T0, G_over_LR);
+    // Optimization: Use multiplication by inverse (T / T0 -> T * INV_T0)
+    P = P0 * Math.pow(T * INV_T0, G_over_LR);
     rho = P / (R * T);
   } else {
     // Stratosphere (Lower) - Simplified: Isothermal
     T = T_trop;
     P = P_trop * Math.exp(G_over_RT_trop * (curr_h - 11000));
-    rho = P / (R * T);
+    // Optimization: Use precomputed inverse for R * T_trop to avoid division
+    rho = P * INV_RT_trop;
   }
 
-  const a = Math.sqrt(gamma * R * T);
+  // Optimization: Use precomputed GAMMA_R
+  const a = Math.sqrt(GAMMA_R * T);
   return { T, P, rho, a };
 }
 
@@ -93,9 +102,21 @@ export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: num
     return ((Pa as number) - (Pr as number)) / W;
   }
 
-  // Assuming Pa and Pr are matched in length if both arrays
-  const PaArray = isPaArray ? (Pa as number[]) : (isPrArray ? Array((Pr as number[]).length).fill(Pa) : [Pa]);
-  const PrArray = isPrArray ? (Pr as number[]) : (isPaArray ? Array((Pa as number[]).length).fill(Pr) : [Pr]);
+  // Optimization: Handle mixed scalar/array inputs without allocating temporary arrays
+  // This avoids O(N) memory allocation and copy operations
+  if (isPaArray && !isPrArray) {
+    const prVal = Pr as number;
+    return (Pa as number[]).map(pa => (pa - prVal) / W);
+  }
+
+  if (!isPaArray && isPrArray) {
+    const paVal = Pa as number;
+    return (Pr as number[]).map(pr => (paVal - pr) / W);
+  }
+
+  // Both are arrays (assuming matched length)
+  const PaArray = Pa as number[];
+  const PrArray = Pr as number[];
 
   return PaArray.map((pa, i) => {
     const pr = PrArray[i];

@@ -33,3 +33,7 @@
 ## 2025-06-03 - [Optimized Math Functions]
 **Learning:** `Math.pow(x, 0.25)` is significantly slower (~30x in micro-benchmarks) than `Math.sqrt(Math.sqrt(x))`.
 **Action:** When calculating 4th roots (or other powers of 2 roots), chain `Math.sqrt` calls instead of using `Math.pow`.
+
+## 2025-10-28 - [Physics Math & Allocation Optimization]
+**Learning:** Pre-computing inverse constants (e.g., `1/T0`) to replace division with multiplication in high-frequency physics models like `stdAtm` yielded a ~2x speedup. Additionally, refactoring utility functions to handle mixed scalar/array inputs without temporary array allocations (`rateOfClimb`) reduced GC pressure.
+**Action:** Pre-compute inverse constants for division-heavy formulas and implement specific branches for mixed scalar/vector inputs to avoid unnecessary array allocation.
