@@ -21,7 +21,6 @@ interface RangeCalculatorProps {
 export default function RangeCalculator({ params }: RangeCalculatorProps) {
   const [fuelMassStr, setFuelMassStr] = useState<string>("150")
   const [cruiseAltitudeStr, setCruiseAltitudeStr] = useState<string>("2000")
-  const [result, setResult] = useState<{ glideRange: number; breguetRange: number; LDmax: number } | null>(null)
 
   // Validation
   const fuelMass = parseFloat(fuelMassStr)
@@ -39,8 +38,9 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
   const isValidFuel = !isNaN(fuelMass) && !validationError
   const isValidAlt = !isNaN(cruiseAltitude) && cruiseAltitude >= 0
 
-  const calculate = () => {
-    if (!isValidFuel || !isValidAlt) return
+  // Reactive calculation
+  const result = useMemo(() => {
+    if (!isValidFuel || !isValidAlt) return null
 
     const { m, S, b, e, CD0, SFC, eta_prop } = params
     const g = 9.80665
@@ -66,12 +66,12 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
 
     const breguetRangeVal = rangeBreguet(Wi, Wf, CL_md, CD_md, SFC_si, 0, true, eta_prop)
 
-    setResult({
+    return {
       glideRange: glideRangeVal,
       breguetRange: breguetRangeVal,
       LDmax: LDmax
-    })
-  }
+    }
+  }, [params, fuelMass, cruiseAltitude, isValidFuel, isValidAlt])
 
   return (
     <Card>
@@ -88,7 +88,6 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               id="fuelMass"
               value={fuelMassStr}
               onChange={(e) => setFuelMassStr(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && calculate()}
               className={validationError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={!!validationError}
               aria-describedby={validationError ? "fuel-error" : "fuel-helper"}
@@ -111,7 +110,6 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               id="cruiseAltitude"
               value={cruiseAltitudeStr}
               onChange={(e) => setCruiseAltitudeStr(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && calculate()}
             />
             <div className="flex flex-wrap gap-2 pt-1">
               {ALTITUDE_PRESETS.map((preset) => (
@@ -131,14 +129,6 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
           </div>
         </div>
 
-        <Button
-          onClick={calculate}
-          disabled={!isValidFuel || !isValidAlt}
-          className="w-full sm:w-auto"
-        >
-          Calculate Range
-        </Button>
-
         {result ? (
           <div className="rounded-lg border bg-muted/50 p-4 space-y-3" aria-live="polite">
             <div className="flex justify-between items-center border-b pb-2">
@@ -156,7 +146,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
           </div>
         ) : (
           <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-            <p className="text-sm">Enter fuel and altitude parameters to estimate aircraft range capabilities.</p>
+            <p className="text-sm">Please enter valid fuel and altitude parameters to see range estimates.</p>
           </div>
         )}
       </CardContent>
