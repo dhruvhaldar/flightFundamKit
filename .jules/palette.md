@@ -21,3 +21,7 @@
 ## 2025-05-27 - Calculator Interaction Patterns
 **Learning:** Users instinctively press 'Enter' to trigger calculations in input fields, even outside of formal <form> elements.
 **Action:** Always add an `onKeyDown` handler to inputs in interactive tools to trigger the primary action (e.g., calculation) on 'Enter' key press.
+
+## 2025-05-28 - Reactive vs. Manual Calculation
+**Learning:** For lightweight calculations (like range estimation), reactive updates (calculating as you type) are superior to "Calculate" buttons or Enter key handlers, as they provide immediate feedback and reduce friction.
+**Action:** When calculation cost is negligible, prefer reactive state (e.g., `useMemo`) over manual triggers.
