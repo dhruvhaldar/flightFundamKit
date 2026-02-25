@@ -50,7 +50,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     const inducedConst = (2 * k * (W * W)) / (RHO_SL * S)
 
     // Optimization: Hoist constant Pa_kW calculation outside loop
-    const Pa_kW_val = Math.round((Pa / 1000) * 100) / 100
+    const Pa_kW_val = Pa / 1000
 
     const data = []
     for (let i = 0; i <= 50; i++) {
@@ -61,8 +61,8 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       const Pr = parasiteConst * (V * V * V) + inducedConst / V
 
       data.push({
-        V: Math.round(V * 10) / 10,
-        Pr_kW: Math.round((Pr / 1000) * 100) / 100,
+        V: V,
+        Pr_kW: Pr / 1000,
         Pa_kW: Pa_kW_val
       })
     }
@@ -120,7 +120,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
       data.push({
         h,
-        RC: Math.round(max_RC * 100) / 100
+        RC: max_RC
       })
     }
     return data
@@ -154,11 +154,13 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
                 <XAxis
                   dataKey="V"
                   label={{ value: 'Velocity (m/s)', position: 'insideBottomRight', offset: -5 }}
+                  tickFormatter={(val) => Number(val).toFixed(1)}
                 />
                 <YAxis
                   label={{ value: 'Power (kW)', angle: -90, position: 'insideLeft' }}
+                  tickFormatter={(val) => val.toFixed(0)}
                 />
-                <Tooltip />
+                <Tooltip formatter={(val) => Number(val).toFixed(2)} labelFormatter={(val) => `V: ${Number(val).toFixed(1)} m/s`} />
                 <Legend />
                 <Line type="monotone" dataKey="Pr_kW" stroke="#8884d8" name="Power Required" />
                 <Line type="monotone" dataKey="Pa_kW" stroke="#82ca9d" name="Power Available" strokeDasharray="5 5" />
@@ -169,8 +171,8 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
         <CardFooter>
           <p className="text-sm text-muted-foreground">
             <span className="font-medium text-foreground">Insight:</span> Most efficient cruise speed is{" "}
-            <span className="font-bold text-foreground">{minPowerPoint?.V} m/s</span> requiring{" "}
-            <span className="font-bold text-foreground">{minPowerPoint?.Pr_kW} kW</span> power.
+            <span className="font-bold text-foreground">{minPowerPoint?.V?.toFixed(1)} m/s</span> requiring{" "}
+            <span className="font-bold text-foreground">{minPowerPoint?.Pr_kW?.toFixed(2)} kW</span> power.
           </p>
         </CardFooter>
       </Card>
@@ -190,8 +192,9 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
                 />
                 <YAxis
                   label={{ value: 'Rate of Climb (m/s)', angle: -90, position: 'insideLeft' }}
+                  tickFormatter={(val) => val.toFixed(1)}
                 />
-                <Tooltip />
+                <Tooltip formatter={(val) => Number(val).toFixed(2)} labelFormatter={(val) => `Alt: ${val} m`} />
                 <Legend />
                 <Line type="monotone" dataKey="RC" stroke="#82ca9d" name="Max RC" />
               </LineChart>
@@ -201,7 +204,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
         <CardFooter>
           <p className="text-sm text-muted-foreground">
             <span className="font-medium text-foreground">Insight:</span> Max climb rate is{" "}
-            <span className="font-bold text-foreground">{maxClimbPoint?.RC} m/s</span> at sea level.
+            <span className="font-bold text-foreground">{maxClimbPoint?.RC?.toFixed(2)} m/s</span> at sea level.
             {ceilingPoint && ceilingPoint.h < 5000 && (
               <> Service ceiling is approx <span className="font-bold text-foreground">{ceilingPoint.h} m</span>.</>
             )}
