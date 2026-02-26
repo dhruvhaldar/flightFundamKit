@@ -36,6 +36,17 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
   const k = 1 / (Math.PI * e * AR)
   const Pa_sl = P_bhp * 745.7 // Watts
 
+  // Optimization: Pre-calculate constant factor for V_mp to avoid Math.pow inside loops
+  // V_mp = (B / (3*A))^0.25
+  // A = 0.5 * rho * S * CD0
+  // B = (2 * k * W^2) / (rho * S)
+  // B/(3A) = (4 * k * W^2) / (3 * rho^2 * S^2 * CD0)
+  // V_mp = ( (4 * k * W^2) / (3 * S^2 * CD0) )^0.25 * (1/rho^2)^0.25
+  // V_mp = K_Vmp / sqrt(rho)
+  // K_Vmp = ((4 * k * W^2) / (3 * S^2 * CD0))^0.25
+  const K_Vmp_base = (4 * k * (W * W)) / (3 * (S * S) * CD0)
+  const K_Vmp = Math.sqrt(Math.sqrt(K_Vmp_base))
+
   // Power Curve Data (Sea Level)
   const powerData = useMemo(() => {
     const V_stall = stallSpeed(W, RHO_SL, S, CL_max)
@@ -71,24 +82,34 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
   // Analysis for Power Curve
   const minPowerPoint = useMemo(() => {
-    if (!powerData.length) return null
-    return powerData.reduce((min, p) => (p.Pr_kW < min.Pr_kW ? p : min), powerData[0])
-  }, [powerData])
+    // Optimization: Replaced O(N) iterative search with O(1) analytical solution
+    // This finds the exact minimum power point without looping over powerData
+
+    // Calculate V_mp using hoisted constant and Sea Level density
+    const V_mp = K_Vmp / Math.sqrt(RHO_SL)
+
+    // Check flight envelope constraints
+    const V_stall = stallSpeed(W, RHO_SL, S, CL_max)
+    const V_end = 80
+
+    let V_best = V_mp
+    if (V_best < V_stall) V_best = V_stall
+    if (V_best > V_end) V_best = V_end
+
+    // Calculate Power Required at this exact velocity
+    const parasiteConst = 0.5 * RHO_SL * S * CD0
+    const inducedConst = (2 * k * (W * W)) / (RHO_SL * S)
+    const Pr = parasiteConst * (V_best * V_best * V_best) + inducedConst / V_best
+
+    return {
+      V: V_best,
+      Pr_kW: Pr / 1000
+    }
+  }, [K_Vmp, W, S, CD0, k, CL_max])
 
   // Rate of Climb Data (vs Altitude)
   const climbData = useMemo(() => {
     const data = []
-
-    // Optimization: Pre-calculate constant factor for V_mp to avoid Math.pow inside loop
-    // V_mp = (B / (3*A))^0.25
-    // A = 0.5 * rho * S * CD0
-    // B = (2 * k * W^2) / (rho * S)
-    // B/(3A) = (4 * k * W^2) / (3 * rho^2 * S^2 * CD0)
-    // V_mp = ( (4 * k * W^2) / (3 * S^2 * CD0) )^0.25 * (1/rho^2)^0.25
-    // V_mp = K_Vmp / sqrt(rho)
-    // K_Vmp = ((4 * k * W^2) / (3 * S^2 * CD0))^0.25
-    const K_Vmp_base = (4 * k * (W * W)) / (3 * (S * S) * CD0)
-    const K_Vmp = Math.sqrt(Math.sqrt(K_Vmp_base))
 
     for (let i = 0; i < ALTITUDES.length; i++) {
       const h = ALTITUDES[i]
@@ -124,7 +145,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       })
     }
     return data
-  }, [W, S, CL_max, CD0, k, Pa_sl, eta_prop])
+  }, [W, S, CL_max, CD0, k, Pa_sl, eta_prop, K_Vmp])
 
   // Analysis for Climb Curve
   const maxClimbPoint = useMemo(() => {
