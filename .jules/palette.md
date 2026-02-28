@@ -25,3 +25,6 @@
 ## 2025-05-28 - Reactive vs. Manual Calculation
 **Learning:** For lightweight calculations (like range estimation), reactive updates (calculating as you type) are superior to "Calculate" buttons or Enter key handlers, as they provide immediate feedback and reduce friction.
 **Action:** When calculation cost is negligible, prefer reactive state (e.g., `useMemo`) over manual triggers.
+## 2026-02-28 - Dark Mode Color Variables
+**Learning:** When using shadcn/ui and Tailwind with native CSS variables for dark mode, missing component-specific variables (like `--card`, `--muted`) in the `@media (prefers-color-scheme: dark)` block will result in unreadable contrast (e.g. dark text on dark backgrounds inside cards).
+**Action:** Always ensure the full suite of semantic color variables is defined for both light and dark themes to maintain proper contrast and component visibility.
