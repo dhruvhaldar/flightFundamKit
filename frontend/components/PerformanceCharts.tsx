@@ -183,8 +183,9 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
                 />
                 <Tooltip formatter={(val) => Number(val).toFixed(2)} labelFormatter={(val) => `V: ${Number(val).toFixed(1)} m/s`} />
                 <Legend />
-                <Line type="monotone" dataKey="Pr_kW" stroke="#8884d8" name="Power Required" />
-                <Line type="monotone" dataKey="Pa_kW" stroke="#82ca9d" name="Power Available" strokeDasharray="5 5" />
+                {/* ⚡ Bolt Optimization: Disabled Recharts animation to improve rendering performance and fix a React 19 compatibility issue where SVG paths fail to render. */}
+                <Line type="monotone" dataKey="Pr_kW" stroke="#8884d8" name="Power Required" isAnimationActive={false} />
+                <Line type="monotone" dataKey="Pa_kW" stroke="#82ca9d" name="Power Available" strokeDasharray="5 5" isAnimationActive={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -217,7 +218,8 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
                 />
                 <Tooltip formatter={(val) => Number(val).toFixed(2)} labelFormatter={(val) => `Alt: ${val} m`} />
                 <Legend />
-                <Line type="monotone" dataKey="RC" stroke="#82ca9d" name="Max RC" />
+                {/* ⚡ Bolt Optimization: Disabled Recharts animation to improve rendering performance and fix a React 19 compatibility issue where SVG paths fail to render. */}
+                <Line type="monotone" dataKey="RC" stroke="#82ca9d" name="Max RC" isAnimationActive={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
