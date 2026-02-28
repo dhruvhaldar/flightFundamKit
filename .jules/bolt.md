@@ -37,3 +37,7 @@
 ## 2025-10-28 - [Physics Math & Allocation Optimization]
 **Learning:** Pre-computing inverse constants (e.g., `1/T0`) to replace division with multiplication in high-frequency physics models like `stdAtm` yielded a ~2x speedup. Additionally, refactoring utility functions to handle mixed scalar/array inputs without temporary array allocations (`rateOfClimb`) reduced GC pressure.
 **Action:** Pre-compute inverse constants for division-heavy formulas and implement specific branches for mixed scalar/vector inputs to avoid unnecessary array allocation.
+
+## 2025-02-28 - Recharts Animation Performance in React 19
+**Learning:** Recharts SVG animations (`react-smooth`) cause significant CPU overhead and can fail to render paths completely in React 19 due to `useEffect` timing differences, leaving only dots visible on `LineChart`s. Disabling these animations reduces Time to Interactive (TTI) significantly.
+**Action:** Always add `isAnimationActive={false}` to Recharts components (like `<Line>`) when using React 19 to improve rendering performance and ensure correct visual output.
