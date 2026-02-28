@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, memo } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -47,7 +47,12 @@ function CopyButton({ value, label }: { value: string; label: string }) {
   )
 }
 
-export default function AtmosphereCalculator() {
+// ⚡ Bolt Optimization: Added React.memo() to prevent unnecessary re-renders.
+// Since AtmosphereCalculator takes no props and maintains its own isolated state,
+// wrapping it in memo() prevents it from re-rendering every time the parent (page.tsx)
+// updates the global `params` state (e.g., when a user edits an aircraft parameter).
+// This saves React from needlessly evaluating this component tree.
+const AtmosphereCalculator = memo(function AtmosphereCalculator() {
   const [altitudeStr, setAltitudeStr] = useState<string>("0")
 
   // Derive result directly from input state
@@ -150,4 +155,6 @@ export default function AtmosphereCalculator() {
       </CardContent>
     </Card>
   )
-}
+})
+
+export default AtmosphereCalculator
