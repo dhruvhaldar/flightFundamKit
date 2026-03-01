@@ -7,16 +7,19 @@ import AtmosphereCalculator from "@/components/AtmosphereCalculator"
 import AircraftParameters from "@/components/AircraftParameters"
 import RangeCalculator from "@/components/RangeCalculator"
 import { AircraftParams } from "@/types"
+import { Loader2 } from "lucide-react"
 
 // Lazy load PerformanceCharts to reduce initial bundle size as it contains heavy Recharts library
 // and is not visible on initial load.
 const PerformanceCharts = dynamic(() => import("@/components/PerformanceCharts"), {
   loading: () => (
-    <div className="space-y-8">
-      <div className="rounded-lg border bg-card text-card-foreground shadow-sm h-[400px] flex items-center justify-center">
+    <div className="space-y-8" role="status" aria-label="Loading performance charts">
+      <div className="rounded-lg border bg-card text-card-foreground shadow-sm h-[400px] flex items-center justify-center flex-col gap-2">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         <p className="text-muted-foreground animate-pulse">Loading Power Curve...</p>
       </div>
-      <div className="rounded-lg border bg-card text-card-foreground shadow-sm h-[400px] flex items-center justify-center">
+      <div className="rounded-lg border bg-card text-card-foreground shadow-sm h-[400px] flex items-center justify-center flex-col gap-2">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         <p className="text-muted-foreground animate-pulse">Loading Climb Rate...</p>
       </div>
     </div>

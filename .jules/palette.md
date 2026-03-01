@@ -28,3 +28,6 @@
 ## 2026-02-28 - Dark Mode Color Variables
 **Learning:** When using shadcn/ui and Tailwind with native CSS variables for dark mode, missing component-specific variables (like `--card`, `--muted`) in the `@media (prefers-color-scheme: dark)` block will result in unreadable contrast (e.g. dark text on dark backgrounds inside cards).
 **Action:** Always ensure the full suite of semantic color variables is defined for both light and dark themes to maintain proper contrast and component visibility.
+## 2024-05-18 - Screen Reader Notifications for Cleared Empty States
+**Learning:** In real-time calculators, when a user enters an invalid value that causes the results to disappear and an "empty state" to show, screen reader users might not know the results have vanished.
+**Action:** Use `role="status"` and `aria-live="polite"` on the empty state containers themselves. This ensures screen readers announce the fallback message (e.g., "Please enter a valid altitude") immediately when the user clears or invalidates the input.
