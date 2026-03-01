@@ -41,3 +41,7 @@
 ## 2025-02-28 - Recharts Animation Performance in React 19
 **Learning:** Recharts SVG animations (`react-smooth`) cause significant CPU overhead and can fail to render paths completely in React 19 due to `useEffect` timing differences, leaving only dots visible on `LineChart`s. Disabling these animations reduces Time to Interactive (TTI) significantly.
 **Action:** Always add `isAnimationActive={false}` to Recharts components (like `<Line>`) when using React 19 to improve rendering performance and ensure correct visual output.
+
+## 2025-06-03 - [Single-Pass Array Generation & Analysis]
+**Learning:** Generating an array of data in `useMemo` and then using subsequent `useMemo` blocks to analyze it (e.g., using `.reduce` to find max, or `.filter` to find limits) forces multiple O(N) traversals and array allocations. Combining generation and analysis into a single pass avoids this.
+**Action:** When generating data arrays for charts that also require derived statistics (min/max/limits), compute and track these statistics inside the same generation loop to avoid redundant array traversals.

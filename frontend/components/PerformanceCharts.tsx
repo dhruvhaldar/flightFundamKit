@@ -107,24 +107,30 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     }
   }, [K_Vmp, W, S, CD0, k, CL_max])
 
-  // Rate of Climb Data (vs Altitude)
-  const climbData = useMemo(() => {
+  // Rate of Climb Data & Analysis (vs Altitude)
+  const { climbData, maxClimbPoint, ceilingPoint } = useMemo(() => {
     const data = []
+    let maxPoint = { h: 0, RC: -Infinity }
+    let lastPositivePoint = null
+
+    // ⚡ Bolt Optimization: Hoisted density-independent physics bases outside the altitude loop
+    // to replace 3 multiplications and 1 division per iteration with simpler scaled variants.
+    const V_end = 80
+    const stallBase = (2 * W) / (S * CL_max)
+    const parasiteBase = 0.5 * S * CD0
+    const inducedBase = (2 * k * (W * W)) / S
+    const Pa_factor = (Pa_sl * eta_prop) / RHO_SL
 
     for (let i = 0; i < ALTITUDES.length; i++) {
       const h = ALTITUDES[i]
       const { rho } = ATM_DATA[i]
 
-      // Find max RC at this altitude
-      const V_stall_h = stallSpeed(W, rho, S, CL_max)
-      const V_end = 80
+      // Find max RC at this altitude using hoisted constants
+      const V_stall_h = Math.sqrt(stallBase / rho)
+      const Pa_h = Pa_factor * rho
 
-      const sigma = rho / RHO_SL
-      const Pa_h = Pa_sl * sigma * eta_prop
-
-      // Optimization: Pre-calculate constants for this altitude
-      const parasiteConst = 0.5 * rho * S * CD0
-      const inducedConst = (2 * k * (W * W)) / (rho * S)
+      const parasiteConst = parasiteBase * rho
+      const inducedConst = inducedBase / rho
 
       // Optimization: Analytical solution for max Rate of Climb
       // Max RC occurs at minimum Power Required (since Pa is constant with V)
@@ -139,27 +145,27 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       const Pr_best = parasiteConst * (V_best * V_best * V_best) + inducedConst / V_best
       const max_RC = (Pa_h - Pr_best) / W
 
-      data.push({
-        h,
-        RC: max_RC
-      })
+      const point = { h, RC: max_RC }
+      data.push(point)
+
+      // ⚡ Bolt Optimization: Track max point and ceiling in the same pass
+      // to avoid O(N) array traversals (.reduce and .filter) later.
+      if (max_RC > maxPoint.RC) {
+        maxPoint = point
+      }
+
+      // Service ceiling def: < 0.5 m/s (approx 100 fpm)
+      if (max_RC > 0.5) {
+        lastPositivePoint = point
+      }
     }
-    return data
+
+    return {
+      climbData: data,
+      maxClimbPoint: maxPoint.RC === -Infinity ? null : maxPoint,
+      ceilingPoint: lastPositivePoint || (data.length > 0 ? data[0] : null)
+    }
   }, [W, S, CL_max, CD0, k, Pa_sl, eta_prop, K_Vmp])
-
-  // Analysis for Climb Curve
-  const maxClimbPoint = useMemo(() => {
-    if (!climbData.length) return null
-    return climbData.reduce((max, p) => (p.RC > max.RC ? p : max), climbData[0])
-  }, [climbData])
-
-  const ceilingPoint = useMemo(() => {
-    if (!climbData.length) return null
-    // Find the altitude where RC drops close to zero or is the last positive value
-    const positiveRC = climbData.filter(d => d.RC > 0.5) // Service ceiling def: < 0.5 m/s (approx 100 fpm)
-    if (positiveRC.length === 0) return climbData[0]
-    return positiveRC[positiveRC.length - 1]
-  }, [climbData])
 
   return (
     <div className="space-y-8">
