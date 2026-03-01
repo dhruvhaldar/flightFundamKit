@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { stdAtm } from "@/utils/flightMechanics"
-import { Check, Copy } from "lucide-react"
+import { Check, Copy, Cloud } from "lucide-react"
 
 const ALTITUDE_PRESETS = [
   { label: "Sea Level", value: "0" },
@@ -147,7 +147,8 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               </dl>
             </div>
           ) : (
-            <div className="mt-6 border-t pt-4 text-center text-muted-foreground">
+            <div className="mt-6 border-t pt-8 pb-4 text-center text-muted-foreground flex flex-col items-center justify-center gap-3" role="status" aria-live="polite">
+              <Cloud className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
               <p>Enter a valid altitude to see results.</p>
             </div>
           )}
