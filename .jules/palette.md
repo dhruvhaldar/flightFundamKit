@@ -31,3 +31,7 @@
 ## 2024-05-18 - Screen Reader Notifications for Cleared Empty States
 **Learning:** In real-time calculators, when a user enters an invalid value that causes the results to disappear and an "empty state" to show, screen reader users might not know the results have vanished.
 **Action:** Use `role="status"` and `aria-live="polite"` on the empty state containers themselves. This ensures screen readers announce the fallback message (e.g., "Please enter a valid altitude") immediately when the user clears or invalidates the input.
+
+## 2025-05-31 - Accessibility for Form Errors and Reset Actions
+**Learning:** `aria-errormessage` has inconsistent support across screen readers. `aria-describedby` is significantly more reliable for associating error messages with input fields. Furthermore, destructive or reset actions (like "Reset Defaults") benefit greatly from visual confirmation (e.g., a "Restored" state with a checkmark) paired with a temporary `aria-live` announcement, rather than happening silently.
+**Action:** Always use `aria-describedby` for form validation errors instead of `aria-errormessage`. For global reset or save actions, implement a 2-second visual confirmation state and an invisible `aria-live="polite"` region to announce the success to screen readers.

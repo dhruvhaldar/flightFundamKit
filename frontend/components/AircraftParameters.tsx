@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { RotateCcw } from "lucide-react"
+import { RotateCcw, Check } from "lucide-react"
 import { AircraftParams } from "@/types"
 
 interface AircraftParametersProps {
@@ -58,6 +58,8 @@ const validateParam = (key: keyof AircraftParams, val: number): string | null =>
 }
 
 export default function AircraftParameters({ params, setParams }: AircraftParametersProps) {
+  const [isResetting, setIsResetting] = useState(false)
+
   // Local state as strings for immediate input feedback
   const [localParams, setLocalParams] = useState<Record<keyof AircraftParams, string>>(() => {
     return Object.fromEntries(
@@ -133,6 +135,13 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
     setLocalParams((prev) => ({ ...prev, [key]: value }))
   }
 
+  useEffect(() => {
+    if (isResetting) {
+      const timeout = setTimeout(() => setIsResetting(false), 2000)
+      return () => clearTimeout(timeout)
+    }
+  }, [isResetting])
+
   const handleReset = () => {
     const newParams = { ...DEFAULT_PARAMS }
     setParams(newParams)
@@ -143,6 +152,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
         Object.entries(newParams).map(([k, v]) => [k, String(v)])
       ) as Record<keyof AircraftParams, string>
     )
+    setIsResetting(true)
   }
 
   return (
@@ -150,15 +160,28 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle>Aircraft Parameters</CardTitle>
         <Button
-          variant="outline"
+          variant={isResetting ? "secondary" : "outline"}
           size="sm"
           onClick={handleReset}
-          className="h-8 px-2 lg:px-3"
+          className="h-8 px-2 lg:px-3 transition-all"
           title="Reset to Standard C172 Defaults"
+          aria-disabled={isResetting}
         >
-          <RotateCcw className="mr-2 h-4 w-4" />
-          Reset Defaults
+          {isResetting ? (
+            <>
+              <Check className="mr-2 h-4 w-4 text-green-500" />
+              Restored
+            </>
+          ) : (
+            <>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Reset Defaults
+            </>
+          )}
         </Button>
+        <span aria-live="polite" className="sr-only">
+          {isResetting ? "Aircraft parameters reset to default values" : ""}
+        </span>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -178,7 +201,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                 onChange={(e) => handleChange(key, e.target.value)}
                 className={errors[key] ? "border-destructive focus-visible:ring-destructive" : ""}
                 aria-invalid={!!errors[key]}
-                aria-errormessage={`${key}-error`}
+                aria-describedby={errors[key] ? `${key}-error` : undefined}
               />
               {errors[key] && (
                 <p id={`${key}-error`} className="text-xs text-destructive mt-1 font-medium">
