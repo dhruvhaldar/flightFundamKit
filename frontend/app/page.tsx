@@ -50,7 +50,7 @@ export default function Home() {
       </div>
 
       <Tabs defaultValue="atmosphere" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4" aria-label="Flight Calculator Tools">
           <TabsTrigger value="atmosphere">Atmosphere</TabsTrigger>
           <TabsTrigger value="parameters">Aircraft Params</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>

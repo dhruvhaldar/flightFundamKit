@@ -36,8 +36,14 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
     return null
   }, [fuelMass, params.m])
 
+  const altValidationError = useMemo(() => {
+    if (isNaN(cruiseAltitude)) return null
+    if (cruiseAltitude < 0) return "Cruise altitude cannot be negative."
+    return null
+  }, [cruiseAltitude])
+
   const isValidFuel = !isNaN(fuelMass) && !validationError
-  const isValidAlt = !isNaN(cruiseAltitude) && cruiseAltitude >= 0
+  const isValidAlt = !isNaN(cruiseAltitude) && !altValidationError
 
   // Reactive calculation
   const result = useMemo(() => {
@@ -91,7 +97,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               onChange={(e) => setFuelMassStr(e.target.value)}
               className={validationError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={!!validationError}
-              aria-describedby={validationError ? "fuel-error" : "fuel-helper"}
+              aria-describedby={validationError ? "fuel-error fuel-helper" : "fuel-helper"}
             />
             {validationError && (
               <p id="fuel-error" className="text-sm text-destructive font-medium">
@@ -110,8 +116,20 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               step="any"
               id="cruiseAltitude"
               value={cruiseAltitudeStr}
+              placeholder="e.g. 2000"
               onChange={(e) => setCruiseAltitudeStr(e.target.value)}
+              className={altValidationError ? "border-destructive focus-visible:ring-destructive" : ""}
+              aria-invalid={!!altValidationError}
+              aria-describedby={altValidationError ? "alt-error alt-helper" : "alt-helper"}
             />
+            {altValidationError && (
+              <p id="alt-error" className="text-sm text-destructive font-medium">
+                {altValidationError}
+              </p>
+            )}
+            <p id="alt-helper" className="sr-only">
+              Enter cruise altitude in meters.
+            </p>
             <div className="flex flex-wrap gap-2 pt-1">
               {ALTITUDE_PRESETS.map((preset) => (
                 <Button
