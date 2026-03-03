@@ -20,9 +20,15 @@ const INV_RT_trop = 1 / RT_trop;
 const GAMMA_R = gamma * R;
 
 export function stdAtm(h: number | number[]) {
-  // Optimized: Handle scalar inputs directly to avoid array allocation overhead
+  // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loop.
+  // Avoids callback function overhead and reduces GC pressure for large arrays.
   if (Array.isArray(h)) {
-    return h.map(calculateStdAtm);
+    const len = h.length;
+    const res = new Array(len);
+    for (let i = 0; i < len; i++) {
+      res[i] = calculateStdAtm(h[i]);
+    }
+    return res;
   }
   return calculateStdAtm(h);
 }
@@ -54,36 +60,54 @@ export function stallSpeed(W: number, rho: number, S: number, CL_max: number) {
 }
 
 export function dragPolar(CL: number | number[], CD0: number, k: number) {
-  // Optimized: Handle scalar inputs directly to avoid array allocation overhead
+  // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loop.
   if (Array.isArray(CL)) {
-    return CL.map(cl => CD0 + k * cl * cl);
+    const len = CL.length;
+    const res = new Array(len);
+    for (let i = 0; i < len; i++) {
+      const cl = CL[i];
+      res[i] = CD0 + k * cl * cl;
+    }
+    return res;
   }
   return CD0 + k * CL * CL;
 }
 
 export function liftCoeff(W: number, rho: number, V: number | number[], S: number) {
-  // Optimized: Handle scalar inputs directly to avoid array allocation overhead
+  // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loop and hoisted constants.
   if (Array.isArray(V)) {
-    return V.map(v => {
-      const q = 0.5 * rho * v * v;
-      return W / (q * S);
-    });
+    const len = V.length;
+    const res = new Array(len);
+    const factor = W / (0.5 * rho * S);
+    for (let i = 0; i < len; i++) {
+      const v = V[i];
+      res[i] = factor / (v * v);
+    }
+    return res;
   }
   const q = 0.5 * rho * V * V;
   return W / (q * S);
 }
 
 export function powerRequired(rho: number, V: number | number[], S: number, CD0: number, k: number, W: number) {
-  // Optimized: Handle scalar inputs directly to avoid array allocation overhead
+  // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loop and hoisted constants.
   if (Array.isArray(V)) {
-    return V.map(v => {
-      const q = 0.5 * rho * v * v;
-      const CL = W / (q * S);
+    const len = V.length;
+    const res = new Array(len);
+    const parasiteConst = 0.5 * rho * S * CD0;
+    const inducedConst = (2 * k * W * W) / (rho * S);
+    const W_over_05rhoS = W / (0.5 * rho * S);
+
+    for (let i = 0; i < len; i++) {
+      const v = V[i];
+      const v2 = v * v;
+      const Pr = parasiteConst * (v2 * v) + inducedConst / v;
+      const Tr = Pr / v;
+      const CL = W_over_05rhoS / v2;
       const CD = CD0 + k * CL * CL;
-      const Tr = q * S * CD;
-      const Pr = Tr * v;
-      return { Pr, Tr, CL, CD };
-    });
+      res[i] = { Pr, Tr, CL, CD };
+    }
+    return res;
   }
   const q = 0.5 * rho * V * V;
   const CL = W / (q * S);
@@ -102,26 +126,38 @@ export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: num
     return ((Pa as number) - (Pr as number)) / W;
   }
 
-  // Optimization: Handle mixed scalar/array inputs without allocating temporary arrays
-  // This avoids O(N) memory allocation and copy operations
+  // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loops.
   if (isPaArray && !isPrArray) {
     const prVal = Pr as number;
-    return (Pa as number[]).map(pa => (pa - prVal) / W);
+    const paArr = Pa as number[];
+    const len = paArr.length;
+    const res = new Array(len);
+    for (let i = 0; i < len; i++) {
+      res[i] = (paArr[i] - prVal) / W;
+    }
+    return res;
   }
 
   if (!isPaArray && isPrArray) {
     const paVal = Pa as number;
-    return (Pr as number[]).map(pr => (paVal - pr) / W);
+    const prArr = Pr as number[];
+    const len = prArr.length;
+    const res = new Array(len);
+    for (let i = 0; i < len; i++) {
+      res[i] = (paVal - prArr[i]) / W;
+    }
+    return res;
   }
 
   // Both are arrays (assuming matched length)
   const PaArray = Pa as number[];
   const PrArray = Pr as number[];
-
-  return PaArray.map((pa, i) => {
-    const pr = PrArray[i];
-    return (pa - pr) / W;
-  });
+  const len = Math.min(PaArray.length, PrArray.length);
+  const res = new Array(len);
+  for (let i = 0; i < len; i++) {
+    res[i] = (PaArray[i] - PrArray[i]) / W;
+  }
+  return res;
 }
 
 export function glidingRange(h_start: number, h_end: number, CL: number, CD: number) {
