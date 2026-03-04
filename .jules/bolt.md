@@ -49,3 +49,7 @@
 ## 2025-10-28 - [Array Pre-allocation over Map]
 **Learning:** Using `.map()` to iterate over arrays in vectorized functions creates unnecessary function call overhead and GC pressure. Replacing `.map()` with pre-allocated arrays (`new Array(len)`) and simple `for` loops resulted in ~4x execution speedup in some vectorized physics functions.
 **Action:** In high-frequency, math-heavy vectorized utility functions, prefer pre-allocating arrays and using `for` loops instead of using Array `.map()`.
+
+## 2025-06-03 - [Replacing Loop-Variant Divisions with Inverse Multiplication]
+**Learning:** In vectorized mathematical computations inside a loop (like iterating through arrays of velocities), repeatedly performing divisions (e.g. `const inv_v2 = x / (v * v)`) incurs measurable overhead. Replacing these operations with a single inverse division computation (`const inv_v = 1 / v`) and subsequent multiplication operations was found to provide a speedup in benchmarks (e.g. ~10-15% for complex iterations, and ~2x when the denominator is completely loop-invariant).
+**Action:** When performing multiple divisions involving the same varying denominator inside a loop, compute its inverse once per iteration and multiply instead. For loop-invariant denominators, hoist the inverse computation entirely out of the loop.
