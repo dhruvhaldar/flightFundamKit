@@ -75,13 +75,15 @@ export function dragPolar(CL: number | number[], CD0: number, k: number) {
 
 export function liftCoeff(W: number, rho: number, V: number | number[], S: number) {
   // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loop and hoisted constants.
+  // Also replaced loop division with multiplication by inverse.
   if (Array.isArray(V)) {
     const len = V.length;
     const res = new Array(len);
     const factor = W / (0.5 * rho * S);
     for (let i = 0; i < len; i++) {
       const v = V[i];
-      res[i] = factor / (v * v);
+      const inv_v = 1 / v;
+      res[i] = factor * (inv_v * inv_v);
     }
     return res;
   }
@@ -91,6 +93,7 @@ export function liftCoeff(W: number, rho: number, V: number | number[], S: numbe
 
 export function powerRequired(rho: number, V: number | number[], S: number, CD0: number, k: number, W: number) {
   // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loop and hoisted constants.
+  // Replaced repeated division inside the loop with multiplication by an inverse.
   if (Array.isArray(V)) {
     const len = V.length;
     const res = new Array(len);
@@ -100,10 +103,11 @@ export function powerRequired(rho: number, V: number | number[], S: number, CD0:
 
     for (let i = 0; i < len; i++) {
       const v = V[i];
-      const v2 = v * v;
-      const Pr = parasiteConst * (v2 * v) + inducedConst / v;
-      const Tr = Pr / v;
-      const CL = W_over_05rhoS / v2;
+      const inv_v = 1 / v;
+      const inv_v2 = inv_v * inv_v;
+      const Pr = parasiteConst * (v * v * v) + inducedConst * inv_v;
+      const Tr = Pr * inv_v;
+      const CL = W_over_05rhoS * inv_v2;
       const CD = CD0 + k * CL * CL;
       res[i] = { Pr, Tr, CL, CD };
     }
@@ -126,6 +130,10 @@ export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: num
     return ((Pa as number) - (Pr as number)) / W;
   }
 
+  // ⚡ Bolt Optimization: Replaced division with multiplication by an inverse
+  // to avoid redundant division overhead inside loops.
+  const invW = 1 / W;
+
   // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loops.
   if (isPaArray && !isPrArray) {
     const prVal = Pr as number;
@@ -133,7 +141,7 @@ export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: num
     const len = paArr.length;
     const res = new Array(len);
     for (let i = 0; i < len; i++) {
-      res[i] = (paArr[i] - prVal) / W;
+      res[i] = (paArr[i] - prVal) * invW;
     }
     return res;
   }
@@ -144,7 +152,7 @@ export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: num
     const len = prArr.length;
     const res = new Array(len);
     for (let i = 0; i < len; i++) {
-      res[i] = (paVal - prArr[i]) / W;
+      res[i] = (paVal - prArr[i]) * invW;
     }
     return res;
   }
@@ -155,7 +163,7 @@ export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: num
   const len = Math.min(PaArray.length, PrArray.length);
   const res = new Array(len);
   for (let i = 0; i < len; i++) {
-    res[i] = (PaArray[i] - PrArray[i]) / W;
+    res[i] = (PaArray[i] - PrArray[i]) * invW;
   }
   return res;
 }
