@@ -63,19 +63,22 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     // Optimization: Hoist constant Pa_kW calculation outside loop
     const Pa_kW_val = Pa / 1000
 
-    const data = []
+    // ⚡ Bolt Optimization: Pre-allocate array and hoist velocity step to reduce allocations and divisions
+    const data = new Array(51)
+    const vStep = (V_end - V_stall) / 50
     for (let i = 0; i <= 50; i++) {
-      const V = V_stall + (i / 50) * (V_end - V_stall)
+      const V = V_stall + i * vStep
 
       // Optimized Power Required calculation
       // V^3 is faster as V * V * V
-      const Pr = parasiteConst * (V * V * V) + inducedConst / V
+      const inv_V = 1 / V
+      const Pr = parasiteConst * (V * V * V) + inducedConst * inv_V
 
-      data.push({
+      data[i] = {
         V: V,
         Pr_kW: Pr / 1000,
         Pa_kW: Pa_kW_val
-      })
+      }
     }
     return data
   }, [W, S, CL_max, CD0, k, Pa_sl, eta_prop])
@@ -109,7 +112,9 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
   // Rate of Climb Data & Analysis (vs Altitude)
   const { climbData, maxClimbPoint, ceilingPoint } = useMemo(() => {
-    const data = []
+    // ⚡ Bolt Optimization: Pre-allocate array to avoid reallocation overhead
+    const len = ALTITUDES.length
+    const data = new Array(len)
     let maxPoint = { h: 0, RC: -Infinity }
     let lastPositivePoint = null
 
@@ -121,32 +126,37 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     const inducedBase = (2 * k * (W * W)) / S
     const Pa_factor = (Pa_sl * eta_prop) / RHO_SL
 
-    for (let i = 0; i < ALTITUDES.length; i++) {
+    for (let i = 0; i < len; i++) {
       const h = ALTITUDES[i]
       const { rho } = ATM_DATA[i]
 
+      // ⚡ Bolt Optimization: Pre-compute inverse density values to replace divisions with multiplications
+      const inv_rho = 1 / rho
+      const inv_sqrt_rho = Math.sqrt(inv_rho) // Equivalent to 1 / Math.sqrt(rho)
+
       // Find max RC at this altitude using hoisted constants
-      const V_stall_h = Math.sqrt(stallBase / rho)
+      const V_stall_h = Math.sqrt(stallBase * inv_rho)
       const Pa_h = Pa_factor * rho
 
       const parasiteConst = parasiteBase * rho
-      const inducedConst = inducedBase / rho
+      const inducedConst = inducedBase * inv_rho
 
       // Optimization: Analytical solution for max Rate of Climb
       // Max RC occurs at minimum Power Required (since Pa is constant with V)
       // V_mp = K_Vmp / sqrt(rho) is ~30x faster than Math.pow inside loop
-      const V_mp = K_Vmp / Math.sqrt(rho)
+      const V_mp = K_Vmp * inv_sqrt_rho
 
       // Check if V_mp is within flight envelope
       let V_best = V_mp
       if (V_best < V_stall_h) V_best = V_stall_h
       if (V_best > V_end) V_best = V_end
 
-      const Pr_best = parasiteConst * (V_best * V_best * V_best) + inducedConst / V_best
+      const inv_V_best = 1 / V_best
+      const Pr_best = parasiteConst * (V_best * V_best * V_best) + inducedConst * inv_V_best
       const max_RC = (Pa_h - Pr_best) / W
 
       const point = { h, RC: max_RC }
-      data.push(point)
+      data[i] = point
 
       // ⚡ Bolt Optimization: Track max point and ceiling in the same pass
       // to avoid O(N) array traversals (.reduce and .filter) later.
