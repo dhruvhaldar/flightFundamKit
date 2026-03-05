@@ -38,3 +38,6 @@
 ## 2024-03-03 - Preserving Context in aria-describedby
 **Learning:** When an input has both helper text and error text, replacing the helper text's `id` in `aria-describedby` with the error text's `id` removes critical context for screen reader users (e.g., losing the "Max available: 1100 kg" context when a "Must be less than aircraft mass" error appears).
 **Action:** Always concatenate IDs (e.g., `aria-describedby="error-id helper-id"`) when a field has multiple descriptive elements, ensuring users hear both the error and the instructions on how to fix it.
+## 2026-03-05 - Semantic Grouping of Preset Buttons
+**Learning:** Groups of related quick-action buttons (like 'Presets') read as disconnected individual items to screen readers unless semantically wrapped. Without context, users don't realize these buttons affect a single input field.
+**Action:** Always wrap groups of related preset buttons in a container with `role="group"` and an `aria-label` (e.g., 'Altitude presets') to establish their relationship, and provide individual `aria-label`s for clarity.
