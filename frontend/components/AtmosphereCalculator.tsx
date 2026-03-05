@@ -88,7 +88,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
             <p id="altitude-desc" className="text-sm text-muted-foreground">
               Enter altitude in meters to see atmospheric properties.
             </p>
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Altitude presets">
               {ALTITUDE_PRESETS.map((preset) => (
                 <Button
                   key={preset.value}

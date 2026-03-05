@@ -130,7 +130,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
             <p id="alt-helper" className="sr-only">
               Enter cruise altitude in meters.
             </p>
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Cruise altitude presets">
               {ALTITUDE_PRESETS.map((preset) => (
                 <Button
                   key={preset.value}
@@ -138,6 +138,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
                   variant={cruiseAltitudeStr === preset.value ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCruiseAltitudeStr(preset.value)}
+                  aria-label={`Set cruise altitude to ${preset.label}`}
                   aria-pressed={cruiseAltitudeStr === preset.value}
                   className="h-7 text-xs"
                 >
