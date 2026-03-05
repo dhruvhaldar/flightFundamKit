@@ -73,7 +73,10 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
   ;(Object.keys(localParams) as Array<keyof AircraftParams>).forEach((key) => {
       const valStr = localParams[key]
       const val = parseFloat(valStr)
-      if (valStr.trim() !== "") {
+      if (valStr.trim() === "") {
+        errors[key] = "Required"
+        hasErrors = true
+      } else {
         const error = validateParam(key, val)
         if (error) {
           errors[key] = error
@@ -196,6 +199,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
               <Input
                 id={key}
                 type="number"
+                required
                 step={PARAM_CONFIG[key].step}
                 value={localParams[key]}
                 onChange={(e) => handleChange(key, e.target.value)}
