@@ -41,3 +41,7 @@
 ## 2026-03-05 - Semantic Grouping of Preset Buttons
 **Learning:** Groups of related quick-action buttons (like 'Presets') read as disconnected individual items to screen readers unless semantically wrapped. Without context, users don't realize these buttons affect a single input field.
 **Action:** Always wrap groups of related preset buttons in a container with `role="group"` and an `aria-label` (e.g., 'Altitude presets') to establish their relationship, and provide individual `aria-label`s for clarity.
+
+## 2024-03-05 - Reactive Form State Desync
+**Learning:** When local input state allows empty values but silences parent updates without visual errors, it causes a severe UX disconnect where charts use stale data.
+**Action:** Always provide explicit error states ("Required") when a required reactive input is cleared, rather than silently ignoring the update.
