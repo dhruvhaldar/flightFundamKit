@@ -45,3 +45,7 @@
 ## 2024-03-05 - Reactive Form State Desync
 **Learning:** When local input state allows empty values but silences parent updates without visual errors, it causes a severe UX disconnect where charts use stale data.
 **Action:** Always provide explicit error states ("Required") when a required reactive input is cleared, rather than silently ignoring the update.
+
+## 2025-06-05 - Visual Capacity Indicators
+**Learning:** Replacing plain text helpers (like "Max available: 1100 kg") with visual progress bars significantly improves the user's immediate understanding of technical boundaries (e.g. Fuel Load vs Max Takeoff Weight).
+**Action:** For technical inputs bounded by a physical limit, use an inline progress bar. Ensure accessibility by always including `role="progressbar"`, `aria-valuenow`, `aria-valuemin`, and `aria-valuemax`. Apply dynamic semantic classes (like `bg-destructive`) for out-of-bounds or error states.
