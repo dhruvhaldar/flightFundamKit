@@ -53,3 +53,7 @@
 ## 2025-06-03 - [Replacing Loop-Variant Divisions with Inverse Multiplication]
 **Learning:** In vectorized mathematical computations inside a loop (like iterating through arrays of velocities), repeatedly performing divisions (e.g. `const inv_v2 = x / (v * v)`) incurs measurable overhead. Replacing these operations with a single inverse division computation (`const inv_v = 1 / v`) and subsequent multiplication operations was found to provide a speedup in benchmarks (e.g. ~10-15% for complex iterations, and ~2x when the denominator is completely loop-invariant).
 **Action:** When performing multiple divisions involving the same varying denominator inside a loop, compute its inverse once per iteration and multiply instead. For loop-invariant denominators, hoist the inverse computation entirely out of the loop.
+
+## 2025-06-03 - [Hoisting Loop-Invariant Physics Variables]
+**Learning:** Re-calculating loop-invariant values (like `1 / W`) inside a physics calculation loop creates unnecessary operations. Hoisting these calculations outside the loop replaces repeated divisions with a single multiplication inside the loop, improving performance.
+**Action:** Always identify values that do not change during an iteration (e.g. `1 / W` when iterating over altitudes or speeds) and pre-calculate them outside the loop.
