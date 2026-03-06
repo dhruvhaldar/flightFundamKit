@@ -20,7 +20,11 @@ import {
 
 // Optimization: Pre-calculate constant atmosphere data to avoid redundant calls on every render
 const ALTITUDES = [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000]
-const ATM_DATA = stdAtm(ALTITUDES) as { rho: number }[]
+const ATM_DATA = (stdAtm(ALTITUDES) as { rho: number }[]).map(d => ({
+  ...d,
+  inv_rho: 1 / d.rho,
+  inv_sqrt_rho: 1 / Math.sqrt(d.rho)
+}))
 const RHO_SL = (stdAtm(0) as { rho: number }).rho
 
 interface PerformanceChartsProps {
@@ -126,13 +130,13 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     const inducedBase = (2 * k * (W * W)) / S
     const Pa_factor = (Pa_sl * eta_prop) / RHO_SL
 
+    // ⚡ Bolt Optimization: Hoist inverse weight calculation to avoid division in the loop
+    const inv_W = 1 / W
+
     for (let i = 0; i < len; i++) {
       const h = ALTITUDES[i]
-      const { rho } = ATM_DATA[i]
-
-      // ⚡ Bolt Optimization: Pre-compute inverse density values to replace divisions with multiplications
-      const inv_rho = 1 / rho
-      const inv_sqrt_rho = Math.sqrt(inv_rho) // Equivalent to 1 / Math.sqrt(rho)
+      // ⚡ Bolt Optimization: Use pre-computed inverse density from global ATM_DATA
+      const { rho, inv_rho, inv_sqrt_rho } = ATM_DATA[i]
 
       // Find max RC at this altitude using hoisted constants
       const V_stall_h = Math.sqrt(stallBase * inv_rho)
@@ -153,7 +157,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
       const inv_V_best = 1 / V_best
       const Pr_best = parasiteConst * (V_best * V_best * V_best) + inducedConst * inv_V_best
-      const max_RC = (Pa_h - Pr_best) / W
+      const max_RC = (Pa_h - Pr_best) * inv_W
 
       const point = { h, RC: max_RC }
       data[i] = point
