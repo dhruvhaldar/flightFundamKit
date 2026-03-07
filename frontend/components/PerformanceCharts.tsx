@@ -191,17 +191,25 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={powerData}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis
                   dataKey="V"
-                  label={{ value: 'Velocity (m/s)', position: 'insideBottomRight', offset: -5 }}
+                  stroke="var(--muted-foreground)"
+                  label={{ value: 'Velocity (m/s)', position: 'insideBottomRight', offset: -5, fill: 'var(--foreground)' }}
                   tickFormatter={(val) => Number(val).toFixed(1)}
                 />
                 <YAxis
-                  label={{ value: 'Power (kW)', angle: -90, position: 'insideLeft' }}
+                  stroke="var(--muted-foreground)"
+                  label={{ value: 'Power (kW)', angle: -90, position: 'insideLeft', fill: 'var(--foreground)' }}
                   tickFormatter={(val) => val.toFixed(0)}
                 />
-                <Tooltip formatter={(val) => Number(val).toFixed(2)} labelFormatter={(val) => `V: ${Number(val).toFixed(1)} m/s`} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: 'var(--radius)', color: 'var(--card-foreground)' }}
+                  itemStyle={{ color: 'var(--card-foreground)' }}
+                  labelStyle={{ color: 'var(--card-foreground)' }}
+                  formatter={(val) => Number(val).toFixed(2)}
+                  labelFormatter={(val) => `V: ${Number(val).toFixed(1)} m/s`}
+                />
                 <Legend />
                 {/* ⚡ Bolt Optimization: Disabled Recharts animation to improve rendering performance and fix a React 19 compatibility issue where SVG paths fail to render. */}
                 <Line type="monotone" dataKey="Pr_kW" stroke="#8884d8" name="Power Required" isAnimationActive={false} />
@@ -227,16 +235,24 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={climbData}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis
                   dataKey="h"
-                  label={{ value: 'Altitude (m)', position: 'insideBottomRight', offset: -5 }}
+                  stroke="var(--muted-foreground)"
+                  label={{ value: 'Altitude (m)', position: 'insideBottomRight', offset: -5, fill: 'var(--foreground)' }}
                 />
                 <YAxis
-                  label={{ value: 'Rate of Climb (m/s)', angle: -90, position: 'insideLeft' }}
+                  stroke="var(--muted-foreground)"
+                  label={{ value: 'Rate of Climb (m/s)', angle: -90, position: 'insideLeft', fill: 'var(--foreground)' }}
                   tickFormatter={(val) => val.toFixed(1)}
                 />
-                <Tooltip formatter={(val) => Number(val).toFixed(2)} labelFormatter={(val) => `Alt: ${val} m`} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: 'var(--radius)', color: 'var(--card-foreground)' }}
+                  itemStyle={{ color: 'var(--card-foreground)' }}
+                  labelStyle={{ color: 'var(--card-foreground)' }}
+                  formatter={(val) => Number(val).toFixed(2)}
+                  labelFormatter={(val) => `Alt: ${val} m`}
+                />
                 <Legend />
                 {/* ⚡ Bolt Optimization: Disabled Recharts animation to improve rendering performance and fix a React 19 compatibility issue where SVG paths fail to render. */}
                 <Line type="monotone" dataKey="RC" stroke="#82ca9d" name="Max RC" isAnimationActive={false} />

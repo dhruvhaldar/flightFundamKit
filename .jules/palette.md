@@ -25,9 +25,11 @@
 ## 2025-05-28 - Reactive vs. Manual Calculation
 **Learning:** For lightweight calculations (like range estimation), reactive updates (calculating as you type) are superior to "Calculate" buttons or Enter key handlers, as they provide immediate feedback and reduce friction.
 **Action:** When calculation cost is negligible, prefer reactive state (e.g., `useMemo`) over manual triggers.
+
 ## 2026-02-28 - Dark Mode Color Variables
 **Learning:** When using shadcn/ui and Tailwind with native CSS variables for dark mode, missing component-specific variables (like `--card`, `--muted`) in the `@media (prefers-color-scheme: dark)` block will result in unreadable contrast (e.g. dark text on dark backgrounds inside cards).
 **Action:** Always ensure the full suite of semantic color variables is defined for both light and dark themes to maintain proper contrast and component visibility.
+
 ## 2024-05-18 - Screen Reader Notifications for Cleared Empty States
 **Learning:** In real-time calculators, when a user enters an invalid value that causes the results to disappear and an "empty state" to show, screen reader users might not know the results have vanished.
 **Action:** Use `role="status"` and `aria-live="polite"` on the empty state containers themselves. This ensures screen readers announce the fallback message (e.g., "Please enter a valid altitude") immediately when the user clears or invalidates the input.
@@ -35,9 +37,11 @@
 ## 2025-05-31 - Accessibility for Form Errors and Reset Actions
 **Learning:** `aria-errormessage` has inconsistent support across screen readers. `aria-describedby` is significantly more reliable for associating error messages with input fields. Furthermore, destructive or reset actions (like "Reset Defaults") benefit greatly from visual confirmation (e.g., a "Restored" state with a checkmark) paired with a temporary `aria-live` announcement, rather than happening silently.
 **Action:** Always use `aria-describedby` for form validation errors instead of `aria-errormessage`. For global reset or save actions, implement a 2-second visual confirmation state and an invisible `aria-live="polite"` region to announce the success to screen readers.
+
 ## 2024-03-03 - Preserving Context in aria-describedby
 **Learning:** When an input has both helper text and error text, replacing the helper text's `id` in `aria-describedby` with the error text's `id` removes critical context for screen reader users (e.g., losing the "Max available: 1100 kg" context when a "Must be less than aircraft mass" error appears).
 **Action:** Always concatenate IDs (e.g., `aria-describedby="error-id helper-id"`) when a field has multiple descriptive elements, ensuring users hear both the error and the instructions on how to fix it.
+
 ## 2026-03-05 - Semantic Grouping of Preset Buttons
 **Learning:** Groups of related quick-action buttons (like 'Presets') read as disconnected individual items to screen readers unless semantically wrapped. Without context, users don't realize these buttons affect a single input field.
 **Action:** Always wrap groups of related preset buttons in a container with `role="group"` and an `aria-label` (e.g., 'Altitude presets') to establish their relationship, and provide individual `aria-label`s for clarity.
@@ -49,3 +53,7 @@
 ## 2025-06-05 - Visual Capacity Indicators
 **Learning:** Replacing plain text helpers (like "Max available: 1100 kg") with visual progress bars significantly improves the user's immediate understanding of technical boundaries (e.g. Fuel Load vs Max Takeoff Weight).
 **Action:** For technical inputs bounded by a physical limit, use an inline progress bar. Ensure accessibility by always including `role="progressbar"`, `aria-valuenow`, `aria-valuemin`, and `aria-valuemax`. Apply dynamic semantic classes (like `bg-destructive`) for out-of-bounds or error states.
+
+## 2026-06-05 - Recharts Dark Mode Compatibility
+**Learning:** Recharts components default to light-theme specific colors (like `#ccc` for grids and `#fff` for tooltips). In a CSS-variable driven dark mode (like Tailwind with shadcn), these charts become visually jarring or unreadable when the theme switches.
+**Action:** To ensure Recharts components correctly support dark mode themes, explicit color overrides must be implemented by mapping SVG properties (like `stroke`, `fill`) and Tooltip styles (`contentStyle`, `itemStyle`) to semantic CSS variables (e.g., `var(--foreground)`, `var(--card)`, `var(--border)`).
