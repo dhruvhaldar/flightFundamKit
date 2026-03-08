@@ -57,3 +57,7 @@
 ## 2026-06-05 - Recharts Dark Mode Compatibility
 **Learning:** Recharts components default to light-theme specific colors (like `#ccc` for grids and `#fff` for tooltips). In a CSS-variable driven dark mode (like Tailwind with shadcn), these charts become visually jarring or unreadable when the theme switches.
 **Action:** To ensure Recharts components correctly support dark mode themes, explicit color overrides must be implemented by mapping SVG properties (like `stroke`, `fill`) and Tooltip styles (`contentStyle`, `itemStyle`) to semantic CSS variables (e.g., `var(--foreground)`, `var(--card)`, `var(--border)`).
+
+## 2025-06-05 - Empty State Recovery CTAs
+**Learning:** Empty states in technical calculators (e.g., when inputs are cleared or invalid) can feel like "dead ends". While descriptive fallback text helps, users often prefer a one-click way to return to a working state to continue exploring.
+**Action:** When an interactive component falls back to a status/empty state due to missing or invalid input, always provide a clear, one-click recovery CTA (like "Load Example Values" or "Use Sea Level") that resets the inputs to valid defaults.
