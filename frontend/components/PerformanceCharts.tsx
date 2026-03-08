@@ -36,7 +36,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
   const g = 9.80665
   const W = m * g
-  const AR = Math.pow(b, 2) / S
+  const AR = (b * b) / S
   const k = 1 / (Math.PI * e * AR)
   const Pa_sl = P_bhp * 745.7 // Watts
 
@@ -133,13 +133,17 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     // ⚡ Bolt Optimization: Hoist inverse weight calculation to avoid division in the loop
     const inv_W = 1 / W
 
+    // ⚡ Bolt Optimization: Hoist square root calculation out of loop
+    // Math.sqrt(stallBase * inv_rho) == Math.sqrt(stallBase) * inv_sqrt_rho
+    const sqrtStallBase = Math.sqrt(stallBase)
+
     for (let i = 0; i < len; i++) {
       const h = ALTITUDES[i]
       // ⚡ Bolt Optimization: Use pre-computed inverse density from global ATM_DATA
       const { rho, inv_rho, inv_sqrt_rho } = ATM_DATA[i]
 
       // Find max RC at this altitude using hoisted constants
-      const V_stall_h = Math.sqrt(stallBase * inv_rho)
+      const V_stall_h = sqrtStallBase * inv_sqrt_rho
       const Pa_h = Pa_factor * rho
 
       const parasiteConst = parasiteBase * rho
