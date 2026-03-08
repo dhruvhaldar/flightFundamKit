@@ -53,7 +53,8 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
     const g = 9.80665
 
     // Induced drag factor k
-    const AR = Math.pow(b, 2) / S
+    // ⚡ Bolt Optimization: Replace Math.pow with multiplication for performance
+    const AR = (b * b) / S
     const k = 1 / (Math.PI * e * AR)
 
     // Best L/D conditions (Min Drag)

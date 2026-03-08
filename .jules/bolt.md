@@ -57,3 +57,7 @@
 ## 2025-06-03 - [Hoisting Loop-Invariant Physics Variables]
 **Learning:** Re-calculating loop-invariant values (like `1 / W`) inside a physics calculation loop creates unnecessary operations. Hoisting these calculations outside the loop replaces repeated divisions with a single multiplication inside the loop, improving performance.
 **Action:** Always identify values that do not change during an iteration (e.g. `1 / W` when iterating over altitudes or speeds) and pre-calculate them outside the loop.
+
+## 2025-10-28 - [Factoring and Hoisting Math.sqrt in Loops]
+**Learning:** `Math.sqrt(A * B)` evaluated inside a loop where `A` is invariant but `B` changes per iteration can be algebraically factored into `Math.sqrt(A) * Math.sqrt(B)`. If `Math.sqrt(B)` can be pre-computed alongside other variant data, this allows `Math.sqrt(A)` to be hoisted out of the loop entirely, replacing an expensive loop-bound root calculation with a simple multiplication.
+**Action:** When a loop contains expensive math functions (like `Math.sqrt`) wrapping a product of invariant and variant variables, factor the equation to hoist the invariant portion outside the loop and pre-calculate the variant portion if possible.
