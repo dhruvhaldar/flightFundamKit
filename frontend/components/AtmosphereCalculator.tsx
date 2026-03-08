@@ -150,6 +150,14 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
             <div className="mt-6 border-t pt-8 pb-4 text-center text-muted-foreground flex flex-col items-center justify-center gap-3" role="status" aria-live="polite">
               <Cloud className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
               <p>Enter a valid altitude to see results.</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAltitudeStr("0")}
+                className="mt-2"
+              >
+                Use Sea Level
+              </Button>
             </div>
           )}
         </div>

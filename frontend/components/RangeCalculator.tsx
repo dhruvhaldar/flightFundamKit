@@ -186,6 +186,14 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
           <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground flex flex-col items-center justify-center gap-3" role="status" aria-live="polite">
             <Map className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
             <p className="text-sm">Please enter valid fuel and altitude parameters to see range estimates.</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { setFuelMassStr("150"); setCruiseAltitudeStr("2000"); }}
+              className="mt-2"
+            >
+              Load Example Values
+            </Button>
           </div>
         )}
       </CardContent>
