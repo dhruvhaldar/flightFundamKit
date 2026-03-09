@@ -61,3 +61,7 @@
 ## 2025-06-05 - Empty State Recovery CTAs
 **Learning:** Empty states in technical calculators (e.g., when inputs are cleared or invalid) can feel like "dead ends". While descriptive fallback text helps, users often prefer a one-click way to return to a working state to continue exploring.
 **Action:** When an interactive component falls back to a status/empty state due to missing or invalid input, always provide a clear, one-click recovery CTA (like "Load Example Values" or "Use Sea Level") that resets the inputs to valid defaults.
+
+## 2025-06-05 - Contextual Disabled States
+**Learning:** Users often click "Reset to Defaults" buttons when they are already at default values. Disabling the button when its action is a no-op reduces confusion.
+**Action:** Disable reset buttons when values match the defaults, and provide a tooltip (e.g., "Already at default values") explaining why the button is disabled.
