@@ -60,6 +60,10 @@ const validateParam = (key: keyof AircraftParams, val: number): string | null =>
 export default function AircraftParameters({ params, setParams }: AircraftParametersProps) {
   const [isResetting, setIsResetting] = useState(false)
 
+  const isDefault = Object.keys(DEFAULT_PARAMS).every(
+    (key) => params[key as keyof AircraftParams] === DEFAULT_PARAMS[key as keyof AircraftParams]
+  )
+
   // Local state as strings for immediate input feedback
   const [localParams, setLocalParams] = useState<Record<keyof AircraftParams, string>>(() => {
     return Object.fromEntries(
@@ -167,7 +171,8 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
           size="sm"
           onClick={handleReset}
           className="h-8 px-2 lg:px-3 transition-all"
-          title="Reset to Standard C172 Defaults"
+          title={isDefault && !isResetting ? "Already at default values" : "Reset to Standard C172 Defaults"}
+          disabled={isDefault && !isResetting}
           aria-disabled={isResetting}
         >
           {isResetting ? (
