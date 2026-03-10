@@ -61,3 +61,7 @@
 ## 2025-10-28 - [Factoring and Hoisting Math.sqrt in Loops]
 **Learning:** `Math.sqrt(A * B)` evaluated inside a loop where `A` is invariant but `B` changes per iteration can be algebraically factored into `Math.sqrt(A) * Math.sqrt(B)`. If `Math.sqrt(B)` can be pre-computed alongside other variant data, this allows `Math.sqrt(A)` to be hoisted out of the loop entirely, replacing an expensive loop-bound root calculation with a simple multiplication.
 **Action:** When a loop contains expensive math functions (like `Math.sqrt`) wrapping a product of invariant and variant variables, factor the equation to hoist the invariant portion outside the loop and pre-calculate the variant portion if possible.
+
+## 2025-06-03 - [Algebraic Distribution out of Loops]
+**Learning:** In calculations where a loop evaluates an expression and then multiplies the result by a loop-invariant value (e.g., `(Pa - Pr) * inv_W`), you can algebraically distribute the invariant multiplication into the constants used to compute `Pa` and `Pr` before the loop starts. This transforms the operation inside the loop from subtraction and multiplication to just subtraction, yielding measurable performance improvements (~48% faster in benchmarks).
+**Action:** Always check if mathematical operations applied to the final result of a loop iteration can be algebraically factored into the constants outside the loop.

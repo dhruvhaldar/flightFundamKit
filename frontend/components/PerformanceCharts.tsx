@@ -61,11 +61,12 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     // Pr = Tr * V = (q * S * CD) * V
     // Pr = (0.5 * rho * V^2 * S * (CD0 + k * CL^2)) * V
     // ... simplifies to: Pr = parasiteConst * V^3 + inducedConst / V
-    const parasiteConst = 0.5 * RHO_SL * S * CD0
-    const inducedConst = (2 * k * (W * W)) / (RHO_SL * S)
+    // ⚡ Bolt Optimization: Pre-divide by 1000 to output kW directly, removing division inside the loop
+    const parasiteConst_kW = (0.5 * RHO_SL * S * CD0) * 0.001
+    const inducedConst_kW = ((2 * k * (W * W)) / (RHO_SL * S)) * 0.001
 
     // Optimization: Hoist constant Pa_kW calculation outside loop
-    const Pa_kW_val = Pa / 1000
+    const Pa_kW_val = Pa * 0.001
 
     // ⚡ Bolt Optimization: Pre-allocate array and hoist velocity step to reduce allocations and divisions
     const data = new Array(51)
@@ -76,11 +77,11 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       // Optimized Power Required calculation
       // V^3 is faster as V * V * V
       const inv_V = 1 / V
-      const Pr = parasiteConst * (V * V * V) + inducedConst * inv_V
+      const Pr_kW = parasiteConst_kW * (V * V * V) + inducedConst_kW * inv_V
 
       data[i] = {
         V: V,
-        Pr_kW: Pr / 1000,
+        Pr_kW: Pr_kW,
         Pa_kW: Pa_kW_val
       }
     }
@@ -126,12 +127,13 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     // to replace 3 multiplications and 1 division per iteration with simpler scaled variants.
     const V_end = 80
     const stallBase = (2 * W) / (S * CL_max)
-    const parasiteBase = 0.5 * S * CD0
-    const inducedBase = (2 * k * (W * W)) / S
-    const Pa_factor = (Pa_sl * eta_prop) / RHO_SL
-
     // ⚡ Bolt Optimization: Hoist inverse weight calculation to avoid division in the loop
     const inv_W = 1 / W
+
+    // ⚡ Bolt Optimization: Multiply inverse W directly into the constants
+    const parasiteBase_inv_W = (0.5 * S * CD0) * inv_W
+    const inducedBase_inv_W = ((2 * k * (W * W)) / S) * inv_W
+    const Pa_factor_inv_W = ((Pa_sl * eta_prop) / RHO_SL) * inv_W
 
     // ⚡ Bolt Optimization: Hoist square root calculation out of loop
     // Math.sqrt(stallBase * inv_rho) == Math.sqrt(stallBase) * inv_sqrt_rho
@@ -144,10 +146,10 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
       // Find max RC at this altitude using hoisted constants
       const V_stall_h = sqrtStallBase * inv_sqrt_rho
-      const Pa_h = Pa_factor * rho
+      const Pa_h_div_W = Pa_factor_inv_W * rho
 
-      const parasiteConst = parasiteBase * rho
-      const inducedConst = inducedBase * inv_rho
+      const parasiteConst_div_W = parasiteBase_inv_W * rho
+      const inducedConst_div_W = inducedBase_inv_W * inv_rho
 
       // Optimization: Analytical solution for max Rate of Climb
       // Max RC occurs at minimum Power Required (since Pa is constant with V)
@@ -160,8 +162,8 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       if (V_best > V_end) V_best = V_end
 
       const inv_V_best = 1 / V_best
-      const Pr_best = parasiteConst * (V_best * V_best * V_best) + inducedConst * inv_V_best
-      const max_RC = (Pa_h - Pr_best) * inv_W
+      const Pr_best_div_W = parasiteConst_div_W * (V_best * V_best * V_best) + inducedConst_div_W * inv_V_best
+      const max_RC = Pa_h_div_W - Pr_best_div_W
 
       const point = { h, RC: max_RC }
       data[i] = point
