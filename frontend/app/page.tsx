@@ -7,7 +7,7 @@ import AtmosphereCalculator from "@/components/AtmosphereCalculator"
 import AircraftParameters from "@/components/AircraftParameters"
 import RangeCalculator from "@/components/RangeCalculator"
 import { AircraftParams } from "@/types"
-import { Loader2 } from "lucide-react"
+import { Loader2, Cloud, SlidersHorizontal, TrendingUp, Map as MapIcon } from "lucide-react"
 
 // Lazy load PerformanceCharts to reduce initial bundle size as it contains heavy Recharts library
 // and is not visible on initial load.
@@ -50,11 +50,23 @@ export default function Home() {
       </div>
 
       <Tabs defaultValue="atmosphere" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4" aria-label="Flight Calculator Tools">
-          <TabsTrigger value="atmosphere">Atmosphere</TabsTrigger>
-          <TabsTrigger value="parameters">Aircraft Params</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="range">Range & Endurance</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1" aria-label="Flight Calculator Tools">
+          <TabsTrigger value="atmosphere" className="gap-2 py-2">
+            <Cloud className="h-4 w-4" aria-hidden="true" />
+            <span className="truncate">Atmosphere</span>
+          </TabsTrigger>
+          <TabsTrigger value="parameters" className="gap-2 py-2">
+            <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+            <span className="truncate">Aircraft Params</span>
+          </TabsTrigger>
+          <TabsTrigger value="performance" className="gap-2 py-2">
+            <TrendingUp className="h-4 w-4" aria-hidden="true" />
+            <span className="truncate">Performance</span>
+          </TabsTrigger>
+          <TabsTrigger value="range" className="gap-2 py-2">
+            <MapIcon className="h-4 w-4" aria-hidden="true" />
+            <span className="truncate">Range & Endurance</span>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="atmosphere" className="space-y-4">
