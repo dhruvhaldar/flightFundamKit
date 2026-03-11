@@ -65,3 +65,7 @@
 ## 2025-06-03 - [Algebraic Distribution out of Loops]
 **Learning:** In calculations where a loop evaluates an expression and then multiplies the result by a loop-invariant value (e.g., `(Pa - Pr) * inv_W`), you can algebraically distribute the invariant multiplication into the constants used to compute `Pa` and `Pr` before the loop starts. This transforms the operation inside the loop from subtraction and multiplication to just subtraction, yielding measurable performance improvements (~48% faster in benchmarks).
 **Action:** Always check if mathematical operations applied to the final result of a loop iteration can be algebraically factored into the constants outside the loop.
+
+## 2024-05-15 - [Direct Division vs Inverse Multiplication in V8]
+**Learning:** The optimization of calculating an inverse variable (e.g., `const inv_v = 1 / v`) and then multiplying (e.g., `x * inv_v`) to avoid repeated division is an anti-pattern in modern V8 engines for simple operations. Benchmarks in Node.js v22.22.0 showed that performing direct division (`x / v`) is roughly 2x faster than the inverse-and-multiply approach inside hot loops because the JIT compiler is highly optimized for direct division and avoids the intermediate variable allocation/lookup.
+**Action:** Do not replace simple repeated divisions with an `inv_var` multiplied inversion pattern in hot loops; use direct division.

@@ -76,8 +76,9 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
       // Optimized Power Required calculation
       // V^3 is faster as V * V * V
-      const inv_V = 1 / V
-      const Pr_kW = parasiteConst_kW * (V * V * V) + inducedConst_kW * inv_V
+      // ⚡ Bolt Optimization: Using direct division for induced power instead of
+      // calculating inv_V, which avoids variable allocation and benchmarks faster.
+      const Pr_kW = parasiteConst_kW * (V * V * V) + inducedConst_kW / V
 
       data[i] = {
         V: V,
@@ -161,8 +162,8 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       if (V_best < V_stall_h) V_best = V_stall_h
       if (V_best > V_end) V_best = V_end
 
-      const inv_V_best = 1 / V_best
-      const Pr_best_div_W = parasiteConst_div_W * (V_best * V_best * V_best) + inducedConst_div_W * inv_V_best
+      // ⚡ Bolt Optimization: Replace `inv_V_best` intermediate with direct division
+      const Pr_best_div_W = parasiteConst_div_W * (V_best * V_best * V_best) + inducedConst_div_W / V_best
       const max_RC = Pa_h_div_W - Pr_best_div_W
 
       const point = { h, RC: max_RC }
