@@ -65,3 +65,7 @@
 ## 2025-06-05 - Contextual Disabled States
 **Learning:** Users often click "Reset to Defaults" buttons when they are already at default values. Disabling the button when its action is a no-op reduces confusion.
 **Action:** Disable reset buttons when values match the defaults, and provide a tooltip (e.g., "Already at default values") explaining why the button is disabled.
+
+## 2026-06-05 - Required Field Indicators
+**Learning:** Relying solely on validation errors to indicate required fields causes friction, as users don't know what's mandatory until they make a mistake. Adding explicit visual indicators (like red asterisks) to labels before interaction significantly improves form usability.
+**Action:** For form usability and accessibility, explicitly mark mandatory fields with a visual indicator (e.g., a '*' styled with semantic tokens like 'text-destructive') on the label and provide contextual helper text in the form header, rather than relying solely on post-interaction validation errors.

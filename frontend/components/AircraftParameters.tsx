@@ -165,7 +165,12 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle>Aircraft Parameters</CardTitle>
+        <div className="space-y-1">
+          <CardTitle>Aircraft Parameters</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            All parameters are required for accurate simulation.
+          </p>
+        </div>
         <Button
           variant={isResetting ? "secondary" : "outline"}
           size="sm"
@@ -199,7 +204,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                 htmlFor={key}
                 className={errors[key] ? "text-destructive" : ""}
               >
-                {PARAM_CONFIG[key].label}
+                {PARAM_CONFIG[key].label} <span className="text-destructive" aria-hidden="true">*</span>
               </Label>
               <Input
                 id={key}
