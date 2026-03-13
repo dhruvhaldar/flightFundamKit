@@ -69,3 +69,7 @@
 ## 2026-06-05 - Required Field Indicators
 **Learning:** Relying solely on validation errors to indicate required fields causes friction, as users don't know what's mandatory until they make a mistake. Adding explicit visual indicators (like red asterisks) to labels before interaction significantly improves form usability.
 **Action:** For form usability and accessibility, explicitly mark mandatory fields with a visual indicator (e.g., a '*' styled with semantic tokens like 'text-destructive') on the label and provide contextual helper text in the form header, rather than relying solely on post-interaction validation errors.
+
+## 2026-06-05 - Number Input Auto-select on Focus
+**Learning:** Default values in number inputs (like '0' or '150') create friction because users must manually delete them before typing a new value, leading to input errors like '1500' when they meant '500'.
+**Action:** Always add an `onFocus` handler to `type="number"` inputs that calls `e.target.select()` to automatically highlight the existing value, allowing the user to immediately overwrite it.
