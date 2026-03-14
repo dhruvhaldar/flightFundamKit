@@ -213,6 +213,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                 step={PARAM_CONFIG[key].step}
                 value={localParams[key]}
                 onChange={(e) => handleChange(key, e.target.value)}
+                onFocus={(e) => e.target.select()}
                 className={errors[key] ? "border-destructive focus-visible:ring-destructive" : ""}
                 aria-invalid={!!errors[key]}
                 aria-describedby={errors[key] ? `${key}-error` : undefined}

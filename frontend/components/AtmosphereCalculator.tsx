@@ -82,6 +82,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               id="altitude"
               value={altitudeStr}
               onChange={(e) => setAltitudeStr(e.target.value)}
+              onFocus={(e) => e.target.select()}
               placeholder="e.g. 0 (Sea Level)"
               aria-describedby="altitude-desc"
             />
