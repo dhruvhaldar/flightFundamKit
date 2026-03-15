@@ -54,6 +54,7 @@ function CopyButton({ value, label }: { value: string; label: string }) {
 // This saves React from needlessly evaluating this component tree.
 const AtmosphereCalculator = memo(function AtmosphereCalculator() {
   const [altitudeStr, setAltitudeStr] = useState<string>("0")
+  const [isTouched, setIsTouched] = useState(false)
 
   // Derive result directly from input state
   let result: { T: number; P: number; rho: number; a: number } | null = null
@@ -63,7 +64,10 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
   // parseFloat("   ") is NaN, so !isNaN(val) handles that too?
   // No, parseFloat("  12 ") is 12. parseFloat("") is NaN.
   // We want to allow "0" and "-100".
-  if (altitudeStr.trim() !== "" && !isNaN(val)) {
+  const isAltitudeEmpty = altitudeStr.trim() === ""
+  const showError = isAltitudeEmpty && isTouched
+
+  if (!isAltitudeEmpty && !isNaN(val)) {
     result = stdAtm(val) as { T: number; P: number; rho: number; a: number }
   }
 
@@ -71,11 +75,14 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
     <Card>
       <CardHeader>
         <CardTitle>Atmosphere Calculator (ISA)</CardTitle>
+        <p className="text-xs text-muted-foreground">All parameters are required.</p>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="altitude">Altitude (m)</Label>
+            <Label htmlFor="altitude" className={showError ? "text-destructive" : ""}>
+              Altitude (m) <span className="text-destructive" aria-hidden="true">*</span>
+            </Label>
             <Input
               type="number"
               step="any"
@@ -83,9 +90,18 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               value={altitudeStr}
               onChange={(e) => setAltitudeStr(e.target.value)}
               onFocus={(e) => e.target.select()}
+              onBlur={() => setIsTouched(true)}
               placeholder="e.g. 0 (Sea Level)"
-              aria-describedby="altitude-desc"
+              className={showError ? "border-destructive focus-visible:ring-destructive" : ""}
+              aria-invalid={showError}
+              aria-describedby={showError ? "altitude-error altitude-desc" : "altitude-desc"}
+              required
             />
+            {showError && (
+              <p id="altitude-error" className="text-xs text-destructive font-medium">
+                Required
+              </p>
+            )}
             <p id="altitude-desc" className="text-sm text-muted-foreground">
               Enter altitude in meters to see atmospheric properties.
             </p>
