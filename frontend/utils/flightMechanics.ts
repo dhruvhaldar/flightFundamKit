@@ -104,11 +104,12 @@ export function powerRequired(rho: number, V: number | number[], S: number, CD0:
 
     for (let i = 0; i < len; i++) {
       const v = V[i];
-      // ⚡ Bolt Optimization: Direct division is used instead of calculating `inv_v`
-      // because JIT compilation handles simple divisions more efficiently.
-      const Pr = parasiteConst * (v * v * v) + inducedConst / v;
+      const v2 = v * v;
+      // ⚡ Bolt Optimization: Pre-calculate v^2 to reduce multiplication operations.
+      // Direct division is used instead of calculating `inv_v` because JIT handles it efficiently.
+      const Pr = parasiteConst * (v2 * v) + inducedConst / v;
       const Tr = Pr / v;
-      const CL = W_over_05rhoS / (v * v);
+      const CL = W_over_05rhoS / v2;
       const CD = CD0 + k * CL * CL;
       res[i] = { Pr, Tr, CL, CD };
     }
