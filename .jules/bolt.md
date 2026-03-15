@@ -69,3 +69,7 @@
 ## 2024-05-15 - [Direct Division vs Inverse Multiplication in V8]
 **Learning:** The optimization of calculating an inverse variable (e.g., `const inv_v = 1 / v`) and then multiplying (e.g., `x * inv_v`) to avoid repeated division is an anti-pattern in modern V8 engines for simple operations. Benchmarks in Node.js v22.22.0 showed that performing direct division (`x / v`) is roughly 2x faster than the inverse-and-multiply approach inside hot loops because the JIT compiler is highly optimized for direct division and avoids the intermediate variable allocation/lookup.
 **Action:** Do not replace simple repeated divisions with an `inv_var` multiplied inversion pattern in hot loops; use direct division.
+
+## 2025-03-15 - [Pre-calculate redundant math inside iteration]
+**Learning:** Inside `powerRequired` utility, calculating `v * v * v` for Pr and `v * v` for CL led to a redundant multiplication. Pre-calculating `v2 = v * v` outside those calculations reduced the number of multiplication operations per iteration, leading to measurable performance boost in V8.
+**Action:** Always look for common sub-expressions inside hot loops (like `v*v`) and assign them to a local variable.
