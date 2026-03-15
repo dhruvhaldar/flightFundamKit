@@ -73,3 +73,7 @@
 ## 2026-06-05 - Number Input Auto-select on Focus
 **Learning:** Default values in number inputs (like '0' or '150') create friction because users must manually delete them before typing a new value, leading to input errors like '1500' when they meant '500'.
 **Action:** Always add an `onFocus` handler to `type="number"` inputs that calls `e.target.select()` to automatically highlight the existing value, allowing the user to immediately overwrite it.
+
+## 2024-06-05 - Explicit Mandatory Indicators vs Graceful Empty States
+**Learning:** Even when an interactive component provides a robust, descriptive "empty state" fallback (e.g., "Enter a valid altitude to see results"), users can still be confused if they don't explicitly know *which* fields are required to exit that state, especially if they cleared an input and received no inline validation error.
+**Action:** Always explicitly mark mandatory fields with visual indicators (e.g., asterisks in labels) and provide inline validation errors (e.g., "Required"), even if the component gracefully handles the empty state globally. This bridges the gap between field-level interaction and component-level status.

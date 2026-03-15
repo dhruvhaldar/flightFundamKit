@@ -23,27 +23,35 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
   const [fuelMassStr, setFuelMassStr] = useState<string>("150")
   const [cruiseAltitudeStr, setCruiseAltitudeStr] = useState<string>("2000")
 
+  const [isFuelTouched, setIsFuelTouched] = useState(false)
+  const [isAltTouched, setIsAltTouched] = useState(false)
+
   // Validation
   const fuelMass = parseFloat(fuelMassStr)
   const cruiseAltitude = parseFloat(cruiseAltitudeStr)
 
+  const isFuelEmpty = fuelMassStr.trim() === ""
+  const isAltEmpty = cruiseAltitudeStr.trim() === ""
+
   const validationError = useMemo(() => {
-    if (isNaN(fuelMass)) return null
+    if (isFuelEmpty) return isFuelTouched ? "Required" : null
+    if (isNaN(fuelMass)) return isFuelTouched ? "Invalid number" : null
     if (fuelMass < 0) return "Fuel mass cannot be negative."
     if (fuelMass >= params.m) {
       return `Fuel mass must be less than aircraft mass (${params.m} kg).`
     }
     return null
-  }, [fuelMass, params.m])
+  }, [fuelMass, params.m, isFuelEmpty, isFuelTouched])
 
   const altValidationError = useMemo(() => {
-    if (isNaN(cruiseAltitude)) return null
+    if (isAltEmpty) return isAltTouched ? "Required" : null
+    if (isNaN(cruiseAltitude)) return isAltTouched ? "Invalid number" : null
     if (cruiseAltitude < 0) return "Cruise altitude cannot be negative."
     return null
-  }, [cruiseAltitude])
+  }, [cruiseAltitude, isAltEmpty, isAltTouched])
 
-  const isValidFuel = !isNaN(fuelMass) && !validationError
-  const isValidAlt = !isNaN(cruiseAltitude) && !altValidationError
+  const isValidFuel = !isFuelEmpty && !isNaN(fuelMass) && !validationError
+  const isValidAlt = !isAltEmpty && !isNaN(cruiseAltitude) && !altValidationError
 
   // Reactive calculation
   const result = useMemo(() => {
@@ -85,11 +93,14 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
     <Card>
       <CardHeader>
         <CardTitle>Range & Endurance Calculator</CardTitle>
+        <p className="text-xs text-muted-foreground">All parameters are required.</p>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="fuelMass">Fuel Mass (kg)</Label>
+            <Label htmlFor="fuelMass" className={validationError ? "text-destructive" : ""}>
+              Fuel Mass (kg) <span className="text-destructive" aria-hidden="true">*</span>
+            </Label>
             <Input
               type="number"
               step="any"
@@ -97,9 +108,11 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               value={fuelMassStr}
               onChange={(e) => setFuelMassStr(e.target.value)}
               onFocus={(e) => e.target.select()}
+              onBlur={() => setIsFuelTouched(true)}
               className={validationError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={!!validationError}
               aria-describedby={validationError ? "fuel-error fuel-helper" : "fuel-helper"}
+              required
             />
             {validationError && (
               <p id="fuel-error" className="text-sm text-destructive font-medium">
@@ -129,7 +142,9 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="cruiseAltitude">Cruise Altitude (m)</Label>
+            <Label htmlFor="cruiseAltitude" className={altValidationError ? "text-destructive" : ""}>
+              Cruise Altitude (m) <span className="text-destructive" aria-hidden="true">*</span>
+            </Label>
             <Input
               type="number"
               step="any"
@@ -138,9 +153,11 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               placeholder="e.g. 2000"
               onChange={(e) => setCruiseAltitudeStr(e.target.value)}
               onFocus={(e) => e.target.select()}
+              onBlur={() => setIsAltTouched(true)}
               className={altValidationError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={!!altValidationError}
               aria-describedby={altValidationError ? "alt-error alt-helper" : "alt-helper"}
+              required
             />
             {altValidationError && (
               <p id="alt-error" className="text-sm text-destructive font-medium">
