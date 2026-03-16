@@ -77,3 +77,6 @@
 ## 2024-06-05 - Explicit Mandatory Indicators vs Graceful Empty States
 **Learning:** Even when an interactive component provides a robust, descriptive "empty state" fallback (e.g., "Enter a valid altitude to see results"), users can still be confused if they don't explicitly know *which* fields are required to exit that state, especially if they cleared an input and received no inline validation error.
 **Action:** Always explicitly mark mandatory fields with visual indicators (e.g., asterisks in labels) and provide inline validation errors (e.g., "Required"), even if the component gracefully handles the empty state globally. This bridges the gap between field-level interaction and component-level status.
+## 2023-11-20 - Dynamic Capacity Presets
+**Learning:** Pairing a numeric capacity input with percentage-based preset buttons (e.g., 25%, 50%, 75%, 100% of MTOW) provides a significant UX improvement by reducing mental math and serving as accessible touch targets, particularly when the maximum capacity is dynamic.
+**Action:** Always include relative percentage presets when an input represents a fraction of a larger, dynamically calculated total (like fuel capacity based on aircraft mass), ensuring the button group has a clear `role="group"` and accurate `aria-label`.

@@ -138,6 +138,25 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
                 />
               </div>
               <p className="text-xs text-muted-foreground">Max available: {params.m} kg</p>
+              <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Fuel mass presets">
+                {[0.25, 0.5, 0.75, 1].map((frac) => {
+                  const valStr = (params.m * frac).toFixed(0)
+                  return (
+                    <Button
+                      key={frac}
+                      type="button"
+                      variant={fuelMassStr === valStr ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setFuelMassStr(valStr)}
+                      aria-label={`Set fuel mass to ${frac * 100}% of MTOW`}
+                      aria-pressed={fuelMassStr === valStr}
+                      className="h-7 text-xs"
+                    >
+                      {frac * 100}%
+                    </Button>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
