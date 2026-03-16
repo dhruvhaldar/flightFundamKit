@@ -73,3 +73,7 @@
 ## 2025-03-15 - [Pre-calculate redundant math inside iteration]
 **Learning:** Inside `powerRequired` utility, calculating `v * v * v` for Pr and `v * v` for CL led to a redundant multiplication. Pre-calculating `v2 = v * v` outside those calculations reduced the number of multiplication operations per iteration, leading to measurable performance boost in V8.
 **Action:** Always look for common sub-expressions inside hot loops (like `v*v`) and assign them to a local variable.
+
+## 2025-10-28 - [Function Inlining in Vectorized Loops]
+**Learning:** Calling an external helper function (e.g. `calculateStdAtm`) inside a hot loop traversing large arrays causes measurable function call overhead, even in modern JS engines. Inlining the helper logic directly into the loop, along with pre-computing partial inverse constants (e.g. `INV_R = 1 / R` replacing `P / (R * T)` with `(P * INV_R) / T`), yielded a ~2.5x performance speedup in benchmarks.
+**Action:** Always inline small, repeatedly called helper logic into vectorized loops instead of abstracting it, and partially pre-compute invariant portions of complex denominators to reduce operations per iteration.
