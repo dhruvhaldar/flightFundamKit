@@ -39,7 +39,7 @@ function CopyButton({ value, label }: { value: string; label: string }) {
       title={copied ? "Copied!" : "Copy to clipboard"}
       aria-label={copied ? `Copied ${label} to clipboard` : `Copy ${label} value of ${value}`}
     >
-      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+      {copied ? <Check className="h-3 w-3" aria-hidden="true" /> : <Copy className="h-3 w-3" aria-hidden="true" />}
       <span aria-live="polite" className="sr-only">
         {copied ? `Copied ${label} to clipboard` : ""}
       </span>

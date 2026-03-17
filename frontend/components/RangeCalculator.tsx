@@ -112,6 +112,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               className={validationError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={!!validationError}
               aria-describedby={validationError ? "fuel-error fuel-helper" : "fuel-helper"}
+              placeholder={`e.g. 150`}
               required
             />
             {validationError && (
