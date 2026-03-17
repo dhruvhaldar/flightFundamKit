@@ -214,7 +214,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
                   contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: 'var(--radius)', color: 'var(--card-foreground)' }}
                   itemStyle={{ color: 'var(--card-foreground)' }}
                   labelStyle={{ color: 'var(--card-foreground)' }}
-                  formatter={(val) => Number(val).toFixed(2)}
+                  formatter={(val) => `${Number(val).toFixed(2)} kW`}
                   labelFormatter={(val) => `V: ${Number(val).toFixed(1)} m/s`}
                 />
                 <Legend />
@@ -257,7 +257,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
                   contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: 'var(--radius)', color: 'var(--card-foreground)' }}
                   itemStyle={{ color: 'var(--card-foreground)' }}
                   labelStyle={{ color: 'var(--card-foreground)' }}
-                  formatter={(val) => Number(val).toFixed(2)}
+                  formatter={(val) => `${Number(val).toFixed(2)} m/s`}
                   labelFormatter={(val) => `Alt: ${val} m`}
                 />
                 <Legend />

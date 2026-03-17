@@ -182,12 +182,12 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
         >
           {isResetting ? (
             <>
-              <Check className="mr-2 h-4 w-4 text-green-500" />
+              <Check className="mr-2 h-4 w-4 text-green-500" aria-hidden="true" />
               Restored
             </>
           ) : (
             <>
-              <RotateCcw className="mr-2 h-4 w-4" />
+              <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
               Reset Defaults
             </>
           )}
@@ -217,6 +217,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                 className={errors[key] ? "border-destructive focus-visible:ring-destructive" : ""}
                 aria-invalid={!!errors[key]}
                 aria-describedby={errors[key] ? `${key}-error` : undefined}
+                placeholder={`e.g. ${DEFAULT_PARAMS[key]}`}
               />
               {errors[key] && (
                 <p id={`${key}-error`} className="text-xs text-destructive mt-1 font-medium">
