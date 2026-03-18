@@ -4,12 +4,20 @@ import { cn } from "@/utils/utils"
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, onFocus, ...props }, ref) => {
+  ({ className, type, onFocus, onWheel, ...props }, ref) => {
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
       if (type === "number") {
         e.target.select()
       }
       onFocus?.(e)
+    }
+
+    const handleWheel = (e: React.WheelEvent<HTMLInputElement>) => {
+      if (type === "number") {
+        // Prevent accidental scrolling from mutating the number input
+        e.currentTarget.blur()
+      }
+      onWheel?.(e)
     }
 
     return (
@@ -20,6 +28,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className
         )}
         onFocus={handleFocus}
+        onWheel={handleWheel}
         ref={ref}
         {...props}
       />

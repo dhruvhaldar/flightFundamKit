@@ -80,3 +80,7 @@
 ## 2023-11-20 - Dynamic Capacity Presets
 **Learning:** Pairing a numeric capacity input with percentage-based preset buttons (e.g., 25%, 50%, 75%, 100% of MTOW) provides a significant UX improvement by reducing mental math and serving as accessible touch targets, particularly when the maximum capacity is dynamic.
 **Action:** Always include relative percentage presets when an input represents a fraction of a larger, dynamically calculated total (like fuel capacity based on aircraft mass), ensuring the button group has a clear `role="group"` and accurate `aria-label`.
+
+## 2026-06-05 - Number Input Scroll Trap
+**Learning:** Native `type="number"` inputs will change their value if the user scrolls their mouse wheel while the input is focused. In forms with many technical numeric inputs (like aircraft parameters), users frequently accidentally alter data when trying to scroll down the page, leading to severe UX frustration and inaccurate calculations.
+**Action:** Always add an `onWheel` event handler to `type="number"` inputs that calls `e.currentTarget.blur()`. This immediately removes focus upon scroll, preventing the value from changing and allowing the page to scroll naturally.
