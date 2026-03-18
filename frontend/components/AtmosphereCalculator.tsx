@@ -132,9 +132,9 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
                     {result.T.toFixed(2)} <span className="text-sm font-normal text-muted-foreground ml-1">K</span>
                     <CopyButton value={result.T.toFixed(2)} label="Temperature" />
                   </dd>
-                  <p className="text-xs text-muted-foreground">
+                  <dd className="text-xs text-muted-foreground">
                     {(result.T - 273.15).toFixed(1)} °C
-                  </p>
+                  </dd>
                 </div>
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Pressure</dt>
@@ -142,10 +142,10 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
                     {(result.P / 100).toFixed(2)} <span className="text-sm font-normal text-muted-foreground ml-1">hPa</span>
                     <CopyButton value={(result.P / 100).toFixed(2)} label="Pressure (hPa)" />
                   </dd>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <dd className="text-xs text-muted-foreground flex items-center gap-1">
                     {result.P.toFixed(0)} Pa
                     <CopyButton value={result.P.toFixed(0)} label="Pressure (Pa)" />
-                  </p>
+                  </dd>
                 </div>
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Density</dt>
