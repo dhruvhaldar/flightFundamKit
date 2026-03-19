@@ -110,6 +110,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               onChange={(e) => setFuelMassStr(e.target.value)}
               onFocus={(e) => e.target.select()}
               onBlur={() => setIsFuelTouched(true)}
+              onWheel={(e) => e.currentTarget.blur()}
               className={validationError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={!!validationError}
               aria-describedby={validationError ? "fuel-error fuel-helper" : "fuel-helper"}
@@ -175,6 +176,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               onChange={(e) => setCruiseAltitudeStr(e.target.value)}
               onFocus={(e) => e.target.select()}
               onBlur={() => setIsAltTouched(true)}
+              onWheel={(e) => e.currentTarget.blur()}
               className={altValidationError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={!!altValidationError}
               aria-describedby={altValidationError ? "alt-error alt-helper" : "alt-helper"}

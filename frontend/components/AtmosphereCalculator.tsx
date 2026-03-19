@@ -91,6 +91,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               onChange={(e) => setAltitudeStr(e.target.value)}
               onFocus={(e) => e.target.select()}
               onBlur={() => setIsTouched(true)}
+              onWheel={(e) => e.currentTarget.blur()}
               placeholder="e.g. 0 (Sea Level)"
               className={showError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={showError}
