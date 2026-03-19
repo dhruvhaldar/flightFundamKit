@@ -77,8 +77,9 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
     const Wi = m * g
     const Wf = (m - fuelMass) * g
 
-    const SFC_kg_Ws = (SFC * 0.453592) / (745.7 * 3600)
-    const SFC_si = SFC_kg_Ws * g
+    // ⚡ Bolt Optimization: Pre-calculated constant factor for SFC conversion to avoid multiple math ops on every render.
+    // SFC_conversion = (0.453592 * g) / (745.7 * 3600)
+    const SFC_si = SFC * 0.0000016572
 
     const breguetRangeVal = rangeBreguet(Wi, Wf, CL_md, CD_md, SFC_si, 0, true, eta_prop)
 

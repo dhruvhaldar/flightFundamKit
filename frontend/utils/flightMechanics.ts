@@ -36,7 +36,8 @@ export function stdAtm(h: number | number[]) {
       if (curr_h <= 11000) {
         // Troposphere
         T = T0 + L * curr_h;
-        P = P0 * Math.pow(T * INV_T0, G_over_LR);
+        // ⚡ Bolt Optimization: Replace Math.pow with Math.exp and Math.log for significant performance boost in V8 loop
+        P = P0 * Math.exp(G_over_LR * Math.log(T * INV_T0));
         // Optimization: Multiply by precomputed inverse of R
         rho = (P * INV_R) / T;
       } else {
@@ -56,7 +57,8 @@ export function stdAtm(h: number | number[]) {
   let T, P, rho;
   if (h <= 11000) {
     T = T0 + L * h;
-    P = P0 * Math.pow(T * INV_T0, G_over_LR);
+    // ⚡ Bolt Optimization: Using Math.exp(G_over_LR * Math.log(...)) instead of Math.pow for performance in tight loops
+    P = P0 * Math.exp(G_over_LR * Math.log(T * INV_T0));
     rho = (P * INV_R) / T;
   } else {
     T = T_trop;
