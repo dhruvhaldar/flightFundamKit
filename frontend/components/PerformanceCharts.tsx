@@ -195,7 +195,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
           <CardTitle>Power Required vs Velocity (Sea Level)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] w-full">
+          <div className="h-[300px] w-full" role="img" aria-label="Line chart showing Power Required and Power Available versus Velocity at Sea Level">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={powerData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -239,7 +239,7 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
           <CardTitle>Max Rate of Climb vs Altitude</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] w-full">
+          <div className="h-[300px] w-full" role="img" aria-label="Line chart showing Maximum Rate of Climb versus Altitude">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={climbData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
