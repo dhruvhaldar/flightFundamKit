@@ -1,13 +1,45 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { AircraftParams } from "@/types"
 import { glidingRange, rangeBreguet } from "@/utils/flightMechanics"
-import { Map } from "lucide-react"
+import { Map, Copy, Check } from "lucide-react"
+
+function CopyButton({ value, label }: { value: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (copied) {
+      const timeout = setTimeout(() => setCopied(false), 2000)
+      return () => clearTimeout(timeout)
+    }
+  }, [copied])
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value)
+    setCopied(true)
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className={`h-6 w-6 ml-2 transition-all ${copied ? "text-foreground scale-110" : "text-muted-foreground hover:text-foreground hover:scale-105"}`}
+      onClick={handleCopy}
+      title={copied ? "Copied!" : "Copy to clipboard"}
+      aria-label={copied ? `Copied ${label} to clipboard` : `Copy ${label} value of ${value}`}
+    >
+      {copied ? <Check className="h-3 w-3" aria-hidden="true" /> : <Copy className="h-3 w-3" aria-hidden="true" />}
+      <span aria-live="polite" className="sr-only">
+        {copied ? `Copied ${label} to clipboard` : ""}
+      </span>
+    </Button>
+  )
+}
 
 const ALTITUDE_PRESETS = [
   { label: "Sea Level", value: "0" },
@@ -210,19 +242,30 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
         </div>
 
         {result ? (
-          <div className="rounded-lg border bg-muted/50 p-4 space-y-3" aria-live="polite">
-            <div className="flex justify-between items-center border-b pb-2">
-              <span className="text-sm font-medium">Max L/D Ratio</span>
-              <span className="font-bold">{result.LDmax.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between items-center border-b pb-2">
-              <span className="text-sm font-medium">Best Glide Range</span>
-              <span className="font-bold">{(result.glideRange / 1000).toFixed(1)} km</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Max Range (Breguet)</span>
-              <span className="font-bold text-primary">{(result.breguetRange / 1000).toFixed(1)} km</span>
-            </div>
+          <div className="rounded-lg border bg-muted/50 p-4" aria-live="polite">
+            <dl className="space-y-3">
+              <div className="flex justify-between items-center border-b pb-2">
+                <dt className="text-sm font-medium">Max L/D Ratio</dt>
+                <dd className="font-bold flex items-center">
+                  {result.LDmax.toFixed(2)}
+                  <CopyButton value={result.LDmax.toFixed(2)} label="Max L/D Ratio" />
+                </dd>
+              </div>
+              <div className="flex justify-between items-center border-b pb-2">
+                <dt className="text-sm font-medium">Best Glide Range</dt>
+                <dd className="font-bold flex items-center">
+                  {(result.glideRange / 1000).toFixed(1)} <span className="text-sm font-normal text-muted-foreground ml-1">km</span>
+                  <CopyButton value={(result.glideRange / 1000).toFixed(1)} label="Best Glide Range" />
+                </dd>
+              </div>
+              <div className="flex justify-between items-center">
+                <dt className="text-sm font-medium">Max Range (Breguet)</dt>
+                <dd className="font-bold text-primary flex items-center">
+                  {(result.breguetRange / 1000).toFixed(1)} <span className="text-sm font-normal text-muted-foreground ml-1">km</span>
+                  <CopyButton value={(result.breguetRange / 1000).toFixed(1)} label="Max Range (Breguet)" />
+                </dd>
+              </div>
+            </dl>
           </div>
         ) : (
           <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground flex flex-col items-center justify-center gap-3" role="status" aria-live="polite">
