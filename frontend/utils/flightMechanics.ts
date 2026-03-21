@@ -22,6 +22,9 @@ const GAMMA_R = gamma * R;
 // ⚡ Bolt Optimization: Pre-calculated inverse of gas constant R
 const INV_R = 1 / R;
 
+// ⚡ Bolt Optimization: Pre-calculated speed of sound in the stratosphere (constant temperature)
+const A_trop = Math.sqrt(GAMMA_R * T_trop);
+
 export function stdAtm(h: number | number[]) {
   // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loop and inlined calculateStdAtm.
   // Inlining the loop body and pre-calculating INV_R to avoid division reduces overhead
@@ -33,6 +36,7 @@ export function stdAtm(h: number | number[]) {
       const curr_h = h[i];
       let T, P, rho;
 
+      let a;
       if (curr_h <= 11000) {
         // Troposphere
         T = T0 + L * curr_h;
@@ -40,32 +44,35 @@ export function stdAtm(h: number | number[]) {
         P = P0 * Math.exp(G_over_LR * Math.log(T * INV_T0));
         // Optimization: Multiply by precomputed inverse of R
         rho = (P * INV_R) / T;
+        a = Math.sqrt(GAMMA_R * T);
       } else {
         // Stratosphere (Lower) - Simplified: Isothermal
         T = T_trop;
         P = P_trop * Math.exp(G_over_RT_trop * (curr_h - 11000));
         rho = P * INV_RT_trop;
+        // ⚡ Bolt Optimization: Use pre-calculated speed of sound since temperature is constant
+        a = A_trop;
       }
 
-      const a = Math.sqrt(GAMMA_R * T);
       res[i] = { T, P, rho, a };
     }
     return res;
   }
 
   // Scalar case
-  let T, P, rho;
+  let T, P, rho, a;
   if (h <= 11000) {
     T = T0 + L * h;
     // ⚡ Bolt Optimization: Using Math.exp(G_over_LR * Math.log(...)) instead of Math.pow for performance in tight loops
     P = P0 * Math.exp(G_over_LR * Math.log(T * INV_T0));
     rho = (P * INV_R) / T;
+    a = Math.sqrt(GAMMA_R * T);
   } else {
     T = T_trop;
     P = P_trop * Math.exp(G_over_RT_trop * (h - 11000));
     rho = P * INV_RT_trop;
+    a = A_trop;
   }
-  const a = Math.sqrt(GAMMA_R * T);
   return { T, P, rho, a };
 }
 
