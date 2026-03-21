@@ -84,3 +84,7 @@
 ## 2026-06-05 - Number Input Scroll Trap
 **Learning:** Native `type="number"` inputs will change their value if the user scrolls their mouse wheel while the input is focused. In forms with many technical numeric inputs (like aircraft parameters), users frequently accidentally alter data when trying to scroll down the page, leading to severe UX frustration and inaccurate calculations.
 **Action:** Always add an `onWheel` event handler to `type="number"` inputs that calls `e.currentTarget.blur()`. This immediately removes focus upon scroll, preventing the value from changing and allowing the page to scroll naturally.
+
+## 2026-06-05 - Semantic Description Lists and Copy Buttons for Calculator Results
+**Learning:** Using generic `div` and `span` tags for key-value result pairs in technical calculators creates a flattened, non-semantic reading experience for screen reader users, making it harder to associate labels with their values. Furthermore, users frequently need to extract single data points for external use, which is cumbersome without explicit actions.
+**Action:** Always use semantic HTML description lists (`<dl>`, `<dt>`, `<dd>`) for calculator results to ensure screen readers explicitly announce the relationship between a parameter name and its calculated value. Provide explicit, accessible "Copy to clipboard" buttons adjacent to key calculated results to reduce interaction friction and improve the mobile experience.
