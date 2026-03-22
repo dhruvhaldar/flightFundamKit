@@ -30,6 +30,12 @@ const A_trop = Math.sqrt(GAMMA_R * T_trop);
 //   = P_trop * Math.exp(-G_over_RT_trop * 11000) * Math.exp(G_over_RT_trop * h)
 const BASE_P_TROP = P_trop * Math.exp(-G_over_RT_trop * 11000);
 
+// ⚡ Bolt Optimization: Pre-calculate invariant portion of tropospheric pressure
+// P = P0 * Math.exp(G_over_LR * Math.log(T * INV_T0))
+//   = P0 * Math.exp(G_over_LR * (Math.log(T) + Math.log(INV_T0)))
+//   = [P0 * Math.exp(G_over_LR * Math.log(INV_T0))] * Math.exp(G_over_LR * Math.log(T))
+const BASE_P_TROPO_CONST = P0 * Math.exp(G_over_LR * Math.log(INV_T0));
+
 export function stdAtm(h: number | number[]) {
   // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loop and inlined calculateStdAtm.
   // Inlining the loop body and pre-calculating INV_R to avoid division reduces overhead
@@ -46,7 +52,8 @@ export function stdAtm(h: number | number[]) {
         // Troposphere
         T = T0 + L * curr_h;
         // ⚡ Bolt Optimization: Replace Math.pow with Math.exp and Math.log for significant performance boost in V8 loop
-        P = P0 * Math.exp(G_over_LR * Math.log(T * INV_T0));
+        // Additionally algebraically distribute invariant INV_T0 to save 1 multiplication per iteration
+        P = BASE_P_TROPO_CONST * Math.exp(G_over_LR * Math.log(T));
         // Optimization: Multiply by precomputed inverse of R
         rho = (P * INV_R) / T;
         a = Math.sqrt(GAMMA_R * T);
@@ -70,7 +77,8 @@ export function stdAtm(h: number | number[]) {
   if (h <= 11000) {
     T = T0 + L * h;
     // ⚡ Bolt Optimization: Using Math.exp(G_over_LR * Math.log(...)) instead of Math.pow for performance in tight loops
-    P = P0 * Math.exp(G_over_LR * Math.log(T * INV_T0));
+    // Additionally algebraically distribute invariant INV_T0 to save 1 multiplication
+    P = BASE_P_TROPO_CONST * Math.exp(G_over_LR * Math.log(T));
     rho = (P * INV_R) / T;
     a = Math.sqrt(GAMMA_R * T);
   } else {
