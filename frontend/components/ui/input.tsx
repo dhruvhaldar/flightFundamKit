@@ -4,7 +4,7 @@ import { cn } from "@/utils/utils"
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, onFocus, onWheel, ...props }, ref) => {
+  ({ className, type, onFocus, onWheel, onKeyDown, ...props }, ref) => {
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
       if (type === "number") {
         e.target.select()
@@ -29,6 +29,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         onFocus={handleFocus}
         onWheel={handleWheel}
+        onKeyDown={onKeyDown}
         ref={ref}
         {...props}
       />
