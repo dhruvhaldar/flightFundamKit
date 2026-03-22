@@ -88,3 +88,11 @@
 ## 2026-06-05 - Semantic Description Lists and Copy Buttons for Calculator Results
 **Learning:** Using generic `div` and `span` tags for key-value result pairs in technical calculators creates a flattened, non-semantic reading experience for screen reader users, making it harder to associate labels with their values. Furthermore, users frequently need to extract single data points for external use, which is cumbersome without explicit actions.
 **Action:** Always use semantic HTML description lists (`<dl>`, `<dt>`, `<dd>`) for calculator results to ensure screen readers explicitly announce the relationship between a parameter name and its calculated value. Provide explicit, accessible "Copy to clipboard" buttons adjacent to key calculated results to reduce interaction friction and improve the mobile experience.
+
+## 2026-06-05 - Scoped Keyboard Interactions
+**Learning:** Adding specialized interaction behaviors (like blurring an input on "Enter" to dismiss mobile keyboards) to globally shared UI components (like a base `<Input>`) causes severe global regressions, breaking standard form submission and accessibility patterns.
+**Action:** Do not add specialized interaction behaviors to globally shared UI components. Apply these behaviors only to specific component instances (like the technical calculators) where the context justifies it.
+
+## 2026-06-05 - Avoid Redundant Prop Wiring
+**Learning:** When building reusable UI components that extend standard HTML attributes (e.g., `React.InputHTMLAttributes<HTMLInputElement>`), explicitly destructuring and manually passing standard event handlers (like `onKeyDown`) is redundant and can break event bubbling if not implemented perfectly.
+**Action:** Rely on spreading `...props` to the underlying native element to handle standard event attributes automatically, preventing redundant or broken event wiring.

@@ -92,6 +92,11 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               onFocus={(e) => e.target.select()}
               onBlur={() => setIsTouched(true)}
               onWheel={(e) => e.currentTarget.blur()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.currentTarget.blur()
+                }
+              }}
               placeholder="e.g. 0 (Sea Level)"
               className={showError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={showError}
