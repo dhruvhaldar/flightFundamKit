@@ -142,9 +142,9 @@ export function powerRequired(rho: number, V: number | number[], S: number, CD0:
       const v = V[i];
       const v2 = v * v;
       // ⚡ Bolt Optimization: Pre-calculate v^2 to reduce multiplication operations.
-      // Direct division is used instead of calculating `inv_v` because JIT handles it efficiently.
-      const Pr = parasiteConst * (v2 * v) + inducedConst / v;
-      const Tr = Pr / v;
+      // ⚡ Bolt Optimization: Calculate Tr first to avoid calculating v^3 (v2 * v) and an extra division.
+      const Tr = parasiteConst * v2 + inducedConst / v2;
+      const Pr = Tr * v;
       const CL = W_over_05rhoS / v2;
       const CD = CD0 + k * CL * CL;
       res[i] = { Pr, Tr, CL, CD };

@@ -85,3 +85,7 @@
 ## 2025-06-03 - [Algebraic Distribution of Logarithmic Constants]
 **Learning:** In exponential calculations involving logarithms like `Math.exp(A * Math.log(B * C))` where `C` is a loop-invariant constant, `C` can be algebraically factored out using logarithm rules: `Math.log(B) + Math.log(C)`. This allows pre-calculating the invariant portion `Math.exp(A * Math.log(C))` outside the loop, saving one multiplication per iteration. In micro-benchmarks for `stdAtm`, this optimization yielded ~30% faster execution.
 **Action:** When working with exponential and logarithmic formulas inside loops, always check if invariant multipliers can be algebraically distributed and hoisted out as pre-calculated constants.
+
+## 2025-10-29 - [Algebraic Reordering in Hot Loops]
+**Learning:** When calculating dependent mathematical variables inside hot loops, algebraically reordering the sequence of operations to compute the lower-degree/simpler term first (e.g., Thrust using `v^2`) and deriving the higher-degree term from it (e.g., Power = Thrust * `v`) eliminates unnecessary higher-order exponentiations (like `v^3`) and divisions per iteration. In benchmarks, this yielded a measurable speedup.
+**Action:** When dealing with multiple dependent calculations inside a loop, always check if reordering them starting from the simplest algebraic form avoids redundant exponentiation or division.
