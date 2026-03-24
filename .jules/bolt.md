@@ -89,3 +89,7 @@
 ## 2025-10-29 - [Algebraic Reordering in Hot Loops]
 **Learning:** When calculating dependent mathematical variables inside hot loops, algebraically reordering the sequence of operations to compute the lower-degree/simpler term first (e.g., Thrust using `v^2`) and deriving the higher-degree term from it (e.g., Power = Thrust * `v`) eliminates unnecessary higher-order exponentiations (like `v^3`) and divisions per iteration. In benchmarks, this yielded a measurable speedup.
 **Action:** When dealing with multiple dependent calculations inside a loop, always check if reordering them starting from the simplest algebraic form avoids redundant exponentiation or division.
+
+## 2025-02-23 - [Algebraic simplification of polynomial expressions in loops]
+**Learning:** In calculations inside loops, expressions like `C1 + k * (C2 / v^2)^2` involve expanding variables dynamically inside the loop. Algebraically distributing loop-invariant constants into a single pre-calculated term (e.g. `k * C2^2`) outside the loop replaces multiple mathematical operations (multiplications) inside the loop with just one division. In V8, replacing `CD0 + k * CL * CL` with `CD0 + k_W_sq / (v2 * v2)` yielded measurable performance improvements (~15% faster in micro-benchmarks).
+**Action:** When working with polynomial equations inside tight loops, algebraically expand and distribute the invariants outside the loop to combine constants and minimize multiplications/divisions per iteration.
