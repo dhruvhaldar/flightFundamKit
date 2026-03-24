@@ -138,6 +138,11 @@ export function powerRequired(rho: number, V: number | number[], S: number, CD0:
     const inducedConst = (2 * k * W * W) / (rho * S);
     const W_over_05rhoS = W / (0.5 * rho * S);
 
+    // ⚡ Bolt Optimization: Algebraically distribute k into the base constant to save 2 multiplications per loop iteration.
+    // CD = CD0 + k * CL * CL = CD0 + k * (W_over_05rhoS / v2) * (W_over_05rhoS / v2)
+    // CD = CD0 + (k * W_over_05rhoS^2) / (v2 * v2)
+    const k_W_over_05rhoS_sq = k * W_over_05rhoS * W_over_05rhoS;
+
     for (let i = 0; i < len; i++) {
       const v = V[i];
       const v2 = v * v;
@@ -146,7 +151,8 @@ export function powerRequired(rho: number, V: number | number[], S: number, CD0:
       const Tr = parasiteConst * v2 + inducedConst / v2;
       const Pr = Tr * v;
       const CL = W_over_05rhoS / v2;
-      const CD = CD0 + k * CL * CL;
+      // ⚡ Bolt Optimization: Calculate CD directly using hoisted constant
+      const CD = CD0 + k_W_over_05rhoS_sq / (v2 * v2);
       res[i] = { Pr, Tr, CL, CD };
     }
     return res;
