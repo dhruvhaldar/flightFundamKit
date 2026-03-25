@@ -197,40 +197,51 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
         </span>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {(Object.keys(PARAM_CONFIG) as Array<keyof AircraftParams>).map((key) => (
-            <div key={key}>
-              <Label
-                htmlFor={key}
-                className={errors[key] ? "text-destructive" : ""}
-              >
-                {PARAM_CONFIG[key].label} <span className="text-destructive" aria-hidden="true">*</span>
-              </Label>
-              <Input
-                id={key}
-                type="number"
-                required
-                step={PARAM_CONFIG[key].step}
-                value={localParams[key]}
-                onChange={(e) => handleChange(key, e.target.value)}
-                onFocus={(e) => e.target.select()}
-                onWheel={(e) => e.currentTarget.blur()}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.currentTarget.blur()
-                  }
-                }}
-                className={errors[key] ? "border-destructive focus-visible:ring-destructive" : ""}
-                aria-invalid={!!errors[key]}
-                aria-describedby={errors[key] ? `${key}-error` : undefined}
-                placeholder={`e.g. ${DEFAULT_PARAMS[key]}`}
-              />
-              {errors[key] && (
-                <p id={`${key}-error`} className="text-xs text-destructive mt-1 font-medium">
-                  {errors[key]}
-                </p>
-              )}
-            </div>
+        <div className="space-y-6">
+          {[
+            { title: "Geometry & Mass", keys: ["m", "S", "b"] as Array<keyof AircraftParams> },
+            { title: "Aerodynamics", keys: ["CD0", "e", "CL_max"] as Array<keyof AircraftParams> },
+            { title: "Propulsion", keys: ["P_bhp", "eta_prop", "SFC"] as Array<keyof AircraftParams> },
+          ].map((group) => (
+            <fieldset key={group.title} className="space-y-4 rounded-md border p-4">
+              <legend className="px-1 text-sm font-medium text-foreground">{group.title}</legend>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {group.keys.map((key) => (
+                  <div key={key}>
+                    <Label
+                      htmlFor={key}
+                      className={errors[key] ? "text-destructive" : ""}
+                    >
+                      {PARAM_CONFIG[key].label} <span className="text-destructive" aria-hidden="true">*</span>
+                    </Label>
+                    <Input
+                      id={key}
+                      type="number"
+                      required
+                      step={PARAM_CONFIG[key].step}
+                      value={localParams[key]}
+                      onChange={(e) => handleChange(key, e.target.value)}
+                      onFocus={(e) => e.target.select()}
+                      onWheel={(e) => e.currentTarget.blur()}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.currentTarget.blur()
+                        }
+                      }}
+                      className={errors[key] ? "border-destructive focus-visible:ring-destructive" : ""}
+                      aria-invalid={!!errors[key]}
+                      aria-describedby={errors[key] ? `${key}-error` : undefined}
+                      placeholder={`e.g. ${DEFAULT_PARAMS[key]}`}
+                    />
+                    {errors[key] && (
+                      <p id={`${key}-error`} className="text-xs text-destructive mt-1 font-medium">
+                        {errors[key]}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </fieldset>
           ))}
         </div>
       </CardContent>
