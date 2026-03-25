@@ -100,3 +100,7 @@
 ## 2026-06-05 - Skip to Content Links
 **Learning:** React/Next.js applications often forget to include a "skip to main content" link, forcing keyboard users and screen readers to traverse the entire navigation structure on every page load.
 **Action:** For keyboard and screen reader accessibility, implement a 'Skip to main content' link at the top of the root layout using Tailwind classes (`sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground`) that targets the ID of the primary `<main>` content wrapper.
+
+## 2024-06-06 - Semantic Grouping of Form Inputs
+**Learning:** When presenting many related technical inputs (like aircraft geometry and aerodynamics), a flat list or grid increases cognitive load and lacks semantic context for screen readers. Users must parse the entire form to understand the relationships.
+**Action:** Group related inputs into logical chunks using `<fieldset>` and `<legend>`. This visually breaks up the form, reduces cognitive load, and provides semantic context (the legend) that screen readers announce when users navigate into the group.
