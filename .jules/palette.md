@@ -104,3 +104,7 @@
 ## 2024-06-06 - Semantic Grouping of Form Inputs
 **Learning:** When presenting many related technical inputs (like aircraft geometry and aerodynamics), a flat list or grid increases cognitive load and lacks semantic context for screen readers. Users must parse the entire form to understand the relationships.
 **Action:** Group related inputs into logical chunks using `<fieldset>` and `<legend>`. This visually breaks up the form, reduces cognitive load, and provides semantic context (the legend) that screen readers announce when users navigate into the group.
+
+## 2026-06-05 - Numeric Equivalence for Preset Active States
+**Learning:** Relying on strict string equality (e.g., `inputValue === presetValue`) to determine the active state of preset buttons fails when users manually enter mathematically equivalent but syntactically different numbers (e.g., typing '1000.0', '01000', or '1e3' instead of '1000'). This creates a minor UX disconnect where a preset button incorrectly loses its active appearance despite the underlying value perfectly matching its intent.
+**Action:** Always use numeric parsing (e.g., `parseFloat()`) rather than string comparison to determine the active (`aria-pressed`) and visual state of preset buttons mapped to numeric input fields.
