@@ -112,20 +112,24 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               Enter altitude in meters to see atmospheric properties.
             </p>
             <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Altitude presets">
-              {ALTITUDE_PRESETS.map((preset) => (
-                <Button
-                  key={preset.value}
-                  type="button"
-                  variant={altitudeStr === preset.value ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setAltitudeStr(preset.value)}
-                  aria-label={`Set altitude to ${preset.label}`}
-                  aria-pressed={altitudeStr === preset.value}
-                  className="h-8 text-xs"
-                >
-                  {preset.label}
-                </Button>
-              ))}
+              {ALTITUDE_PRESETS.map((preset) => {
+                const targetVal = parseFloat(preset.value)
+                const isActive = !isNaN(val) && val === targetVal
+                return (
+                  <Button
+                    key={preset.value}
+                    type="button"
+                    variant={isActive ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setAltitudeStr(preset.value)}
+                    aria-label={`Set altitude to ${preset.label}`}
+                    aria-pressed={isActive}
+                    className="h-8 text-xs"
+                  >
+                    {preset.label}
+                  </Button>
+                )
+              })}
             </div>
           </div>
 

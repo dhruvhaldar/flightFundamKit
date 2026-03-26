@@ -180,16 +180,18 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               <p className="text-xs text-muted-foreground">Max available: {params.m} kg</p>
               <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Fuel mass presets">
                 {[0.25, 0.5, 0.75, 1].map((frac) => {
-                  const valStr = (params.m * frac).toFixed(0)
+                  const targetVal = Math.round(params.m * frac)
+                  const targetValStr = targetVal.toString()
+                  const isActive = !isNaN(fuelMass) && fuelMass === targetVal
                   return (
                     <Button
                       key={frac}
                       type="button"
-                      variant={fuelMassStr === valStr ? "default" : "outline"}
+                      variant={isActive ? "default" : "outline"}
                       size="sm"
-                      onClick={() => setFuelMassStr(valStr)}
+                      onClick={() => setFuelMassStr(targetValStr)}
                       aria-label={`Set fuel mass to ${frac * 100}% of MTOW`}
-                      aria-pressed={fuelMassStr === valStr}
+                      aria-pressed={isActive}
                       className="h-7 text-xs"
                     >
                       {frac * 100}%
@@ -233,20 +235,24 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               Enter cruise altitude in meters.
             </p>
             <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Cruise altitude presets">
-              {ALTITUDE_PRESETS.map((preset) => (
-                <Button
-                  key={preset.value}
-                  type="button"
-                  variant={cruiseAltitudeStr === preset.value ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setCruiseAltitudeStr(preset.value)}
-                  aria-label={`Set cruise altitude to ${preset.label}`}
-                  aria-pressed={cruiseAltitudeStr === preset.value}
-                  className="h-7 text-xs"
-                >
-                  {preset.label}
-                </Button>
-              ))}
+              {ALTITUDE_PRESETS.map((preset) => {
+                const targetVal = parseFloat(preset.value)
+                const isActive = !isNaN(cruiseAltitude) && cruiseAltitude === targetVal
+                return (
+                  <Button
+                    key={preset.value}
+                    type="button"
+                    variant={isActive ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCruiseAltitudeStr(preset.value)}
+                    aria-label={`Set cruise altitude to ${preset.label}`}
+                    aria-pressed={isActive}
+                    className="h-7 text-xs"
+                  >
+                    {preset.label}
+                  </Button>
+                )
+              })}
             </div>
           </div>
         </div>
