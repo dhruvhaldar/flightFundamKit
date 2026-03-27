@@ -108,3 +108,7 @@
 ## 2026-06-05 - Numeric Equivalence for Preset Active States
 **Learning:** Relying on strict string equality (e.g., `inputValue === presetValue`) to determine the active state of preset buttons fails when users manually enter mathematically equivalent but syntactically different numbers (e.g., typing '1000.0', '01000', or '1e3' instead of '1000'). This creates a minor UX disconnect where a preset button incorrectly loses its active appearance despite the underlying value perfectly matching its intent.
 **Action:** Always use numeric parsing (e.g., `parseFloat()`) rather than string comparison to determine the active (`aria-pressed`) and visual state of preset buttons mapped to numeric input fields.
+
+## 2026-06-05 - Immediate Announcement of Dynamic Validation Errors
+**Learning:** Even when validation errors are visibly rendered in a form (e.g., text turning red), screen readers will not announce these dynamic insertions to the user unless the text is specifically marked up or receives focus, leaving visually impaired users unaware of the failure state.
+**Action:** To ensure dynamic form validation errors are immediately announced by screen readers without requiring focus changes, apply `role="alert"` to the error message elements (e.g., `<p role="alert">Required</p>`).

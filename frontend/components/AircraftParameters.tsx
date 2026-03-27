@@ -234,7 +234,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                       placeholder={`e.g. ${DEFAULT_PARAMS[key]}`}
                     />
                     {errors[key] && (
-                      <p id={`${key}-error`} className="text-xs text-destructive mt-1 font-medium">
+                      <p id={`${key}-error`} className="text-xs text-destructive mt-1 font-medium" role="alert">
                         {errors[key]}
                       </p>
                     )}

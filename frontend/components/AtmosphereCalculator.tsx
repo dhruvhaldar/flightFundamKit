@@ -104,7 +104,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               required
             />
             {showError && (
-              <p id="altitude-error" className="text-xs text-destructive font-medium">
+              <p id="altitude-error" className="text-xs text-destructive font-medium" role="alert">
                 Required
               </p>
             )}
