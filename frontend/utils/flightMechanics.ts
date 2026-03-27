@@ -25,6 +25,11 @@ const INV_R = 1 / R;
 // ⚡ Bolt Optimization: Pre-calculated speed of sound in the stratosphere (constant temperature)
 const A_trop = Math.sqrt(GAMMA_R * T_trop);
 
+// ⚡ Bolt Optimization: Factored out invariant square root of GAMMA_R
+// Math.sqrt(GAMMA_R * T) can be algebraically factored into Math.sqrt(GAMMA_R) * Math.sqrt(T).
+// Pre-calculating Math.sqrt(GAMMA_R) hoists an expensive multiplication and square root out of the loop.
+const SQRT_GAMMA_R = Math.sqrt(GAMMA_R);
+
 // ⚡ Bolt Optimization: Pre-calculate the invariant portion of stratospheric pressure
 // P = P_trop * Math.exp(G_over_RT_trop * (h - 11000))
 //   = P_trop * Math.exp(-G_over_RT_trop * 11000) * Math.exp(G_over_RT_trop * h)
@@ -56,7 +61,8 @@ export function stdAtm(h: number | number[]) {
         P = BASE_P_TROPO_CONST * Math.exp(G_over_LR * Math.log(T));
         // Optimization: Multiply by precomputed inverse of R
         rho = (P * INV_R) / T;
-        a = Math.sqrt(GAMMA_R * T);
+        // ⚡ Bolt Optimization: Hoist invariant Math.sqrt(GAMMA_R) to replace a multiplication and complex square root with a simpler square root and simple multiplication.
+        a = SQRT_GAMMA_R * Math.sqrt(T);
       } else {
         // Stratosphere (Lower) - Simplified: Isothermal
         T = T_trop;
@@ -80,7 +86,8 @@ export function stdAtm(h: number | number[]) {
     // Additionally algebraically distribute invariant INV_T0 to save 1 multiplication
     P = BASE_P_TROPO_CONST * Math.exp(G_over_LR * Math.log(T));
     rho = (P * INV_R) / T;
-    a = Math.sqrt(GAMMA_R * T);
+    // ⚡ Bolt Optimization: Hoist invariant Math.sqrt(GAMMA_R) to replace a multiplication and complex square root with a simpler square root and simple multiplication.
+    a = SQRT_GAMMA_R * Math.sqrt(T);
   } else {
     T = T_trop;
     // ⚡ Bolt Optimization: Use algebraically distributed constant to save 1 subtraction
@@ -174,18 +181,17 @@ export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: num
     return ((Pa as number) - (Pr as number)) / W;
   }
 
-  // ⚡ Bolt Optimization: Replaced division with multiplication by an inverse
-  // to avoid redundant division overhead inside loops.
-  const invW = 1 / W;
-
   // ⚡ Bolt Optimization: Replaced .map() with pre-allocated for loops.
+  // ⚡ Bolt Optimization: In modern V8, calculating the inverse (`1/W`) and multiplying
+  // inside the loop is slower due to intermediate variable allocation overhead.
+  // We use direct division (`/ W`) which is highly optimized by the JIT compiler.
   if (isPaArray && !isPrArray) {
     const prVal = Pr as number;
     const paArr = Pa as number[];
     const len = paArr.length;
     const res = new Array(len);
     for (let i = 0; i < len; i++) {
-      res[i] = (paArr[i] - prVal) * invW;
+      res[i] = (paArr[i] - prVal) / W;
     }
     return res;
   }
@@ -196,7 +202,7 @@ export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: num
     const len = prArr.length;
     const res = new Array(len);
     for (let i = 0; i < len; i++) {
-      res[i] = (paVal - prArr[i]) * invW;
+      res[i] = (paVal - prArr[i]) / W;
     }
     return res;
   }
@@ -207,7 +213,7 @@ export function rateOfClimb(Pa: number | number[], Pr: number | number[], W: num
   const len = Math.min(PaArray.length, PrArray.length);
   const res = new Array(len);
   for (let i = 0; i < len; i++) {
-    res[i] = (PaArray[i] - PrArray[i]) * invW;
+    res[i] = (PaArray[i] - PrArray[i]) / W;
   }
   return res;
 }
