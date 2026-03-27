@@ -155,7 +155,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               required
             />
             {validationError && (
-              <p id="fuel-error" className="text-sm text-destructive font-medium">
+              <p id="fuel-error" className="text-sm text-destructive font-medium" role="alert">
                 {validationError}
               </p>
             )}
@@ -227,7 +227,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               required
             />
             {altValidationError && (
-              <p id="alt-error" className="text-sm text-destructive font-medium">
+              <p id="alt-error" className="text-sm text-destructive font-medium" role="alert">
                 {altValidationError}
               </p>
             )}
