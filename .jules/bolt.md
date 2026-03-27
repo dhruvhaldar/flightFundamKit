@@ -93,3 +93,11 @@
 ## 2025-02-23 - [Algebraic simplification of polynomial expressions in loops]
 **Learning:** In calculations inside loops, expressions like `C1 + k * (C2 / v^2)^2` involve expanding variables dynamically inside the loop. Algebraically distributing loop-invariant constants into a single pre-calculated term (e.g. `k * C2^2`) outside the loop replaces multiple mathematical operations (multiplications) inside the loop with just one division. In V8, replacing `CD0 + k * CL * CL` with `CD0 + k_W_sq / (v2 * v2)` yielded measurable performance improvements (~15% faster in micro-benchmarks).
 **Action:** When working with polynomial equations inside tight loops, algebraically expand and distribute the invariants outside the loop to combine constants and minimize multiplications/divisions per iteration.
+
+## 2025-06-03 - [Factoring Constant Square Root in Loops]
+**Learning:** For equations like `Math.sqrt(A * B)` evaluated inside loops where `A` is constant (e.g. `GAMMA_R * T` where `GAMMA_R` is constant), algebraically factoring it into `Math.sqrt(A) * Math.sqrt(B)` and pre-calculating `Math.sqrt(A)` outside the loop reduces operations per iteration. Benchmarks showed replacing the multiplication and complex square root with a pre-calculated square root and simple multiplication yielded ~10% faster execution.
+**Action:** Always pre-calculate invariant square root portions of products when inside tight mathematical loops.
+
+## 2025-06-03 - [Direct Division vs Inverse Multiplication Update]
+**Learning:** Re-verified that calculating an inverse (`const inv_W = 1 / W`) and then replacing division with multiplication (`* inv_W`) is slower in modern V8 than using direct division (`/ W`) inside a mathematical loop. This is true even when multiple constants are algebraically multiplied by `inv_W` before the loop. The direct division approach avoids creating several scaled primitive variables, leading to faster execution due to better JIT optimization of division instructions compared to the overhead of intermediate variable handling.
+**Action:** Always prefer direct division (`/ X`) inside the final formula rather than algebraically factoring `1/X` into constants when generating loop data.
