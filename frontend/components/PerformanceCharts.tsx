@@ -202,11 +202,13 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
                 <XAxis
                   dataKey="V"
                   stroke="var(--muted-foreground)"
+                  tick={{ fill: "var(--muted-foreground)" }}
                   label={{ value: 'Velocity (m/s)', position: 'insideBottomRight', offset: -5, fill: 'var(--foreground)' }}
                   tickFormatter={(val) => Number(val).toFixed(1)}
                 />
                 <YAxis
                   stroke="var(--muted-foreground)"
+                  tick={{ fill: "var(--muted-foreground)" }}
                   label={{ value: 'Power (kW)', angle: -90, position: 'insideLeft', fill: 'var(--foreground)' }}
                   tickFormatter={(val) => val.toFixed(0)}
                 />
@@ -246,10 +248,12 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
                 <XAxis
                   dataKey="h"
                   stroke="var(--muted-foreground)"
+                  tick={{ fill: "var(--muted-foreground)" }}
                   label={{ value: 'Altitude (m)', position: 'insideBottomRight', offset: -5, fill: 'var(--foreground)' }}
                 />
                 <YAxis
                   stroke="var(--muted-foreground)"
+                  tick={{ fill: "var(--muted-foreground)" }}
                   label={{ value: 'Rate of Climb (m/s)', angle: -90, position: 'insideLeft', fill: 'var(--foreground)' }}
                   tickFormatter={(val) => val.toFixed(1)}
                 />
