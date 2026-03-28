@@ -128,13 +128,12 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     // to replace 3 multiplications and 1 division per iteration with simpler scaled variants.
     const V_end = 80
     const stallBase = (2 * W) / (S * CL_max)
-    // ⚡ Bolt Optimization: Hoist inverse weight calculation to avoid division in the loop
-    const inv_W = 1 / W
 
-    // ⚡ Bolt Optimization: Multiply inverse W directly into the constants
-    const parasiteBase_inv_W = (0.5 * S * CD0) * inv_W
-    const inducedBase_inv_W = ((2 * k * (W * W)) / S) * inv_W
-    const Pa_factor_inv_W = ((Pa_sl * eta_prop) / RHO_SL) * inv_W
+    // Reverted inverse W optimization. Modern V8 optimizes direct division (`/ W`) faster
+    // than calculating multiple scaled constants algebraically factored with `1 / W`.
+    const parasiteBase = 0.5 * S * CD0
+    const inducedBase = (2 * k * (W * W)) / S
+    const Pa_factor = (Pa_sl * eta_prop) / RHO_SL
 
     // ⚡ Bolt Optimization: Hoist square root calculation out of loop
     // Math.sqrt(stallBase * inv_rho) == Math.sqrt(stallBase) * inv_sqrt_rho
@@ -147,10 +146,10 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
       // Find max RC at this altitude using hoisted constants
       const V_stall_h = sqrtStallBase * inv_sqrt_rho
-      const Pa_h_div_W = Pa_factor_inv_W * rho
+      const Pa_h = Pa_factor * rho
 
-      const parasiteConst_div_W = parasiteBase_inv_W * rho
-      const inducedConst_div_W = inducedBase_inv_W * inv_rho
+      const parasiteConst = parasiteBase * rho
+      const inducedConst = inducedBase * inv_rho
 
       // Optimization: Analytical solution for max Rate of Climb
       // Max RC occurs at minimum Power Required (since Pa is constant with V)
@@ -163,8 +162,9 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
       if (V_best > V_end) V_best = V_end
 
       // ⚡ Bolt Optimization: Replace `inv_V_best` intermediate with direct division
-      const Pr_best_div_W = parasiteConst_div_W * (V_best * V_best * V_best) + inducedConst_div_W / V_best
-      const max_RC = Pa_h_div_W - Pr_best_div_W
+      const Pr_best = parasiteConst * (V_best * V_best * V_best) + inducedConst / V_best
+      // ⚡ Bolt Optimization: Use direct division by W rather than factored inverse W constants
+      const max_RC = (Pa_h - Pr_best) / W
 
       const point = { h, RC: max_RC }
       data[i] = point
