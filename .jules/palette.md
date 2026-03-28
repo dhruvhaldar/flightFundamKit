@@ -112,3 +112,11 @@
 ## 2026-06-05 - Immediate Announcement of Dynamic Validation Errors
 **Learning:** Even when validation errors are visibly rendered in a form (e.g., text turning red), screen readers will not announce these dynamic insertions to the user unless the text is specifically marked up or receives focus, leaving visually impaired users unaware of the failure state.
 **Action:** To ensure dynamic form validation errors are immediately announced by screen readers without requiring focus changes, apply `role="alert"` to the error message elements (e.g., `<p role="alert">Required</p>`).
+
+## 2026-06-05 - Safe Numeric Presets
+**Learning:** Providing a UI preset button that mathematically guarantees an error state (e.g., setting fuel load to 100% of Max Takeoff Weight, which triggers a divide-by-zero validation in Breguet range calculations) creates a "UX Trap". Users assume UI-provided shortcuts are valid system states.
+**Action:** When designing capacity preset buttons for technical calculators, ensure the bounds reflect realistic or safe mathematical limits (e.g., 10-40% fuel fractions) rather than absolute physical maximums that would violate validation rules.
+
+## 2026-06-05 - Tab Deep Linking
+**Learning:** In single-page applications with multiple discrete tools grouped in a Tabs interface, the lack of URL syncing breaks native browser navigation (Back/Forward) and prevents users from bookmarking or sharing links to specific tools.
+**Action:** Always sync the active state of primary navigation Tabs to the URL hash (e.g., `#range`) and listen for `hashchange` events to ensure the UI remains in sync with browser history and direct links.
