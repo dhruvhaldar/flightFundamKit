@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import AtmosphereCalculator from "@/components/AtmosphereCalculator"
@@ -40,6 +40,28 @@ export default function Home() {
     SFC: 0.45
   })
 
+  const [activeTab, setActiveTab] = useState("atmosphere")
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "")
+      if (["atmosphere", "parameters", "performance", "range"].includes(hash)) {
+        setActiveTab(hash)
+      }
+    }
+
+    // Set initial tab based on hash
+    handleHashChange()
+
+    window.addEventListener("hashchange", handleHashChange)
+    return () => window.removeEventListener("hashchange", handleHashChange)
+  }, [])
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    window.location.hash = value
+  }
+
   return (
     <main id="main-content" className="container mx-auto p-4 md:p-8 space-y-8">
       <div className="flex flex-col space-y-2">
@@ -49,7 +71,7 @@ export default function Home() {
         </p>
       </div>
 
-      <Tabs defaultValue="atmosphere" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1" aria-label="Flight Calculator Tools">
           <TabsTrigger value="atmosphere" className="gap-2 py-2">
             <Cloud className="h-4 w-4" aria-hidden="true" />

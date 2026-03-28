@@ -179,7 +179,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               </div>
               <p className="text-xs text-muted-foreground">Max available: {params.m} kg</p>
               <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Fuel mass presets">
-                {[0.25, 0.5, 0.75, 1].map((frac) => {
+                {[0.1, 0.2, 0.3, 0.4].map((frac) => {
                   const targetVal = Math.round(params.m * frac)
                   const targetValStr = targetVal.toString()
                   const isActive = !isNaN(fuelMass) && fuelMass === targetVal
