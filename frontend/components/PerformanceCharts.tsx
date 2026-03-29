@@ -12,6 +12,7 @@ import {
   ResponsiveContainer
 } from "recharts"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { TrendingUp, Lightbulb } from "lucide-react"
 import { AircraftParams } from "@/types"
 import {
   stallSpeed,
@@ -228,11 +229,15 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
           </div>
         </CardContent>
         <CardFooter>
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Insight:</span> Most efficient cruise speed is{" "}
-            <span className="font-bold text-foreground">{minPowerPoint?.V?.toFixed(1)} m/s</span> requiring{" "}
-            <span className="font-bold text-foreground">{minPowerPoint?.Pr_kW?.toFixed(2)} kW</span> power.
-          </p>
+          <div className="flex gap-3 items-start bg-muted/50 p-4 rounded-lg border w-full" role="note" aria-label="Power curve insight">
+            <Lightbulb className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="font-medium text-foreground block mb-1">Performance Insight</span>
+              Most efficient cruise speed is{" "}
+              <span className="font-bold text-foreground">{minPowerPoint?.V?.toFixed(1)} m/s</span> requiring{" "}
+              <span className="font-bold text-foreground">{minPowerPoint?.Pr_kW?.toFixed(2)} kW</span> power.
+            </p>
+          </div>
         </CardFooter>
       </Card>
 
@@ -272,16 +277,20 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
           </div>
         </CardContent>
         <CardFooter>
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Insight:</span> Max climb rate is{" "}
-            <span className="font-bold text-foreground">{maxClimbPoint?.RC?.toFixed(2)} m/s</span> at sea level.
-            {ceilingPoint && ceilingPoint.h < 5000 && (
-              <> Service ceiling is approx <span className="font-bold text-foreground">{ceilingPoint.h} m</span>.</>
-            )}
-            {ceilingPoint && ceilingPoint.h >= 5000 && (
-               <> Climb rate remains positive up to <span className="font-bold text-foreground">{ceilingPoint.h} m</span>.</>
-            )}
-          </p>
+          <div className="flex gap-3 items-start bg-muted/50 p-4 rounded-lg border w-full" role="note" aria-label="Rate of climb insight">
+            <TrendingUp className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="font-medium text-foreground block mb-1">Climb Performance Insight</span>
+              Max climb rate is{" "}
+              <span className="font-bold text-foreground">{maxClimbPoint?.RC?.toFixed(2)} m/s</span> at sea level.
+              {ceilingPoint && ceilingPoint.h < 5000 && (
+                <> Service ceiling is approx <span className="font-bold text-foreground">{ceilingPoint.h} m</span>.</>
+              )}
+              {ceilingPoint && ceilingPoint.h >= 5000 && (
+                <> Climb rate remains positive up to <span className="font-bold text-foreground">{ceilingPoint.h} m</span>.</>
+              )}
+            </p>
+          </div>
         </CardFooter>
       </Card>
     </div>
