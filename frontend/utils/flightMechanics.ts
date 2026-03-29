@@ -153,13 +153,16 @@ export function powerRequired(rho: number, V: number | number[], S: number, CD0:
     for (let i = 0; i < len; i++) {
       const v = V[i];
       const v2 = v * v;
+      // ⚡ Bolt Optimization: Pre-calculate v^4 (v2 * v2) explicitly to avoid inline parentheses evaluation during division.
+      // In V8, explicit primitive assignment allows the JIT to optimize the direct division significantly better.
+      const v4 = v2 * v2;
       // ⚡ Bolt Optimization: Pre-calculate v^2 to reduce multiplication operations.
       // ⚡ Bolt Optimization: Calculate Tr first to avoid calculating v^3 (v2 * v) and an extra division.
       const Tr = parasiteConst * v2 + inducedConst / v2;
       const Pr = Tr * v;
       const CL = W_over_05rhoS / v2;
-      // ⚡ Bolt Optimization: Calculate CD directly using hoisted constant
-      const CD = CD0 + k_W_over_05rhoS_sq / (v2 * v2);
+      // ⚡ Bolt Optimization: Calculate CD directly using hoisted constant and pre-calculated v4
+      const CD = CD0 + k_W_over_05rhoS_sq / v4;
       res[i] = { Pr, Tr, CL, CD };
     }
     return res;
