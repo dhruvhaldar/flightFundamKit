@@ -120,3 +120,7 @@
 ## 2026-06-05 - Tab Deep Linking
 **Learning:** In single-page applications with multiple discrete tools grouped in a Tabs interface, the lack of URL syncing breaks native browser navigation (Back/Forward) and prevents users from bookmarking or sharing links to specific tools.
 **Action:** Always sync the active state of primary navigation Tabs to the URL hash (e.g., `#range`) and listen for `hashchange` events to ensure the UI remains in sync with browser history and direct links.
+
+## 2026-06-05 - Semantic Callouts for Data Insights
+**Learning:** Appending crucial data insights or summaries as plain text paragraphs at the bottom of complex visualizations (like charts) reduces their discoverability. Visually, they blend into secondary text. For screen readers, they lack structural importance, forcing users to parse them as generic content rather than key takeaways.
+**Action:** When providing summaries or "Insights" derived from complex data visualizations, wrap the text in distinct visual callouts (e.g., bordered boxes with icons) to establish visual hierarchy. More importantly, always apply `role="note"` with an appropriate `aria-label` to the wrapper so screen readers explicitly announce the content as a distinct, important aside or summary related to the data.
