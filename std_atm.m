@@ -25,34 +25,36 @@ function [T, P, rho, a] = std_atm(h)
     L = -0.0065;       % Temperature lapse rate (K/m)
     gamma = 1.4;       % Ratio of specific heats for air
 
+    % Pre-computed constants for performance
+    g_LR = -g / (L * R);
+    T_trop = T0 + L * 11000;
+    P_trop = P0 * (T_trop / T0) ^ g_LR;
+    exp_factor = -g / (R * T_trop);
+    gamma_R = gamma * R;
+
     % Initialize output arrays with same size as input
     T = zeros(size(h));
     P = zeros(size(h));
-    rho = zeros(size(h));
-    a = zeros(size(h));
     
-    % Loop over each altitude element to handle vectors
-    for i = 1:numel(h)
-        curr_h = h(i);
-        
-        if curr_h <= 11000
-            % Troposphere
-            T(i) = T0 + L * curr_h;
-            P(i) = P0 * (T(i) / T0) ^ (-g / (L * R));
-            rho(i) = P(i) / (R * T(i));
-        else
-            % Stratosphere (Lower) - Simplified: Isothermal
-            % Calculate properties at tropopause (11km)
-            T_trop = T0 + L * 11000;
-            P_trop = P0 * (T_trop / T0) ^ (-g / (L * R));
-            
-            T(i) = T_trop;
-            % For isothermal layer: P = P_base * exp(-g/(R*T) * (h - h_base))
-            P(i) = P_trop * exp(-g / (R * T_trop) * (curr_h - 11000));
-            rho(i) = P(i) / (R * T(i));
-        end
-        
-        % Speed of Sound
-        a(i) = sqrt(gamma * R * T(i));
+    % Boolean masks for Troposphere and Stratosphere
+    tropo_mask = h <= 11000;
+    strato_mask = ~tropo_mask;
+
+    % Troposphere calculations
+    if any(tropo_mask(:))
+        h_tropo = h(tropo_mask);
+        T_tropo = T0 + L * h_tropo;
+        T(tropo_mask) = T_tropo;
+        P(tropo_mask) = P0 * (T_tropo / T0) .^ g_LR;
     end
+
+    % Stratosphere calculations
+    if any(strato_mask(:))
+        h_strato = h(strato_mask);
+        T(strato_mask) = T_trop;
+        P(strato_mask) = P_trop * exp(exp_factor * (h_strato - 11000));
+    end
+
+    rho = P ./ (R * T);
+    a = sqrt(gamma_R * T);
 end
