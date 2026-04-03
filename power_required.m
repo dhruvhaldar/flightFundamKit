@@ -16,10 +16,15 @@ function [Pr, Tr] = power_required(rho, V, S, CD0, k, W)
     %   Pr  - Power Required (Watts)
     %   Tr  - Thrust Required (Newtons)
     
-    q = 0.5 * rho .* V.^2;
-    CL = W ./ (q * S);
-    CD = CD0 + k * CL.^2;
+    % Combine formulas to reduce matrix allocations and element-wise operations:
+    % q = 0.5 * rho * V^2
+    % CL = W / (q * S)
+    % CD = CD0 + k * CL^2
+    % Tr = q * S * CD = q * S * (CD0 + k * (W / (q * S))^2)
+    % Tr = q * S * CD0 + k * W^2 / (q * S)
+
+    qS = (0.5 * rho * S) .* V.^2;
+    Tr = qS .* CD0 + (k * W.^2) ./ qS;
     
-    Tr = q .* S .* CD;
     Pr = Tr .* V;
 end
