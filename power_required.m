@@ -16,10 +16,14 @@ function [Pr, Tr] = power_required(rho, V, S, CD0, k, W)
     %   Pr  - Power Required (Watts)
     %   Tr  - Thrust Required (Newtons)
     
-    q = 0.5 * rho .* V.^2;
-    CL = W ./ (q * S);
-    CD = CD0 + k * CL.^2;
+    % ⚡ Bolt Optimization: Algebraically expand and simplify Tr formula
+    % to avoid intermediate vector allocations (q, CL, CD) and redundant operations.
+    % Tr = q * S * CD0 + q * S * k * (W / (q * S))^2
+    % Tr = (0.5 * rho * S * CD0) * V^2 + (2 * k * W^2 / (rho * S)) * (1 / V^2)
+    parasiteConst = 0.5 * rho * S * CD0;
+    inducedConst = (2 * k * W^2) / (rho * S);
     
-    Tr = q .* S .* CD;
+    V2 = V.^2;
+    Tr = parasiteConst .* V2 + inducedConst ./ V2;
     Pr = Tr .* V;
 end
