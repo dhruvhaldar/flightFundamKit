@@ -26,17 +26,23 @@ function R = range_breguet(Wi, Wf, CL, CD, SFC, V, is_prop, eta)
 
     L_D = CL ./ CD;
     
+    % ⚡ Bolt Optimization: Calculate scalar constants before multiplying with the L_D array.
+    % This avoids performing scalar multiplication on every element of the array.
+    log_weight_ratio = log(Wi / Wf);
+
     if is_prop
         % Breguet Range for Propeller Aircraft
         % R = (eta / c_p) * (CL/CD) * ln(Wi / Wf)
         % SFC assumed to be c_p in units of [1/m] (Newtons of fuel per Joule of energy)
         
-        R = (eta / SFC) * L_D * log(Wi / Wf);
+        const_factor = (eta / SFC) * log_weight_ratio;
     else
         % Breguet Range for Jet Aircraft
         % R = (V / c_t) * (CL/CD) * ln(Wi / Wf)
         % SFC assumed to be c_t in units of [1/s] (Newtons of fuel per Newton of thrust per second)
         
-        R = (V / SFC) * L_D * log(Wi / Wf);
+        const_factor = (V / SFC) * log_weight_ratio;
     end
+
+    R = const_factor * L_D;
 end
