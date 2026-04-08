@@ -13,6 +13,9 @@ function CL = lift_coeff(W, rho, V, S)
     % Outputs:
     %   CL  - Lift coefficient
     
-    q = 0.5 * rho .* V.^2; % Dynamic pressure
-    CL = W ./ (q * S);
+    % ⚡ Bolt Optimization: Algebraically expand and simplify CL formula
+    % to avoid intermediate vector allocation (q) and redundant operations.
+    % CL = W / (0.5 * rho * V^2 * S) = (2 * W / (rho * S)) / V^2
+    const_factor = (2 * W) ./ (rho .* S);
+    CL = const_factor ./ (V.^2);
 end
