@@ -124,3 +124,7 @@
 ## 2026-06-05 - Semantic Callouts for Data Insights
 **Learning:** Appending crucial data insights or summaries as plain text paragraphs at the bottom of complex visualizations (like charts) reduces their discoverability. Visually, they blend into secondary text. For screen readers, they lack structural importance, forcing users to parse them as generic content rather than key takeaways.
 **Action:** When providing summaries or "Insights" derived from complex data visualizations, wrap the text in distinct visual callouts (e.g., bordered boxes with icons) to establish visual hierarchy. More importantly, always apply `role="note"` with an appropriate `aria-label` to the wrapper so screen readers explicitly announce the content as a distinct, important aside or summary related to the data.
+
+## 2024-06-05 - Recharts Theme Compatibility
+**Learning:** Recharts SVG components (like `<Line>`) do not automatically inherit or adapt to dark mode themes when using standard hex colors (`#8884d8`), leading to accessibility issues and poor contrast in dark mode. Furthermore, relying on default inline stroke widths is often illegible for data-dense visualizations.
+**Action:** When implementing Recharts, always map stroke colors explicitly to CSS variables (e.g., `stroke="var(--primary)"`) to ensure theme compatibility, and explicitly increase `strokeWidth` (e.g., to `2`) to guarantee legibility and meet accessibility contrast guidelines across both light and dark themes.
