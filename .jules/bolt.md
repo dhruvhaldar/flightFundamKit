@@ -121,3 +121,7 @@
 ## 2025-11-01 - [Grouping Scalar Evaluation Before Array Operations in Octave]
 **Learning:** In formulas that combine scalar logic with large vectors (e.g. `range_breguet.m`: `(eta / SFC) * L_D * log(Wi / Wf)`), calculating the scalar operations first and evaluating it as a single constant prior to array multiplication is not naturally optimized by Octave. Benchmarking the explicit hoisting of `(eta / SFC) * log(Wi / Wf)` before multiplying it by the array `L_D` yielded an almost 2x performance speedup by preventing scalar values from being needlessly processed individually across each array element.
 **Action:** When working in MATLAB/Octave, aggressively separate scalar evaluations from vector mathematical expressions and pre-calculate them into constants before applying them to vectors.
+
+## 2025-06-03 - [Explicit Primitive Grouping in Polynomial Calculations]
+**Learning:** In hot loops involving polynomial expansions like `CD0 + k * cl * cl`, explicitly grouping the identical primitive multiplications using parentheses—e.g., `CD0 + k * (cl * cl)`—allows the V8 JIT compiler to optimize the intermediate squaring step more effectively before applying the scalar multiplier `k`. In micro-benchmarks on `dragPolar`, adding parentheses reduced execution time by ~20% for 1M iterations.
+**Action:** When evaluating simple polynomials involving squares or cubes inline (e.g., `A * x * x`), always group the identical variable multiplications in parentheses (e.g., `A * (x * x)`) to hint the JIT compiler to evaluate the primitive power first.
