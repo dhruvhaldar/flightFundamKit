@@ -128,3 +128,7 @@
 ## 2024-06-05 - Recharts Theme Compatibility
 **Learning:** Recharts SVG components (like `<Line>`) do not automatically inherit or adapt to dark mode themes when using standard hex colors (`#8884d8`), leading to accessibility issues and poor contrast in dark mode. Furthermore, relying on default inline stroke widths is often illegible for data-dense visualizations.
 **Action:** When implementing Recharts, always map stroke colors explicitly to CSS variables (e.g., `stroke="var(--primary)"`) to ensure theme compatibility, and explicitly increase `strokeWidth` (e.g., to `2`) to guarantee legibility and meet accessibility contrast guidelines across both light and dark themes.
+
+## 2026-06-05 - Dynamic Document Titles for Tabbed Interfaces
+**Learning:** In Single Page Applications that use Tabs for navigation (even when synced to the URL hash), the `<title>` of the document often remains static. This deprives screen reader users of essential context when navigating between views, and causes users who bookmark specific tools (like `/#range`) to end up with identical, generic bookmark names.
+**Action:** Always implement a mechanism (like a `useEffect` watching the active tab state) to dynamically update `document.title` to reflect the currently active tool or view in tab-routed applications. This significantly improves both screen reader accessibility and standard user bookmarking/history experiences.

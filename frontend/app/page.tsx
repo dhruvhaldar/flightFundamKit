@@ -57,6 +57,19 @@ export default function Home() {
     return () => window.removeEventListener("hashchange", handleHashChange)
   }, [])
 
+  // Dynamically update document title based on active tab for better accessibility and bookmarking
+  useEffect(() => {
+    const tabTitles: Record<string, string> = {
+      "atmosphere": "Atmosphere Calculator - Flight Toolkit",
+      "parameters": "Aircraft Parameters - Flight Toolkit",
+      "performance": "Performance Charts - Flight Toolkit",
+      "range": "Range Calculator - Flight Toolkit"
+    }
+    if (tabTitles[activeTab]) {
+      document.title = tabTitles[activeTab]
+    }
+  }, [activeTab])
+
   const handleTabChange = (value: string) => {
     setActiveTab(value)
     window.location.hash = value
