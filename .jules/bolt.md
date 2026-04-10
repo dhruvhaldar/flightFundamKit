@@ -129,3 +129,7 @@
 ## 2024-05-18 - Octave Array Division Optimization
 **Learning:** In MATLAB/Octave, performing scalar multiplication element-wise on a large array inside a division denominator (like `(2 * W) ./ (rho .* S .* CL_max)`) is computationally expensive and performs redundant calculations.
 **Action:** Always algebraically expand the expression to group all scalar constants into a pre-computed variable (e.g., `const_factor = (2 .* W) ./ (S .* CL_max)`), then execute a single element-wise array division (e.g., `const_factor ./ rho`) for maximum performance.
+
+## $(date +%Y-%m-%d) - Vectorization vs Scalar Operations in MATLAB/Octave
+**Learning:** While hoisting function calls that process arrays out of loops is an effective optimization, attempting to fully vectorize downstream multi-variable calculations that depend on intermediate vectors with different dimensions (e.g., using `bsxfun` or complex broadcasting) can lead to unreadable code or hard-to-debug non-conformant argument errors (`op1 is 1x11, op2 is 11x50`).
+**Action:** When working in MATLAB/Octave, prioritize hoisting easily vectorized 1D array function calls out of loops (like `std_atm(altitudes)`). Retain the inner loop for complex 2D/3D operations (like evaluating velocity sweeps at different altitudes) to strike the best balance between performance and readability without risking dimensional mismatch errors.
