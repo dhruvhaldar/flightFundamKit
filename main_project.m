@@ -63,9 +63,14 @@ disp('--- 3. Climb Performance ---');
 altitudes = 0:500:5000; % 0 to 5000 meters
 RC_max_vec = zeros(size(altitudes));
 
+% ⚡ Bolt Optimization: Hoist std_atm out of the loop
+% std_atm is fully vectorized, so we compute atmospheric properties
+% for all altitudes simultaneously to avoid function call overhead in the loop.
+[~, ~, rho_all, ~] = std_atm(altitudes);
+
 for i = 1:length(altitudes)
     h = altitudes(i);
-    [~, ~, rho, ~] = std_atm(h);
+    rho = rho_all(i);
     
     % Recalculate Power Required curve for this altitude
     % Assume Best Climb Speed is usually where excess power is max
