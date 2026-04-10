@@ -13,5 +13,7 @@ function V_stall = stall_speed(W, rho, S, CL_max)
     % Outputs:
     %   V_stall - Stall speed (m/s)
 
-    V_stall = sqrt((2 * W) ./ (rho .* S .* CL_max));
+    % ⚡ Bolt Optimization: Group invariant factors to reduce element-wise division complexity
+    const_factor = (2 .* W) ./ (S .* CL_max);
+    V_stall = sqrt(const_factor ./ rho);
 end

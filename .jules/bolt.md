@@ -125,3 +125,7 @@
 ## 2025-06-03 - [Explicit Primitive Grouping in Polynomial Calculations]
 **Learning:** In hot loops involving polynomial expansions like `CD0 + k * cl * cl`, explicitly grouping the identical primitive multiplications using parentheses—e.g., `CD0 + k * (cl * cl)`—allows the V8 JIT compiler to optimize the intermediate squaring step more effectively before applying the scalar multiplier `k`. In micro-benchmarks on `dragPolar`, adding parentheses reduced execution time by ~20% for 1M iterations.
 **Action:** When evaluating simple polynomials involving squares or cubes inline (e.g., `A * x * x`), always group the identical variable multiplications in parentheses (e.g., `A * (x * x)`) to hint the JIT compiler to evaluate the primitive power first.
+
+## 2024-05-18 - Octave Array Division Optimization
+**Learning:** In MATLAB/Octave, performing scalar multiplication element-wise on a large array inside a division denominator (like `(2 * W) ./ (rho .* S .* CL_max)`) is computationally expensive and performs redundant calculations.
+**Action:** Always algebraically expand the expression to group all scalar constants into a pre-computed variable (e.g., `const_factor = (2 .* W) ./ (S .* CL_max)`), then execute a single element-wise array division (e.g., `const_factor ./ rho`) for maximum performance.
