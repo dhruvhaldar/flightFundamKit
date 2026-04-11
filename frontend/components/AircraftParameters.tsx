@@ -171,27 +171,33 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
             All parameters are required for accurate simulation.
           </p>
         </div>
-        <Button
-          variant={isResetting ? "secondary" : "outline"}
-          size="sm"
-          onClick={handleReset}
-          className="h-8 px-2 lg:px-3 transition-all"
+        <span
           title={isDefault && !isResetting ? "Already at default values" : "Reset to Standard C172 Defaults"}
-          disabled={isDefault && !isResetting}
-          aria-disabled={isResetting}
+          className={isDefault && !isResetting ? "inline-block cursor-not-allowed" : "inline-block"}
+          tabIndex={isDefault && !isResetting ? 0 : undefined}
+          aria-label={isDefault && !isResetting ? "Reset button is disabled because values are already at default" : undefined}
         >
-          {isResetting ? (
-            <>
-              <Check className="mr-2 h-4 w-4 text-green-500" aria-hidden="true" />
-              Restored
-            </>
-          ) : (
-            <>
-              <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
-              Reset Defaults
-            </>
-          )}
-        </Button>
+          <Button
+            variant={isResetting ? "secondary" : "outline"}
+            size="sm"
+            onClick={handleReset}
+            className="h-8 px-2 lg:px-3 transition-all"
+            disabled={isDefault && !isResetting}
+            aria-disabled={isResetting}
+          >
+            {isResetting ? (
+              <>
+                <Check className="mr-2 h-4 w-4 text-green-500" aria-hidden="true" />
+                Restored
+              </>
+            ) : (
+              <>
+                <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
+                Reset Defaults
+              </>
+            )}
+          </Button>
+        </span>
         <span aria-live="polite" className="sr-only">
           {isResetting ? "Aircraft parameters reset to default values" : ""}
         </span>
