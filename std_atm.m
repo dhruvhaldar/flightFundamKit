@@ -32,6 +32,12 @@ function [T, P, rho, a] = std_atm(h)
     exp_factor = -g / (R * T_trop);
     gamma_R = gamma * R;
 
+    % ⚡ Bolt Optimization: Algebraically factor the scalar division (1/T0)
+    % out of the element-wise power calculation for the troposphere.
+    % Instead of P0 * (T_tropo / T0)^g_LR, we do (P0 / T0^g_LR) * T_tropo^g_LR
+    % saving an element-wise division per vector entry.
+    const_P_tropo = P0 / (T0 ^ g_LR);
+
     % Initialize output arrays with same size as input
     T = zeros(size(h));
     P = zeros(size(h));
@@ -45,7 +51,7 @@ function [T, P, rho, a] = std_atm(h)
         h_tropo = h(tropo_mask);
         T_tropo = T0 + L * h_tropo;
         T(tropo_mask) = T_tropo;
-        P(tropo_mask) = P0 * (T_tropo / T0) .^ g_LR;
+        P(tropo_mask) = const_P_tropo * T_tropo .^ g_LR;
     end
 
     % Stratosphere calculations
