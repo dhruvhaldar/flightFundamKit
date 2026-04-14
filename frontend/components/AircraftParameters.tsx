@@ -59,6 +59,7 @@ const validateParam = (key: keyof AircraftParams, val: number): string | null =>
 
 export default function AircraftParameters({ params, setParams }: AircraftParametersProps) {
   const [isResetting, setIsResetting] = useState(false)
+  const [openHelps, setOpenHelps] = useState<Partial<Record<keyof AircraftParams, boolean>>>({})
 
   const isDefault = Object.keys(DEFAULT_PARAMS).every(
     (key) => params[key as keyof AircraftParams] === DEFAULT_PARAMS[key as keyof AircraftParams]
@@ -225,7 +226,10 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                         type="button"
                         title={PARAM_CONFIG[key].desc}
                         className="text-muted-foreground hover:text-foreground cursor-help transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm inline-flex items-center justify-center"
-                        aria-label={`Help: ${PARAM_CONFIG[key].desc}`}
+                        aria-label={`Toggle help for ${PARAM_CONFIG[key].label}`}
+                        aria-expanded={!!openHelps[key]}
+                        aria-controls={`${key}-desc`}
+                        onClick={() => setOpenHelps((prev) => ({ ...prev, [key]: !prev[key] }))}
                       >
                         <Info className="h-3.5 w-3.5" aria-hidden="true" />
                       </button>
@@ -249,7 +253,10 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                       aria-describedby={`${errors[key] ? `${key}-error ` : ''}${key}-desc`}
                       placeholder={`e.g. ${DEFAULT_PARAMS[key]}`}
                     />
-                    <p id={`${key}-desc`} className="sr-only">
+                    <p
+                      id={`${key}-desc`}
+                      className={openHelps[key] ? "text-xs text-muted-foreground mt-1.5 animate-in fade-in slide-in-from-top-1" : "sr-only"}
+                    >
                       {PARAM_CONFIG[key].desc}
                     </p>
                     {errors[key] && (
