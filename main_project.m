@@ -68,6 +68,13 @@ RC_max_vec = zeros(size(altitudes));
 % for all altitudes simultaneously to avoid function call overhead in the loop.
 [~, ~, rho_all, ~] = std_atm(altitudes);
 
+% ⚡ Bolt Optimization: Hoist vectorizeable properties out of the loop
+% Power available and Stall Speed can be computed for all altitudes at once
+% to avoid redundant calculations per loop iteration.
+sigma_all = rho_all / rho_sl;
+Pa_h_all = Pa_sl .* sigma_all .* eta_prop;
+V_stall_all = stall_speed(W, rho_all, S, CL_max);
+
 for i = 1:length(altitudes)
     h = altitudes(i);
     rho = rho_all(i);
@@ -75,14 +82,10 @@ for i = 1:length(altitudes)
     % Recalculate Power Required curve for this altitude
     % Assume Best Climb Speed is usually where excess power is max
     % We scan velocities to find max RC
-    V_scan = linspace(stall_speed(W, rho, S, CL_max), 80, 50);
+    V_scan = linspace(V_stall_all(i), 80, 50);
     [Pr_h, ~] = power_required(rho, V_scan, S, CD0, k, W);
     
-    % Power Available drops with density (approx for unsupercharged piston)
-    sigma = rho / rho_sl;
-    Pa_h = Pa_sl * sigma * eta_prop; 
-    
-    RC_vec = rate_of_climb(Pa_h, Pr_h, W);
+    RC_vec = rate_of_climb(Pa_h_all(i), Pr_h, W);
     RC_max_vec(i) = max(RC_vec);
 end
 
