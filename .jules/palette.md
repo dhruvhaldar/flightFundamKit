@@ -1,3 +1,6 @@
+## 2024-06-06 - Accessible Tooltips for Technical Forms
+**Learning:** Adding descriptions to highly technical form fields (like abbreviations or acronyms) is a major UX win, but placing them inside the `<Label>` causes screen readers to over-read the description every time the field is focused.
+**Action:** Always place the tooltip trigger (e.g. an Info icon) outside of the `<Label>` as an accessible `<button>` so keyboard users can discover it. Simultaneously, add a visually hidden `<p>` with the description and link it to the `<Input>` via `aria-describedby` so screen readers announce it naturally upon input focus.
 ## 2024-05-24 - Controlled Number Inputs in React
 **Learning:** Controlled number inputs (`type="number"`) in React can be frustrating because intermediate states (like "0." or empty strings) are often coerced to valid numbers (like 0) immediately, causing cursor jumps or data loss.
 **Action:** When precise decimal input is required, store the input value as a string in local state and parse it to a number only for the parent/logic layer. Use a robust sync mechanism that respects user intent (e.g., preserving "0.") when syncing back from parent props.
