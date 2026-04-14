@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { RotateCcw, Check } from "lucide-react"
+import { RotateCcw, Check, Info } from "lucide-react"
 import { AircraftParams } from "@/types"
 
 interface AircraftParametersProps {
@@ -25,16 +25,16 @@ const DEFAULT_PARAMS: AircraftParams = {
   SFC: 0.45
 }
 
-const PARAM_CONFIG: Record<keyof AircraftParams, { label: string; step?: string }> = {
-  m: { label: "Mass (kg)", step: "1" },
-  S: { label: "Wing Area (m²)", step: "0.1" },
-  b: { label: "Wingspan (m)", step: "0.1" },
-  e: { label: "Oswald Efficiency (e)", step: "0.01" },
-  CD0: { label: "Zero-Lift Drag (CD0)", step: "0.001" },
-  P_bhp: { label: "Power (hp)", step: "1" },
-  eta_prop: { label: "Prop Efficiency", step: "0.01" },
-  CL_max: { label: "Max Lift Coeff (CL_max)", step: "0.1" },
-  SFC: { label: "SFC (lb/hp/hr)", step: "0.01" }
+const PARAM_CONFIG: Record<keyof AircraftParams, { label: string; step?: string; desc: string }> = {
+  m: { label: "Mass (kg)", step: "1", desc: "Total aircraft mass including payload and fuel." },
+  S: { label: "Wing Area (m²)", step: "0.1", desc: "Total planform area of the wings." },
+  b: { label: "Wingspan (m)", step: "0.1", desc: "Distance from left to right wingtip." },
+  e: { label: "Oswald Efficiency (e)", step: "0.01", desc: "Correction factor for non-ideal lift distribution (typically 0.7 - 0.85)." },
+  CD0: { label: "Zero-Lift Drag (CD0)", step: "0.001", desc: "Parasite drag coefficient at zero lift." },
+  P_bhp: { label: "Power (hp)", step: "1", desc: "Maximum engine shaft brake horsepower." },
+  eta_prop: { label: "Prop Efficiency", step: "0.01", desc: "Propeller efficiency factor (typically 0.75 - 0.85)." },
+  CL_max: { label: "Max Lift Coeff (CL_max)", step: "0.1", desc: "Maximum lift coefficient before aerodynamic stall." },
+  SFC: { label: "SFC (lb/hp/hr)", step: "0.01", desc: "Specific Fuel Consumption (mass of fuel per hour per hp)." }
 }
 
 const validateParam = (key: keyof AircraftParams, val: number): string | null => {
@@ -214,12 +214,22 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {group.keys.map((key) => (
                   <div key={key}>
-                    <Label
-                      htmlFor={key}
-                      className={errors[key] ? "text-destructive" : ""}
-                    >
-                      {PARAM_CONFIG[key].label} <span className="text-destructive" aria-hidden="true">*</span>
-                    </Label>
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <Label
+                        htmlFor={key}
+                        className={errors[key] ? "text-destructive" : ""}
+                      >
+                        {PARAM_CONFIG[key].label} <span className="text-destructive" aria-hidden="true">*</span>
+                      </Label>
+                      <button
+                        type="button"
+                        title={PARAM_CONFIG[key].desc}
+                        className="text-muted-foreground hover:text-foreground cursor-help transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm inline-flex items-center justify-center"
+                        aria-label={`Help: ${PARAM_CONFIG[key].desc}`}
+                      >
+                        <Info className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    </div>
                     <Input
                       id={key}
                       type="number"
@@ -236,9 +246,12 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                       }}
                       className={errors[key] ? "border-destructive focus-visible:ring-destructive" : ""}
                       aria-invalid={!!errors[key]}
-                      aria-describedby={errors[key] ? `${key}-error` : undefined}
+                      aria-describedby={`${errors[key] ? `${key}-error ` : ''}${key}-desc`}
                       placeholder={`e.g. ${DEFAULT_PARAMS[key]}`}
                     />
+                    <p id={`${key}-desc`} className="sr-only">
+                      {PARAM_CONFIG[key].desc}
+                    </p>
                     {errors[key] && (
                       <p id={`${key}-error`} className="text-xs text-destructive mt-1 font-medium" role="alert">
                         {errors[key]}
