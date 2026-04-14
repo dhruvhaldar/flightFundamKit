@@ -139,3 +139,7 @@
 ## 2026-06-05 - Tooltips on Disabled Buttons
 **Learning:** Native `title` tooltips and standard hover events do not trigger on form elements (like `<button>`) that are `disabled`, because browsers often apply `pointer-events: none` or natively swallow events on disabled controls. This means users trying to discover *why* a button is disabled receive no feedback, and keyboard users are entirely skipped since disabled elements are removed from the tab order.
 **Action:** To provide accessible tooltips on disabled buttons, always wrap the `<button>` in a parent element (like a `<span>`) that holds the `title` attribute. Furthermore, dynamically apply `tabIndex={0}` to the wrapper *only* when the inner button is disabled, ensuring keyboard users can focus the wrapper to hear the explanation for the disabled state without interfering with standard tab flow when the button is active.
+
+## 2026-06-05 - Inaccessible Mobile Tooltips via native title
+**Learning:** Using an interactive element like `<button title="...">` without an `onClick` handler creates a "fake" interactive target. While keyboard users can focus it, touch users on mobile devices cannot trigger the native `title` attribute via tap, leaving the help text completely inaccessible.
+**Action:** When providing helpful context on interactive labels (e.g., info icons), always bind an explicit `onClick` toggle that reveals the text inline or use an accessible tooltip component, updating `aria-expanded` and `aria-controls` appropriately.
