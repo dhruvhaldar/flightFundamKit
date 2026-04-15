@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, memo } from "react"
+import { useState, useEffect, memo, useRef } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -55,6 +55,7 @@ function CopyButton({ value, label }: { value: string; label: string }) {
 const AtmosphereCalculator = memo(function AtmosphereCalculator() {
   const [altitudeStr, setAltitudeStr] = useState<string>("0")
   const [isTouched, setIsTouched] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   // Derive result directly from input state
   let result: { T: number; P: number; rho: number; a: number } | null = null
@@ -87,6 +88,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               type="number"
               step="any"
               id="altitude"
+              ref={inputRef}
               value={altitudeStr}
               onChange={(e) => setAltitudeStr(e.target.value)}
               onFocus={(e) => e.target.select()}
@@ -180,7 +182,10 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setAltitudeStr("0")}
+                onClick={() => {
+                  setAltitudeStr("0")
+                  setTimeout(() => inputRef.current?.focus(), 0)
+                }}
                 className="mt-2"
               >
                 Use Sea Level

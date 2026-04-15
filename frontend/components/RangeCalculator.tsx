@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -57,6 +57,8 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
 
   const [isFuelTouched, setIsFuelTouched] = useState(false)
   const [isAltTouched, setIsAltTouched] = useState(false)
+
+  const fuelInputRef = useRef<HTMLInputElement>(null)
 
   // Validation
   const fuelMass = parseFloat(fuelMassStr)
@@ -138,6 +140,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               type="number"
               step="any"
               id="fuelMass"
+              ref={fuelInputRef}
               value={fuelMassStr}
               onChange={(e) => setFuelMassStr(e.target.value)}
               onFocus={(e) => e.target.select()}
@@ -290,7 +293,11 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => { setFuelMassStr("150"); setCruiseAltitudeStr("2000"); }}
+              onClick={() => {
+                setFuelMassStr("150");
+                setCruiseAltitudeStr("2000");
+                setTimeout(() => fuelInputRef.current?.focus(), 0)
+              }}
               className="mt-2"
             >
               Load Example Values
