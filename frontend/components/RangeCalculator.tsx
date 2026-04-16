@@ -25,19 +25,21 @@ function CopyButton({ value, label }: { value: string; label: string }) {
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className={`h-6 w-6 ml-2 transition-all ${copied ? "text-foreground scale-110" : "text-muted-foreground hover:text-foreground hover:scale-105"}`}
-      onClick={handleCopy}
-      title={copied ? "Copied!" : "Copy to clipboard"}
-      aria-label={copied ? `Copied ${label} to clipboard` : `Copy ${label} value of ${value}`}
-    >
-      {copied ? <Check className="h-3 w-3" aria-hidden="true" /> : <Copy className="h-3 w-3" aria-hidden="true" />}
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        className={`h-6 w-6 ml-2 transition-all ${copied ? "text-foreground scale-110" : "text-muted-foreground hover:text-foreground hover:scale-105"}`}
+        onClick={handleCopy}
+        title={copied ? "Copied!" : "Copy to clipboard"}
+        aria-label={copied ? `Copied ${label} to clipboard` : `Copy ${label} value of ${value}`}
+      >
+        {copied ? <Check className="h-3 w-3" aria-hidden="true" /> : <Copy className="h-3 w-3" aria-hidden="true" />}
+      </Button>
       <span aria-live="polite" className="sr-only">
         {copied ? `Copied ${label} to clipboard` : ""}
       </span>
-    </Button>
+    </>
   )
 }
 
