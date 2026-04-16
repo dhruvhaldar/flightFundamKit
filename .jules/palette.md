@@ -143,3 +143,6 @@
 ## 2026-06-05 - Inaccessible Mobile Tooltips via native title
 **Learning:** Using an interactive element like `<button title="...">` without an `onClick` handler creates a "fake" interactive target. While keyboard users can focus it, touch users on mobile devices cannot trigger the native `title` attribute via tap, leaving the help text completely inaccessible.
 **Action:** When providing helpful context on interactive labels (e.g., info icons), always bind an explicit `onClick` toggle that reveals the text inline or use an accessible tooltip component, updating `aria-expanded` and `aria-controls` appropriately.
+## 2026-04-16 - Prevent aria-live nesting and improve skip link target
+**Learning:** Nesting `aria-live` regions inside interactive elements like `<button>` that have their own `aria-label` prevents screen readers from announcing updates. Also, 'Skip to content' targets need `tabIndex={-1}` to receive programmatic focus properly.
+**Action:** Always place `aria-live` regions adjacent to interactive elements rather than inside them. Ensure skip link targets have `tabIndex={-1}` and `focus:outline-none` applied to manage focus cleanly without visual artifacts.

@@ -76,7 +76,7 @@ export default function Home() {
   }
 
   return (
-    <main id="main-content" className="container mx-auto p-4 md:p-8 space-y-8">
+    <main id="main-content" tabIndex={-1} className="container mx-auto p-4 md:p-8 space-y-8 focus:outline-none">
       <div className="flex flex-col space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Flight Fundamentals Toolkit</h1>
         <p className="text-muted-foreground">
