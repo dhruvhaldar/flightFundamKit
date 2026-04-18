@@ -146,3 +146,7 @@
 ## 2026-04-16 - Prevent aria-live nesting and improve skip link target
 **Learning:** Nesting `aria-live` regions inside interactive elements like `<button>` that have their own `aria-label` prevents screen readers from announcing updates. Also, 'Skip to content' targets need `tabIndex={-1}` to receive programmatic focus properly.
 **Action:** Always place `aria-live` regions adjacent to interactive elements rather than inside them. Ensure skip link targets have `tabIndex={-1}` and `focus:outline-none` applied to manage focus cleanly without visual artifacts.
+
+## 2024-05-24 - Focus Indicators on Disabled Element Tooltip Wrappers
+**Learning:** When wrapping disabled interactive elements (like `<button disabled>`) in a focusable `<span>` (`tabIndex={0}`) to ensure native `title` tooltips or `aria-label`s remain accessible to keyboard users and screen readers, the wrapper inherently lacks native browser focus styles. Without explicitly adding focus rings to the wrapper, keyboard users have no visual indication that they have focused the element to read its tooltip.
+**Action:** Always apply explicit focus indicator styles (e.g., `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md`) to the focusable wrapper element, just as you would for a native interactive element.

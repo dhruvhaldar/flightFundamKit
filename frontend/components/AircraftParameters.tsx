@@ -174,7 +174,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
         </div>
         <span
           title={isDefault && !isResetting ? "Already at default values" : "Reset to Standard C172 Defaults"}
-          className={isDefault && !isResetting ? "inline-block cursor-not-allowed" : "inline-block"}
+          className={isDefault && !isResetting ? "inline-block cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md" : "inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"}
           tabIndex={isDefault && !isResetting ? 0 : undefined}
           aria-label={isDefault && !isResetting ? "Reset button is disabled because values are already at default" : undefined}
         >
