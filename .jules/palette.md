@@ -150,3 +150,7 @@
 ## 2026-06-05 - Visual Focus Indicator for Disabled Wrappers
 **Learning:** Wrapping a disabled button in a `span` with `tabIndex={0}` correctly makes the tooltip (explaining why it's disabled) accessible to keyboard users by placing it in the tab order. However, standard CSS resets (like Tailwind's) remove default outlines, meaning keyboard users tabbing to this wrapper will not see any visual focus ring, leaving them unsure of their current position on the page.
 **Action:** When wrapping a disabled interactive element in a focusable `span` (`tabIndex={0}`) to maintain tooltip accessibility, always explicitly apply visual focus indicator styles (e.g., Tailwind's `focus-visible:ring-2`) to the wrapper to ensure keyboard users can clearly see the focus state.
+
+## 2026-06-05 - Empty Hash States in SPA Tab Routing
+**Learning:** When syncing active tab states to the URL hash, failing to explicitly handle an empty hash state (`hash === ""`) breaks the native browser "Back" button experience. If a user lands on the root URL, clicks a tab (updating the hash to `#range`), and then clicks "Back" (clearing the hash to the root URL), the UI will remain stuck on the previous tab instead of reverting to the default tab.
+**Action:** Always include a fallback in `hashchange` event listeners that resets the UI to the default state (e.g., `if (!hash) setActiveTab("default")`) to ensure browser history navigation functions correctly.

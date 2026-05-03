@@ -47,6 +47,8 @@ export default function Home() {
       const hash = window.location.hash.replace("#", "")
       if (["atmosphere", "parameters", "performance", "range"].includes(hash)) {
         setActiveTab(hash)
+      } else if (!hash) {
+        setActiveTab("atmosphere")
       }
     }
 
