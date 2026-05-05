@@ -195,7 +195,8 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
                       variant={isActive ? "default" : "outline"}
                       size="sm"
                       onClick={() => setFuelMassStr(targetValStr)}
-                      aria-label={`Set fuel mass to ${frac * 100}% of MTOW`}
+                      title={`${targetVal} kg`}
+                      aria-label={`Set fuel mass to ${frac * 100}% of MTOW (${targetVal} kg)`}
                       aria-pressed={isActive}
                       className="h-7 text-xs"
                     >

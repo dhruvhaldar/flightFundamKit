@@ -154,3 +154,7 @@
 ## 2026-06-05 - Empty Hash States in SPA Tab Routing
 **Learning:** When syncing active tab states to the URL hash, failing to explicitly handle an empty hash state (`hash === ""`) breaks the native browser "Back" button experience. If a user lands on the root URL, clicks a tab (updating the hash to `#range`), and then clicks "Back" (clearing the hash to the root URL), the UI will remain stuck on the previous tab instead of reverting to the default tab.
 **Action:** Always include a fallback in `hashchange` event listeners that resets the UI to the default state (e.g., `if (!hash) setActiveTab("default")`) to ensure browser history navigation functions correctly.
+
+## 2026-06-05 - Absolute Context for Relative Presets
+**Learning:** When providing relative presets (like "10%", "20%") for dynamic capacities (like fuel mass based on MTOW), users lack context on the exact resulting value until they click the button. This forces trial-and-error interaction, especially when trying to match specific absolute requirements.
+**Action:** Always provide the absolute calculated value as a tooltip (`title`) and append it to the `aria-label` on relative preset buttons, ensuring both sighted and screen-reader users have immediate context of the exact value before interacting.
