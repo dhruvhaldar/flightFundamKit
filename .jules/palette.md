@@ -158,3 +158,6 @@
 ## 2026-06-05 - Absolute Context for Relative Presets
 **Learning:** When providing relative presets (like "10%", "20%") for dynamic capacities (like fuel mass based on MTOW), users lack context on the exact resulting value until they click the button. This forces trial-and-error interaction, especially when trying to match specific absolute requirements.
 **Action:** Always provide the absolute calculated value as a tooltip (`title`) and append it to the `aria-label` on relative preset buttons, ensuring both sighted and screen-reader users have immediate context of the exact value before interacting.
+## 2024-05-06 - Format numeric attributes for screen readers
+**Learning:** Using raw floats for `aria-valuenow` on progress bars (e.g. `33.33333333333333`) causes screen readers to announce uncomfortably long decimal values, harming the accessibility of the component.
+**Action:** Always round `aria-valuenow` to an integer, and provide a human-readable `aria-valuetext` (e.g., `"33.3%"`) to give screen reader users the same formatted context as sighted users.

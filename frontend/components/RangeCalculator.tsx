@@ -126,6 +126,9 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
     }
   }, [params, fuelMass, cruiseAltitude, isValidFuel, isValidAlt])
 
+  const fuelPercentage = !isNaN(fuelMass) && fuelMass >= 0 ? Math.min((fuelMass / params.m) * 100, 100) : 0
+  const fuelPercentageRounded = Math.round(fuelPercentage)
+
   return (
     <Card>
       <CardHeader>
@@ -167,19 +170,20 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
             <div id="fuel-helper" className="space-y-1.5">
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Fuel Load</span>
-                <span>{!isNaN(fuelMass) && fuelMass >= 0 ? `${((Math.min(fuelMass, params.m) / params.m) * 100).toFixed(1)}% of MTOW` : "0%"}</span>
+                <span>{fuelPercentage > 0 ? `${fuelPercentage.toFixed(1)}% of MTOW` : "0%"}</span>
               </div>
               <div
                 className="h-2 w-full bg-secondary rounded-full overflow-hidden"
                 role="progressbar"
-                aria-valuenow={!isNaN(fuelMass) && fuelMass >= 0 ? Math.min((fuelMass / params.m) * 100, 100) : 0}
+                aria-valuenow={fuelPercentageRounded}
                 aria-valuemin={0}
                 aria-valuemax={100}
+                aria-valuetext={`${fuelPercentage.toFixed(1)}%`}
                 aria-label="Fuel mass capacity"
               >
                 <div
                   className={`h-full transition-all duration-300 ${validationError ? "bg-destructive" : "bg-primary"}`}
-                  style={{ width: `${!isNaN(fuelMass) && fuelMass >= 0 ? Math.min((fuelMass / params.m) * 100, 100) : 0}%` }}
+                  style={{ width: `${fuelPercentage}%` }}
                 />
               </div>
               <p className="text-xs text-muted-foreground">Max available: {params.m} kg</p>
