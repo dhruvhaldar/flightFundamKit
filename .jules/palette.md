@@ -161,3 +161,7 @@
 ## 2024-05-06 - Format numeric attributes for screen readers
 **Learning:** Using raw floats for `aria-valuenow` on progress bars (e.g. `33.33333333333333`) causes screen readers to announce uncomfortably long decimal values, harming the accessibility of the component.
 **Action:** Always round `aria-valuenow` to an integer, and provide a human-readable `aria-valuetext` (e.g., `"33.3%"`) to give screen reader users the same formatted context as sighted users.
+
+## 2024-05-08 - Mobile UX for Fractional Number Inputs
+**Learning:** Relying solely on `<input type="number">` can degrade mobile UX for forms that require floating-point numbers (e.g., scientific parameters). On some mobile platforms (specifically iOS Safari), the default number keypad invoked by `type="number"` may omit the decimal key, making it impossible or very difficult for users to enter fractional values.
+**Action:** Always explicitly apply `inputMode="decimal"` to numeric inputs that require floating-point numbers. When building reusable UI input components, automatically inject `inputMode="decimal"` when `type="number"` is used, ensuring users always receive a keypad capable of decimal entry.
