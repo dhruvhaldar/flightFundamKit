@@ -29,6 +29,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         onFocus={handleFocus}
         onWheel={handleWheel}
+        inputMode={type === "number" ? "decimal" : undefined}
         ref={ref}
         {...props}
       />
