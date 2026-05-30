@@ -140,6 +140,9 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
     // Math.sqrt(stallBase * inv_rho) == Math.sqrt(stallBase) * inv_sqrt_rho
     const sqrtStallBase = Math.sqrt(stallBase)
 
+    // ⚡ Bolt Optimization: Hoist inverse scalar W calculation out of loop for simple multiplication
+    const invW = 1 / W
+
     for (let i = 0; i < len; i++) {
       const h = ALTITUDES[i]
       // ⚡ Bolt Optimization: Use pre-computed inverse density from global ATM_DATA
@@ -164,8 +167,8 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
 
       // ⚡ Bolt Optimization: Replace `inv_V_best` intermediate with direct division
       const Pr_best = parasiteConst * (V_best * V_best * V_best) + inducedConst / V_best
-      // ⚡ Bolt Optimization: Use direct division by W rather than factored inverse W constants
-      const max_RC = (Pa_h - Pr_best) / W
+      // ⚡ Bolt Optimization: Use multiplication by hoisted inverse W constant rather than scalar division
+      const max_RC = (Pa_h - Pr_best) * invW
 
       const point = { h, RC: max_RC }
       data[i] = point
