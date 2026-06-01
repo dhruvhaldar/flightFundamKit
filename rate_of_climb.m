@@ -12,5 +12,9 @@ function RC = rate_of_climb(Pa, Pr, W)
     % Outputs:
     %   RC  - Rate of Climb (m/s)
 
-    RC = (Pa - Pr) ./ W;
+    % ⚡ Bolt Optimization: Replace element-wise division with inverse multiplication.
+    % Hoisting the inversion (1 ./ W) and multiplying is significantly faster
+    % in MATLAB/Octave than dividing a large array (Pa - Pr) by W directly.
+    invW = 1 ./ W;
+    RC = (Pa - Pr) .* invW;
 end
