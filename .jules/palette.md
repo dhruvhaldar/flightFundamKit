@@ -165,3 +165,7 @@
 ## 2024-05-08 - Mobile UX for Fractional Number Inputs
 **Learning:** Relying solely on `<input type="number">` can degrade mobile UX for forms that require floating-point numbers (e.g., scientific parameters). On some mobile platforms (specifically iOS Safari), the default number keypad invoked by `type="number"` may omit the decimal key, making it impossible or very difficult for users to enter fractional values.
 **Action:** Always explicitly apply `inputMode="decimal"` to numeric inputs that require floating-point numbers. When building reusable UI input components, automatically inject `inputMode="decimal"` when `type="number"` is used, ensuring users always receive a keypad capable of decimal entry.
+
+## 2026-06-02 - Prevent aria-describedby Over-reading
+**Learning:** Pointing `aria-describedby` to a complex wrapper element (like a `<div>` containing multiple sub-elements, labels, and interactive components like progress bars or preset buttons) causes screen readers to over-read the entire content of the wrapper when the input is focused. This results in a noisy and confusing experience.
+**Action:** Always point `aria-describedby` to specific, focused text elements (like a helper `<p>` tag) rather than large container divs. Ensure helper descriptions remain concise.

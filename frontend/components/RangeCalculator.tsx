@@ -158,7 +158,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               }}
               className={validationError ? "border-destructive focus-visible:ring-destructive" : ""}
               aria-invalid={!!validationError}
-              aria-describedby={validationError ? "fuel-error fuel-helper" : "fuel-helper"}
+              aria-describedby={validationError ? "fuel-error fuel-desc" : "fuel-desc"}
               placeholder={`e.g. 150`}
               required
             />
@@ -167,7 +167,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
                 {validationError}
               </p>
             )}
-            <div id="fuel-helper" className="space-y-1.5">
+            <div className="space-y-1.5">
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Fuel Load</span>
                 <span>{fuelPercentage > 0 ? `${fuelPercentage.toFixed(1)}% of MTOW` : "0%"}</span>
@@ -186,7 +186,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
                   style={{ width: `${fuelPercentage}%` }}
                 />
               </div>
-              <p className="text-xs text-muted-foreground">Max available: {params.m} kg</p>
+              <p id="fuel-desc" className="text-xs text-muted-foreground">Max available: {params.m} kg</p>
               <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Fuel mass presets">
                 {[0.1, 0.2, 0.3, 0.4].map((frac) => {
                   const targetVal = Math.round(params.m * frac)
