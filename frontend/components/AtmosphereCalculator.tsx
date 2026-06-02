@@ -83,8 +83,8 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
       <CardContent>
         <div className="space-y-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="altitude" className={showError ? "text-destructive" : ""}>
-              Altitude (m) <span className="text-destructive" aria-hidden="true">*</span>
+            <Label htmlFor="altitude" className={showError ? "text-red-600 dark:text-red-400" : ""}>
+              Altitude (m) <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
             </Label>
             <Input
               type="number"
@@ -102,13 +102,13 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
                 }
               }}
               placeholder="e.g. 0 (Sea Level)"
-              className={showError ? "border-destructive focus-visible:ring-destructive" : ""}
+              className={showError ? "border-red-600 dark:border-red-400 focus-visible:ring-red-600 dark:focus-visible:ring-red-400" : ""}
               aria-invalid={showError}
               aria-describedby={showError ? "altitude-error altitude-desc" : "altitude-desc"}
               required
             />
             {showError && (
-              <p id="altitude-error" className="text-xs text-destructive font-medium" role="alert">
+              <p id="altitude-error" className="text-xs text-red-600 dark:text-red-400 font-medium" role="alert">
                 Required
               </p>
             )}

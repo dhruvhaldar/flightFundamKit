@@ -138,8 +138,8 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="fuelMass" className={validationError ? "text-destructive" : ""}>
-              Fuel Mass (kg) <span className="text-destructive" aria-hidden="true">*</span>
+            <Label htmlFor="fuelMass" className={validationError ? "text-red-600 dark:text-red-400" : ""}>
+              Fuel Mass (kg) <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
             </Label>
             <Input
               type="number"
@@ -156,14 +156,14 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
                   e.currentTarget.blur()
                 }
               }}
-              className={validationError ? "border-destructive focus-visible:ring-destructive" : ""}
+              className={validationError ? "border-red-600 dark:border-red-400 focus-visible:ring-red-600 dark:focus-visible:ring-red-400" : ""}
               aria-invalid={!!validationError}
               aria-describedby={validationError ? "fuel-error fuel-desc" : "fuel-desc"}
               placeholder={`e.g. 150`}
               required
             />
             {validationError && (
-              <p id="fuel-error" className="text-sm text-destructive font-medium" role="alert">
+              <p id="fuel-error" className="text-sm text-red-600 dark:text-red-400 font-medium" role="alert">
                 {validationError}
               </p>
             )}
@@ -182,7 +182,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
                 aria-label="Fuel mass capacity"
               >
                 <div
-                  className={`h-full transition-all duration-300 ${validationError ? "bg-destructive" : "bg-primary"}`}
+                  className={`h-full transition-all duration-300 ${validationError ? "bg-red-600 dark:bg-red-500" : "bg-primary"}`}
                   style={{ width: `${fuelPercentage}%` }}
                 />
               </div>
@@ -213,8 +213,8 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="cruiseAltitude" className={altValidationError ? "text-destructive" : ""}>
-              Cruise Altitude (m) <span className="text-destructive" aria-hidden="true">*</span>
+            <Label htmlFor="cruiseAltitude" className={altValidationError ? "text-red-600 dark:text-red-400" : ""}>
+              Cruise Altitude (m) <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
             </Label>
             <Input
               type="number"
@@ -231,13 +231,13 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
                   e.currentTarget.blur()
                 }
               }}
-              className={altValidationError ? "border-destructive focus-visible:ring-destructive" : ""}
+              className={altValidationError ? "border-red-600 dark:border-red-400 focus-visible:ring-red-600 dark:focus-visible:ring-red-400" : ""}
               aria-invalid={!!altValidationError}
               aria-describedby={altValidationError ? "alt-error alt-helper" : "alt-helper"}
               required
             />
             {altValidationError && (
-              <p id="alt-error" className="text-sm text-destructive font-medium" role="alert">
+              <p id="alt-error" className="text-sm text-red-600 dark:text-red-400 font-medium" role="alert">
                 {altValidationError}
               </p>
             )}

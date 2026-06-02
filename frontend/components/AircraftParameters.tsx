@@ -188,7 +188,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
           >
             {isResetting ? (
               <>
-                <Check className="mr-2 h-4 w-4 text-green-500" aria-hidden="true" />
+                <Check className="mr-2 h-4 w-4 text-green-700 dark:text-green-500" aria-hidden="true" />
                 Restored
               </>
             ) : (
@@ -218,9 +218,9 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <Label
                         htmlFor={key}
-                        className={errors[key] ? "text-destructive" : ""}
+                        className={errors[key] ? "text-red-600 dark:text-red-400" : ""}
                       >
-                        {PARAM_CONFIG[key].label} <span className="text-destructive" aria-hidden="true">*</span>
+                        {PARAM_CONFIG[key].label} <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
                       </Label>
                       <button
                         type="button"
@@ -248,7 +248,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                           e.currentTarget.blur()
                         }
                       }}
-                      className={errors[key] ? "border-destructive focus-visible:ring-destructive" : ""}
+                      className={errors[key] ? "border-red-600 dark:border-red-400 focus-visible:ring-red-600 dark:focus-visible:ring-red-400" : ""}
                       aria-invalid={!!errors[key]}
                       aria-describedby={`${errors[key] ? `${key}-error ` : ''}${key}-desc`}
                       placeholder={`e.g. ${DEFAULT_PARAMS[key]}`}
@@ -260,7 +260,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                       {PARAM_CONFIG[key].desc}
                     </p>
                     {errors[key] && (
-                      <p id={`${key}-error`} className="text-xs text-destructive mt-1 font-medium" role="alert">
+                      <p id={`${key}-error`} className="text-xs text-red-600 dark:text-red-400 mt-1 font-medium" role="alert">
                         {errors[key]}
                       </p>
                     )}
