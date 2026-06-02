@@ -41,7 +41,10 @@ function R = range_breguet(Wi, Wf, CL, CD, SFC, V, is_prop, eta)
         % R = (V / c_t) * (CL/CD) * ln(Wi / Wf)
         % SFC assumed to be c_t in units of [1/s] (Newtons of fuel per Newton of thrust per second)
         
-        const_factor = (V / SFC) * log_weight_ratio;
+        % ⚡ Bolt Optimization: Group scalar operations into a single constant
+        % before multiplying with the velocity array. This eliminates a redundant
+        % O(N) array operation.
+        const_factor = (log_weight_ratio / SFC) .* V;
     end
 
     R = const_factor * L_D;
