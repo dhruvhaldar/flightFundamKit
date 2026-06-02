@@ -169,3 +169,7 @@
 ## 2026-06-02 - Prevent aria-describedby Over-reading
 **Learning:** Pointing `aria-describedby` to a complex wrapper element (like a `<div>` containing multiple sub-elements, labels, and interactive components like progress bars or preset buttons) causes screen readers to over-read the entire content of the wrapper when the input is focused. This results in a noisy and confusing experience.
 **Action:** Always point `aria-describedby` to specific, focused text elements (like a helper `<p>` tag) rather than large container divs. Ensure helper descriptions remain concise.
+
+## 2026-06-05 - Shadcn UI Destructive Token Contrast in Dark Mode
+**Learning:** Using Shadcn UI's `--destructive` token directly for text color (`text-destructive`) or borders creates severe accessibility violations in dark mode. The token is optimized as a button background (`#7f1d1d` dark red in standard configurations), which results in illegible error messages and invisible borders against dark surfaces (`#171717`).
+**Action:** Always use explicit, contrast-safe text and border colors (like `text-red-600 dark:text-red-400` and `border-red-600 dark:border-red-400`) for form validation messages and error states, instead of repurposing background-optimized design tokens like `text-destructive`.
