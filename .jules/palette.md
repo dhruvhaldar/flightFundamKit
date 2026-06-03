@@ -173,3 +173,6 @@
 ## 2026-06-05 - Shadcn UI Destructive Token Contrast in Dark Mode
 **Learning:** Using Shadcn UI's `--destructive` token directly for text color (`text-destructive`) or borders creates severe accessibility violations in dark mode. The token is optimized as a button background (`#7f1d1d` dark red in standard configurations), which results in illegible error messages and invisible borders against dark surfaces (`#171717`).
 **Action:** Always use explicit, contrast-safe text and border colors (like `text-red-600 dark:text-red-400` and `border-red-600 dark:border-red-400`) for form validation messages and error states, instead of repurposing background-optimized design tokens like `text-destructive`.
+## 2024-10-24 - Touch Device Tooltip Accessibility
+**Learning:** Relying solely on the native `title` attribute for temporary interaction feedback (such as a 'Copied!' message on a clipboard button) provides a poor user experience on touch/mobile devices because they lack a hover state.
+**Action:** Dynamically adjust the component's layout to conditionally render inline text feedback alongside the icon to ensure the feedback is universally accessible.
