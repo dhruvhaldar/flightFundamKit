@@ -59,6 +59,7 @@ const validateParam = (key: keyof AircraftParams, val: number): string | null =>
 
 export default function AircraftParameters({ params, setParams }: AircraftParametersProps) {
   const [isResetting, setIsResetting] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false)
   const [openHelps, setOpenHelps] = useState<Partial<Record<keyof AircraftParams, boolean>>>({})
 
   const isDefault = Object.keys(DEFAULT_PARAMS).every(
@@ -150,7 +151,20 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
     }
   }, [isResetting])
 
+  useEffect(() => {
+    if (confirmReset) {
+      const timeout = setTimeout(() => setConfirmReset(false), 3000)
+      return () => clearTimeout(timeout)
+    }
+  }, [confirmReset])
+
   const handleReset = () => {
+    if (!confirmReset) {
+      setConfirmReset(true)
+      return
+    }
+
+    setConfirmReset(false)
     const newParams = { ...DEFAULT_PARAMS }
     setParams(newParams)
     // We also explicitly reset local params to ensure UI updates immediately
@@ -179,7 +193,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
           aria-label={isDefault && !isResetting ? "Reset button is disabled because values are already at default" : undefined}
         >
           <Button
-            variant={isResetting ? "secondary" : "outline"}
+            variant={isResetting ? "secondary" : confirmReset ? "destructive" : "outline"}
             size="sm"
             onClick={handleReset}
             className="h-8 px-2 lg:px-3 transition-all"
@@ -190,6 +204,11 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
               <>
                 <Check className="mr-2 h-4 w-4 text-green-700 dark:text-green-500" aria-hidden="true" />
                 Restored
+              </>
+            ) : confirmReset ? (
+              <>
+                <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
+                Click to confirm
               </>
             ) : (
               <>
