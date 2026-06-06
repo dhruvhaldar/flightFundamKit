@@ -16,6 +16,8 @@ function CL = lift_coeff(W, rho, V, S)
     % ⚡ Bolt Optimization: Algebraically expand and simplify CL formula
     % to avoid intermediate vector allocation (q) and redundant operations.
     % CL = W / (0.5 * rho * V^2 * S) = (2 * W / (rho * S)) / V^2
-    const_factor = (2 * W) ./ (rho .* S);
-    CL = const_factor ./ (V.^2);
+    % Additionally group the scalar math (2 * W / S) first to avoid
+    % an element-wise multiplication vector allocation for rho .* S
+    scalar_part = (2 * W) / S;
+    CL = (scalar_part ./ rho) ./ (V.^2);
 end
