@@ -12,9 +12,10 @@ function RC = rate_of_climb(Pa, Pr, W)
     % Outputs:
     %   RC  - Rate of Climb (m/s)
 
-    % ⚡ Bolt Optimization: Replace element-wise division with inverse multiplication.
-    % Hoisting the inversion (1 ./ W) and multiplying is significantly faster
-    % in MATLAB/Octave than dividing a large array (Pa - Pr) by W directly.
-    invW = 1 ./ W;
-    RC = (Pa - Pr) .* invW;
+    % ⚡ Bolt Optimization: Use direct element-wise division.
+    % In MATLAB/Octave, direct division (./) is natively optimized. Replacing
+    % it with inverse multiplication (.* (1 ./ W)) is an anti-optimization
+    % because it forces the allocation of an intermediate array and adds
+    % unnecessary mathematical operations, degrading performance.
+    RC = (Pa - Pr) ./ W;
 end
