@@ -287,14 +287,14 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
               <div className="flex justify-between items-center border-b pb-2">
                 <dt className="text-sm font-medium">Best Glide Range</dt>
                 <dd className="font-bold flex items-center">
-                  {(result.glideRange / 1000).toFixed(1)} <span className="text-sm font-normal text-muted-foreground ml-1">km</span>
+                  {(result.glideRange / 1000).toFixed(1)} <abbr title="kilometers" className="text-sm font-normal text-muted-foreground ml-1 cursor-help no-underline">km</abbr>
                   <CopyButton value={(result.glideRange / 1000).toFixed(1)} label="Best Glide Range" />
                 </dd>
               </div>
               <div className="flex justify-between items-center">
                 <dt className="text-sm font-medium">Max Range (Breguet)</dt>
                 <dd className="font-bold text-primary flex items-center">
-                  {(result.breguetRange / 1000).toFixed(1)} <span className="text-sm font-normal text-muted-foreground ml-1">km</span>
+                  {(result.breguetRange / 1000).toFixed(1)} <abbr title="kilometers" className="text-sm font-normal text-muted-foreground ml-1 cursor-help no-underline">km</abbr>
                   <CopyButton value={(result.breguetRange / 1000).toFixed(1)} label="Max Range (Breguet)" />
                 </dd>
               </div>

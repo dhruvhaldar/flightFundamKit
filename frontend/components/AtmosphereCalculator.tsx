@@ -150,7 +150,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Temperature</dt>
                   <dd className="text-2xl font-bold tracking-tight flex items-center">
-                    {result.T.toFixed(2)} <span className="text-sm font-normal text-muted-foreground ml-1">K</span>
+                    {result.T.toFixed(2)} <abbr title="Kelvin" className="text-sm font-normal text-muted-foreground ml-1 cursor-help no-underline">K</abbr>
                     <CopyButton value={result.T.toFixed(2)} label="Temperature" />
                   </dd>
                   <dd className="text-xs text-muted-foreground">
@@ -160,7 +160,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Pressure</dt>
                   <dd className="text-2xl font-bold tracking-tight flex items-center">
-                    {(result.P / 100).toFixed(2)} <span className="text-sm font-normal text-muted-foreground ml-1">hPa</span>
+                    {(result.P / 100).toFixed(2)} <abbr title="Hectopascals" className="text-sm font-normal text-muted-foreground ml-1 cursor-help no-underline">hPa</abbr>
                     <CopyButton value={(result.P / 100).toFixed(2)} label="Pressure (hPa)" />
                   </dd>
                   <dd className="text-xs text-muted-foreground flex items-center gap-1">
@@ -171,14 +171,14 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Density</dt>
                   <dd className="text-2xl font-bold tracking-tight flex items-center">
-                    {result.rho.toFixed(4)} <span className="text-sm font-normal text-muted-foreground ml-1">kg/m³</span>
+                    {result.rho.toFixed(4)} <abbr title="kilograms per cubic meter" className="text-sm font-normal text-muted-foreground ml-1 cursor-help no-underline">kg/m³</abbr>
                     <CopyButton value={result.rho.toFixed(4)} label="Density" />
                   </dd>
                 </div>
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Speed of Sound</dt>
                   <dd className="text-2xl font-bold tracking-tight flex items-center">
-                    {result.a.toFixed(1)} <span className="text-sm font-normal text-muted-foreground ml-1">m/s</span>
+                    {result.a.toFixed(1)} <abbr title="meters per second" className="text-sm font-normal text-muted-foreground ml-1 cursor-help no-underline">m/s</abbr>
                     <CopyButton value={result.a.toFixed(1)} label="Speed of Sound" />
                   </dd>
                 </div>
