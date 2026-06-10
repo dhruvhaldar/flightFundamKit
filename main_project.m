@@ -72,7 +72,9 @@ RC_max_vec = zeros(size(altitudes));
 % Power available and Stall Speed can be computed for all altitudes at once
 % to avoid redundant calculations per loop iteration.
 sigma_all = rho_all / rho_sl;
-Pa_h_all = Pa_sl .* sigma_all .* eta_prop;
+% ⚡ Bolt Optimization: Pre-calculate scalar constant to avoid intermediate array allocation
+const_Pa_factor = Pa_sl .* eta_prop;
+Pa_h_all = const_Pa_factor .* sigma_all;
 V_stall_all = stall_speed(W, rho_all, S, CL_max);
 
 for i = 1:length(altitudes)
