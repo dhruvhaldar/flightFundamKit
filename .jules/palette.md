@@ -179,3 +179,27 @@
 ## 2024-06-06 - Two-Step Confirmation for Destructive Actions
 **Learning:** Modals can be overly disruptive for secondary destructive actions like "Reset Defaults".
 **Action:** Implement a two-step inline confirmation pattern using button state changes (e.g. outline to destructive variant, text changing to "Click to confirm") to protect user data from accidental clicks without the friction of a modal.
+
+## 2024-05-24 - Accessible Two-Step Action Confirmations
+**Learning:** We implemented a two-step confirmation for dangerous actions (like reset). While the button text changes to "Click to confirm", screen reader users relying solely on `aria-live` announcements were missing the interim context required to complete the action if the text alone wasn't re-read.
+**Action:** When implementing two-step confirm actions, always ensure the `aria-live` region associated with the element explicitly announces the required secondary interaction (e.g., "Please click again to confirm") during the interim confirmation state.
+
+## 2024-05-24 - Semantic Abbreviations for Technical Units
+**Learning:** Displaying raw technical units (like `hPa`, `kg/m³`) is clean visually but poorly accessible and potentially confusing to casual users. Appending invisible screen-reader text or complex tooltips is overkill.
+**Action:** Use the native `<abbr>` tag for all static technical unit abbreviations. Give them a full descriptive `title` attribute, `cursor-help`, and `no-underline`. This provides an accessible, native hover tooltip for visual users and correct semantic pronunciation for screen readers.
+
+## 2024-05-24 - Accessible Two-Step Action Confirmations
+**Learning:** We implemented a two-step confirmation for dangerous actions (like reset). While the button text changes to "Click to confirm", screen reader users relying solely on `aria-live` announcements were missing the interim context required to complete the action if the text alone wasn't re-read.
+**Action:** When implementing two-step confirm actions, always ensure the `aria-live` region associated with the element explicitly announces the required secondary interaction (e.g., "Please click again to confirm") during the interim confirmation state.
+
+## 2024-05-24 - Semantic Abbreviations for Technical Units
+**Learning:** Displaying raw technical units (like `hPa`, `kg/m³`) is clean visually but poorly accessible and potentially confusing to casual users. Appending invisible screen-reader text or complex tooltips is overkill.
+**Action:** Use the native `<abbr>` tag for all static technical unit abbreviations. Give them a full descriptive `title` attribute, `cursor-help`, and `no-underline`. This provides an accessible, native hover tooltip for visual users and correct semantic pronunciation for screen readers.
+
+## 2024-05-24 - Accessible Two-Step Action Confirmations
+**Learning:** We implemented a two-step confirmation for dangerous actions (like reset). While the button text changes to "Click to confirm", screen reader users relying solely on `aria-live` announcements were missing the interim context required to complete the action if the text alone wasn't re-read.
+**Action:** When implementing two-step confirm actions, always ensure the `aria-live` region associated with the element explicitly announces the required secondary interaction (e.g., "Please click again to confirm") during the interim confirmation state.
+
+## 2024-05-24 - Semantic Abbreviations for Technical Units
+**Learning:** Displaying raw technical units (like `hPa`, `kg/m³`) is clean visually but poorly accessible and potentially confusing to casual users. Appending invisible screen-reader text or complex tooltips is overkill.
+**Action:** Use the native `<abbr>` tag for all static technical unit abbreviations. Give them a full descriptive `title` attribute, `cursor-help`, and `no-underline`. This provides an accessible, native hover tooltip for visual users and correct semantic pronunciation for screen readers.

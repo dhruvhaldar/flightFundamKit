@@ -219,7 +219,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
           </Button>
         </span>
         <span aria-live="polite" className="sr-only">
-          {isResetting ? "Aircraft parameters reset to default values" : ""}
+          {isResetting ? "Aircraft parameters reset to default values" : confirmReset ? "Please click again to confirm reset" : ""}
         </span>
       </CardHeader>
       <CardContent>
