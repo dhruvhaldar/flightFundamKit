@@ -154,7 +154,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
                     <CopyButton value={result.T.toFixed(2)} label="Temperature" />
                   </dd>
                   <dd className="text-xs text-muted-foreground">
-                    {(result.T - 273.15).toFixed(1)} °C
+                    {(result.T - 273.15).toFixed(1)} <abbr title="Celsius" className="cursor-help no-underline">°C</abbr>
                   </dd>
                 </div>
                 <div className="space-y-1">
@@ -164,7 +164,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
                     <CopyButton value={(result.P / 100).toFixed(2)} label="Pressure (hPa)" />
                   </dd>
                   <dd className="text-xs text-muted-foreground flex items-center gap-1">
-                    {result.P.toFixed(0)} Pa
+                    {result.P.toFixed(0)} <abbr title="Pascals" className="cursor-help no-underline">Pa</abbr>
                     <CopyButton value={result.P.toFixed(0)} label="Pressure (Pa)" />
                   </dd>
                 </div>

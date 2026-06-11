@@ -203,3 +203,6 @@
 ## 2024-05-24 - Semantic Abbreviations for Technical Units
 **Learning:** Displaying raw technical units (like `hPa`, `kg/m³`) is clean visually but poorly accessible and potentially confusing to casual users. Appending invisible screen-reader text or complex tooltips is overkill.
 **Action:** Use the native `<abbr>` tag for all static technical unit abbreviations. Give them a full descriptive `title` attribute, `cursor-help`, and `no-underline`. This provides an accessible, native hover tooltip for visual users and correct semantic pronunciation for screen readers.
+## 2024-06-11 - Accessible Technical Units
+**Learning:** Wrapping raw technical text units (like `m/s`, `Pa`, `°C`) in semantic `<abbr>` tags with descriptive `title` attributes provides native tooltips for visual users and corrects pronunciation for screen readers.
+**Action:** Always wrap technical/scientific units in `<abbr title="...">` instead of using plain text to ensure accessibility without cluttering the UI.
