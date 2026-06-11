@@ -206,3 +206,6 @@
 ## 2024-06-11 - Accessible Technical Units
 **Learning:** Wrapping raw technical text units (like `m/s`, `Pa`, `°C`) in semantic `<abbr>` tags with descriptive `title` attributes provides native tooltips for visual users and corrects pronunciation for screen readers.
 **Action:** Always wrap technical/scientific units in `<abbr title="...">` instead of using plain text to ensure accessibility without cluttering the UI.
+## 2026-06-11 - Permanent aria-live regions
+**Learning:** For ARIA live regions to work reliably across all screen readers, the `aria-live` container must be permanently present in the DOM on initial page load. Conditionally rendering the container itself prevents screen readers from tracking updates.
+**Action:** Always place conditional rendering logic inside a permanently mounted `aria-live` container instead of conditionally rendering the container itself.
