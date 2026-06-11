@@ -237,8 +237,8 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
             <p className="text-sm text-muted-foreground leading-relaxed">
               <span className="font-medium text-foreground block mb-1">Performance Insight</span>
               Most efficient cruise speed is{" "}
-              <span className="font-bold text-foreground">{minPowerPoint?.V?.toFixed(1)} m/s</span> requiring{" "}
-              <span className="font-bold text-foreground">{minPowerPoint?.Pr_kW?.toFixed(2)} kW</span> power.
+              <span className="font-bold text-foreground">{minPowerPoint?.V?.toFixed(1)} <abbr title="meters per second" className="cursor-help no-underline">m/s</abbr></span> requiring{" "}
+              <span className="font-bold text-foreground">{minPowerPoint?.Pr_kW?.toFixed(2)} <abbr title="kilowatts" className="cursor-help no-underline">kW</abbr></span> power.
             </p>
           </div>
         </CardFooter>
@@ -285,12 +285,12 @@ export default function PerformanceCharts({ params }: PerformanceChartsProps) {
             <p className="text-sm text-muted-foreground leading-relaxed">
               <span className="font-medium text-foreground block mb-1">Climb Performance Insight</span>
               Max climb rate is{" "}
-              <span className="font-bold text-foreground">{maxClimbPoint?.RC?.toFixed(2)} m/s</span> at sea level.
+              <span className="font-bold text-foreground">{maxClimbPoint?.RC?.toFixed(2)} <abbr title="meters per second" className="cursor-help no-underline">m/s</abbr></span> at sea level.
               {ceilingPoint && ceilingPoint.h < 5000 && (
-                <> Service ceiling is approx <span className="font-bold text-foreground">{ceilingPoint.h} m</span>.</>
+                <> Service ceiling is approx <span className="font-bold text-foreground">{ceilingPoint.h} <abbr title="meters" className="cursor-help no-underline">m</abbr></span>.</>
               )}
               {ceilingPoint && ceilingPoint.h >= 5000 && (
-                <> Climb rate remains positive up to <span className="font-bold text-foreground">{ceilingPoint.h} m</span>.</>
+                <> Climb rate remains positive up to <span className="font-bold text-foreground">{ceilingPoint.h} <abbr title="meters" className="cursor-help no-underline">m</abbr></span>.</>
               )}
             </p>
           </div>
