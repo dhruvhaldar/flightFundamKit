@@ -144,10 +144,11 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
             </div>
           </div>
 
-          {result ? (
-            <div className="mt-6 border-t pt-4">
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
-                <div className="space-y-1">
+          <div aria-live="polite">
+            {result ? (
+              <div className="mt-6 border-t pt-4">
+                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
+                  <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">Temperature</dt>
                   <dd className="text-2xl font-bold tracking-tight flex items-center">
                     {result.T.toFixed(2)} <abbr title="Kelvin" className="text-sm font-normal text-muted-foreground ml-1 cursor-help no-underline">K</abbr>
@@ -198,9 +199,10 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
                 className="mt-2"
               >
                 Use Sea Level
-              </Button>
+                  </Button>
+                </div>
+              )}
             </div>
-          )}
         </div>
       </CardContent>
     </Card>
