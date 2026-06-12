@@ -209,3 +209,6 @@
 ## 2026-06-11 - Permanent aria-live regions
 **Learning:** For ARIA live regions to work reliably across all screen readers, the `aria-live` container must be permanently present in the DOM on initial page load. Conditionally rendering the container itself prevents screen readers from tracking updates.
 **Action:** Always place conditional rendering logic inside a permanently mounted `aria-live` container instead of conditionally rendering the container itself.
+## 2024-06-12 - Persistent ARIA Live Regions for Conditional Content
+**Learning:** In React components, applying `aria-live` directly to elements that are conditionally rendered (e.g., swapping an empty state for a result state) often causes screen readers to fail to announce the change, because the element itself enters the DOM at the same time the content changes.
+**Action:** Always place `aria-live` on a permanently mounted parent container, and render the conditional content inside it, ensuring screen readers reliably track and announce dynamic UI updates.

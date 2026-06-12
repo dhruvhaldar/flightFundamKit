@@ -186,7 +186,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
               </dl>
             </div>
           ) : (
-            <div className="mt-6 border-t pt-8 pb-4 text-center text-muted-foreground flex flex-col items-center justify-center gap-3" role="status" aria-live="polite">
+            <div className="mt-6 border-t pt-8 pb-4 text-center text-muted-foreground flex flex-col items-center justify-center gap-3" role="status">
               <Cloud className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
               <p>Enter a valid altitude to see results.</p>
               <Button

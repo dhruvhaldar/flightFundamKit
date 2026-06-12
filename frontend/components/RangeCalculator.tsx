@@ -274,8 +274,9 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
           </div>
         </div>
 
+        <div aria-live="polite">
         {result ? (
-          <div className="rounded-lg border bg-muted/50 p-4" aria-live="polite">
+          <div className="rounded-lg border bg-muted/50 p-4">
             <dl className="space-y-3">
               <div className="flex justify-between items-center border-b pb-2">
                 <dt className="text-sm font-medium">Max L/D Ratio</dt>
@@ -301,7 +302,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
             </dl>
           </div>
         ) : (
-          <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground flex flex-col items-center justify-center gap-3" role="status" aria-live="polite">
+          <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground flex flex-col items-center justify-center gap-3" role="status">
             <Map className="h-10 w-10 text-muted-foreground/50" aria-hidden="true" />
             <p className="text-sm">Please enter valid fuel and altitude parameters to see range estimates.</p>
             <Button
@@ -318,6 +319,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
             </Button>
           </div>
         )}
+        </div>
       </CardContent>
     </Card>
   )
