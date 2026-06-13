@@ -25,16 +25,16 @@ const DEFAULT_PARAMS: AircraftParams = {
   SFC: 0.45
 }
 
-const PARAM_CONFIG: Record<keyof AircraftParams, { label: string; step?: string; desc: string }> = {
-  m: { label: "Mass (kg)", step: "1", desc: "Total aircraft mass including payload and fuel." },
-  S: { label: "Wing Area (m²)", step: "0.1", desc: "Total planform area of the wings." },
-  b: { label: "Wingspan (m)", step: "0.1", desc: "Distance from left to right wingtip." },
-  e: { label: "Oswald Efficiency (e)", step: "0.01", desc: "Correction factor for non-ideal lift distribution (typically 0.7 - 0.85)." },
-  CD0: { label: "Zero-Lift Drag (CD0)", step: "0.001", desc: "Parasite drag coefficient at zero lift." },
-  P_bhp: { label: "Power (hp)", step: "1", desc: "Maximum engine shaft brake horsepower." },
-  eta_prop: { label: "Prop Efficiency", step: "0.01", desc: "Propeller efficiency factor (typically 0.75 - 0.85)." },
-  CL_max: { label: "Max Lift Coeff (CL_max)", step: "0.1", desc: "Maximum lift coefficient before aerodynamic stall." },
-  SFC: { label: "SFC (lb/hp/hr)", step: "0.01", desc: "Specific Fuel Consumption (mass of fuel per hour per hp)." }
+const PARAM_CONFIG: Record<keyof AircraftParams, { label: React.ReactNode; stringLabel: string; step?: string; desc: string }> = {
+  m: { label: <>Mass (<abbr title="kilograms" className="cursor-help no-underline">kg</abbr>)</>, stringLabel: "Mass", step: "1", desc: "Total aircraft mass including payload and fuel." },
+  S: { label: <>Wing Area (<abbr title="square meters" className="cursor-help no-underline">m²</abbr>)</>, stringLabel: "Wing Area", step: "0.1", desc: "Total planform area of the wings." },
+  b: { label: <>Wingspan (<abbr title="meters" className="cursor-help no-underline">m</abbr>)</>, stringLabel: "Wingspan", step: "0.1", desc: "Distance from left to right wingtip." },
+  e: { label: "Oswald Efficiency (e)", stringLabel: "Oswald Efficiency", step: "0.01", desc: "Correction factor for non-ideal lift distribution (typically 0.7 - 0.85)." },
+  CD0: { label: "Zero-Lift Drag (CD0)", stringLabel: "Zero-Lift Drag", step: "0.001", desc: "Parasite drag coefficient at zero lift." },
+  P_bhp: { label: <>Power (<abbr title="horsepower" className="cursor-help no-underline">hp</abbr>)</>, stringLabel: "Power", step: "1", desc: "Maximum engine shaft brake horsepower." },
+  eta_prop: { label: "Prop Efficiency", stringLabel: "Prop Efficiency", step: "0.01", desc: "Propeller efficiency factor (typically 0.75 - 0.85)." },
+  CL_max: { label: "Max Lift Coeff (CL_max)", stringLabel: "Max Lift Coeff", step: "0.1", desc: "Maximum lift coefficient before aerodynamic stall." },
+  SFC: { label: <>SFC (<abbr title="pounds per horsepower-hour" className="cursor-help no-underline">lb/hp/hr</abbr>)</>, stringLabel: "SFC", step: "0.01", desc: "Specific Fuel Consumption (mass of fuel per hour per hp)." }
 }
 
 const validateParam = (key: keyof AircraftParams, val: number): string | null => {
@@ -245,7 +245,7 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                         type="button"
                         title={PARAM_CONFIG[key].desc}
                         className="text-muted-foreground hover:text-foreground cursor-help transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm inline-flex items-center justify-center"
-                        aria-label={`Toggle help for ${PARAM_CONFIG[key].label}`}
+                        aria-label={`Toggle help for ${PARAM_CONFIG[key].stringLabel}`}
                         aria-expanded={!!openHelps[key]}
                         aria-controls={`${key}-desc`}
                         onClick={() => setOpenHelps((prev) => ({ ...prev, [key]: !prev[key] }))}
