@@ -91,7 +91,7 @@ const AtmosphereCalculator = memo(function AtmosphereCalculator() {
         <div className="space-y-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label htmlFor="altitude" className={showError ? "text-red-600 dark:text-red-400" : ""}>
-              Altitude (m) <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
+              Altitude (<abbr title="meters" className="cursor-help no-underline">m</abbr>) <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
             </Label>
             <Input
               type="number"

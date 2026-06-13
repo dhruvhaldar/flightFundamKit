@@ -146,7 +146,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
         <div className="space-y-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label htmlFor="fuelMass" className={validationError ? "text-red-600 dark:text-red-400" : ""}>
-              Fuel Mass (kg) <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
+              Fuel Mass (<abbr title="kilograms" className="cursor-help no-underline">kg</abbr>) <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
             </Label>
             <Input
               type="number"
@@ -221,7 +221,7 @@ export default function RangeCalculator({ params }: RangeCalculatorProps) {
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label htmlFor="cruiseAltitude" className={altValidationError ? "text-red-600 dark:text-red-400" : ""}>
-              Cruise Altitude (m) <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
+              Cruise Altitude (<abbr title="meters" className="cursor-help no-underline">m</abbr>) <span className="text-red-600 dark:text-red-400" aria-hidden="true">*</span>
             </Label>
             <Input
               type="number"
