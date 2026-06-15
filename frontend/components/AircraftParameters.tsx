@@ -243,7 +243,6 @@ export default function AircraftParameters({ params, setParams }: AircraftParame
                       </Label>
                       <button
                         type="button"
-                        title={PARAM_CONFIG[key].desc}
                         className="text-muted-foreground hover:text-foreground cursor-help transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm inline-flex items-center justify-center"
                         aria-label={`Toggle help for ${PARAM_CONFIG[key].stringLabel}`}
                         aria-expanded={!!openHelps[key]}
