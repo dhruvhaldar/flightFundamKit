@@ -4,3 +4,6 @@
 ## 2024-06-06 - MATLAB Consecutive Array Division
 **Learning:** In MATLAB/Octave, expressions performing consecutive element-wise divisions like `(A ./ B) ./ C` can be optimized algebraically by grouping the denominators as `A ./ (B .* C)`. Since element-wise array multiplication is slightly cheaper computationally than element-wise array division, this replacement yields a measurable (~10%) performance improvement for large arrays without changing mathematical correctness or increasing intermediate array allocations.
 **Action:** Always algebraically group variables in denominators to minimize the number of explicit array division operations when processing large vectors.
+## 2024-06-06 - MATLAB Piecewise Array Vectorization
+**Learning:** In MATLAB/Octave, calculating piecewise functions that transition from a linear behavior to a constant floor (e.g., Temperature through the atmosphere clamping at the Tropopause) via logical indexing and masking is an anti-pattern. Vectorizing the calculation using `max()` or `min()` is measurably faster by completely eliminating redundant logical index allocations and conditional logic.
+**Action:** Always prefer vectorized clamping functions (`max`/`min`) to apply floor or ceiling values across arrays instead of using array masking.
