@@ -38,8 +38,13 @@ function [T, P, rho, a] = std_atm(h)
     % saving an element-wise division per vector entry.
     const_P_tropo = P0 / (T0 ^ g_LR);
 
-    % Initialize output arrays with same size as input
-    T = zeros(size(h));
+    % ⚡ Bolt Optimization: Vectorize piecewise linear-to-constant T calculation using max()
+    % This avoids allocating the T array with zeros and using logical indexing
+    % to piece it together. T_trop is the minimum temperature (constant in lower strato),
+    % so max() naturally clamps the decreasing temperature at 11000m.
+    T = max(T0 + L * h, T_trop);
+
+    % Initialize P array
     P = zeros(size(h));
     
     % Boolean masks for Troposphere and Stratosphere
@@ -48,16 +53,12 @@ function [T, P, rho, a] = std_atm(h)
 
     % Troposphere calculations
     if any(tropo_mask(:))
-        h_tropo = h(tropo_mask);
-        T_tropo = T0 + L * h_tropo;
-        T(tropo_mask) = T_tropo;
-        P(tropo_mask) = const_P_tropo * T_tropo .^ g_LR;
+        P(tropo_mask) = const_P_tropo * T(tropo_mask) .^ g_LR;
     end
 
     % Stratosphere calculations
     if any(strato_mask(:))
         h_strato = h(strato_mask);
-        T(strato_mask) = T_trop;
         P(strato_mask) = P_trop * exp(exp_factor * (h_strato - 11000));
     end
 
