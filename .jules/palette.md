@@ -216,3 +216,7 @@
 ## 2024-06-15 - Redundant Native Title Attributes on Toggle Buttons
 **Learning:** When an interactive element (e.g., a help toggle `<button>`) relies on an explicit `onClick` handler to reveal inline text and already has an `aria-label`, leaving the native `title` attribute causes redundant screen reader announcements and overlapping visual tooltips on desktop browsers.
 **Action:** Always remove the native `title` attribute from interactive toggle buttons if the help text is already accessible via inline expansion or if the element is already labeled using `aria-label`.
+
+## 2024-06-17 - Sequential Heading Hierarchy in Reusable Components
+**Learning:** Reusable UI components like `<CardTitle>` often default to a specific heading level (like `<h3>`). If placed directly under a page's main `<h1>`, this causes skipped heading levels, which is an accessibility violation (WCAG 1.3.1) and confuses screen-reader users relying on a logical document outline.
+**Action:** Always verify the document outline context where reusable components are used. Adapt their internal heading tags (e.g., from `<h3>` to `<h2>`) to maintain a strict, sequential heading hierarchy. When updating the tag, ensure you also update the corresponding React `forwardRef` types (e.g., to `HTMLHeadingElement`) to avoid TypeScript errors.
