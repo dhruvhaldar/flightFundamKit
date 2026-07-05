@@ -7,3 +7,7 @@
 ## 2024-06-06 - MATLAB Piecewise Array Vectorization
 **Learning:** In MATLAB/Octave, calculating piecewise functions that transition from a linear behavior to a constant floor (e.g., Temperature through the atmosphere clamping at the Tropopause) via logical indexing and masking is an anti-pattern. Vectorizing the calculation using `max()` or `min()` is measurably faster by completely eliminating redundant logical index allocations and conditional logic.
 **Action:** Always prefer vectorized clamping functions (`max`/`min`) to apply floor or ceiling values across arrays instead of using array masking.
+
+## 2024-07-05 - Matrix Expansion for Loop Vectorization
+**Learning:** In MATLAB/Octave, nested `for` loops can be a significant performance bottleneck due to interpretation overhead. Vectorizing these loops by expanding 1D parameter arrays into 2D matrices allows calculations to process simultaneously via optimized underlying C/Fortran libraries, yielding massive performance boosts (e.g. ~5x speedup in rate of climb scanning).
+**Action:** Always look for opportunities to replace nested loops that build vectors piece-by-piece with single matrix operations by using implicit expansion or `ones()` to broadcast dimensions.
