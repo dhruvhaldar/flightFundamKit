@@ -77,19 +77,20 @@ const_Pa_factor = Pa_sl .* eta_prop;
 Pa_h_all = const_Pa_factor .* sigma_all;
 V_stall_all = stall_speed(W, rho_all, S, CL_max);
 
-for i = 1:length(altitudes)
-    h = altitudes(i);
-    rho = rho_all(i);
-    
-    % Recalculate Power Required curve for this altitude
-    % Assume Best Climb Speed is usually where excess power is max
-    % We scan velocities to find max RC
-    V_scan = linspace(V_stall_all(i), 80, 50);
-    [Pr_h, ~] = power_required(rho, V_scan, S, CD0, k, W);
-    
-    RC_vec = rate_of_climb(Pa_h_all(i), Pr_h, W);
-    RC_max_vec(i) = max(RC_vec);
-end
+% ⚡ Bolt Optimization: Vectorize the Rate of Climb calculation across all altitudes
+% and velocities simultaneously. By expanding the 1D arrays into 2D matrices, we
+% completely eliminate the O(N) loop and function call overhead, allowing
+% Octave/MATLAB to process the entire parameter space in a few optimized matrix operations.
+num_alts = length(altitudes);
+num_v = 50;
+
+V_scan_mat = V_stall_all(:) + (80 - V_stall_all(:)) * linspace(0, 1, num_v);
+rho_mat = rho_all(:) * ones(1, num_v);
+Pa_h_mat = Pa_h_all(:) * ones(1, num_v);
+
+[Pr_h_mat, ~] = power_required(rho_mat, V_scan_mat, S, CD0, k, W);
+RC_vec_mat = rate_of_climb(Pa_h_mat, Pr_h_mat, W);
+RC_max_vec = max(RC_vec_mat, [], 2)';
 
 figure(2);
 plot(RC_max_vec, altitudes, 'g-', 'LineWidth', 2);
