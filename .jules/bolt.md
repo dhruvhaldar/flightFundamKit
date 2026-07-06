@@ -1,13 +1,3 @@
-## 2024-06-06 - MATLAB Scalar Vector Multiplication Vector Allocation Overhead
-**Learning:** In MATLAB/Octave, expressions like `(scalar1 * array) / scalar2` can cause performance issues because `scalar1 * array` allocates an intermediate vector. By rewriting it to group the scalars first, e.g., `(scalar1 / scalar2) * array`, you can reduce the number of N-element array allocations and math operations.
-**Action:** Always algebraically group constant scalar calculations before applying them to a vector to eliminate unnecessary O(N) memory allocations and element-wise operations.
-## 2024-06-06 - MATLAB Consecutive Array Division
-**Learning:** In MATLAB/Octave, expressions performing consecutive element-wise divisions like `(A ./ B) ./ C` can be optimized algebraically by grouping the denominators as `A ./ (B .* C)`. Since element-wise array multiplication is slightly cheaper computationally than element-wise array division, this replacement yields a measurable (~10%) performance improvement for large arrays without changing mathematical correctness or increasing intermediate array allocations.
-**Action:** Always algebraically group variables in denominators to minimize the number of explicit array division operations when processing large vectors.
-## 2024-06-06 - MATLAB Piecewise Array Vectorization
-**Learning:** In MATLAB/Octave, calculating piecewise functions that transition from a linear behavior to a constant floor (e.g., Temperature through the atmosphere clamping at the Tropopause) via logical indexing and masking is an anti-pattern. Vectorizing the calculation using `max()` or `min()` is measurably faster by completely eliminating redundant logical index allocations and conditional logic.
-**Action:** Always prefer vectorized clamping functions (`max`/`min`) to apply floor or ceiling values across arrays instead of using array masking.
-
-## 2024-07-05 - Matrix Expansion for Loop Vectorization
-**Learning:** In MATLAB/Octave, nested `for` loops can be a significant performance bottleneck due to interpretation overhead. Vectorizing these loops by expanding 1D parameter arrays into 2D matrices allows calculations to process simultaneously via optimized underlying C/Fortran libraries, yielding massive performance boosts (e.g. ~5x speedup in rate of climb scanning).
-**Action:** Always look for opportunities to replace nested loops that build vectors piece-by-piece with single matrix operations by using implicit expansion or `ones()` to broadcast dimensions.
+## 2024-05-24 - Implicit Expansion vs Explicit Matrix Allocation in MATLAB/Octave
+**Learning:** When performing element-wise arithmetic operations between vectors (e.g., column vector) and matrices, explicitly expanding the vector into a matrix (e.g., using `ones()`) before the operation is much slower and uses more memory than simply relying on MATLAB/Octave's native implicit expansion (broadcasting) feature.
+**Action:** Avoid explicit dimension matching using `repmat` or `ones()` when applying operations across different dimensions. Trust and utilize implicit expansion for better performance.

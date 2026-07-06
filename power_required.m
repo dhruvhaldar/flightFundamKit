@@ -26,10 +26,10 @@ function [Pr, Tr] = power_required(rho, V, S, CD0, k, W)
     const_parasite = 0.5 * S * CD0;
     const_induced = (2 * k * W^2) / S;
 
-    parasiteConst = const_parasite .* rho;
-    inducedConst = const_induced ./ rho;
-    
-    V2 = V.^2;
-    Tr = parasiteConst .* V2 + inducedConst ./ V2;
+    % ⚡ Bolt Optimization: Group array operations by factoring out the shared (rho * V^2) matrix.
+    % This replaces consecutive element-wise division and redundant array multiplication
+    % with a single matrix calculation, improving performance in vectorized workloads.
+    rho_V2 = rho .* (V.^2);
+    Tr = const_parasite .* rho_V2 + const_induced ./ rho_V2;
     Pr = Tr .* V;
 end
