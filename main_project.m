@@ -85,11 +85,9 @@ num_alts = length(altitudes);
 num_v = 50;
 
 V_scan_mat = V_stall_all(:) + (80 - V_stall_all(:)) * linspace(0, 1, num_v);
-rho_mat = rho_all(:) * ones(1, num_v);
-Pa_h_mat = Pa_h_all(:) * ones(1, num_v);
 
-[Pr_h_mat, ~] = power_required(rho_mat, V_scan_mat, S, CD0, k, W);
-RC_vec_mat = rate_of_climb(Pa_h_mat, Pr_h_mat, W);
+[Pr_h_mat, ~] = power_required(rho_all(:), V_scan_mat, S, CD0, k, W);
+RC_vec_mat = rate_of_climb(Pa_h_all(:), Pr_h_mat, W);
 RC_max_vec = max(RC_vec_mat, [], 2)';
 
 figure(2);
