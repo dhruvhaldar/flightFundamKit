@@ -71,10 +71,14 @@ RC_max_vec = zeros(size(altitudes));
 % ⚡ Bolt Optimization: Hoist vectorizeable properties out of the loop
 % Power available and Stall Speed can be computed for all altitudes at once
 % to avoid redundant calculations per loop iteration.
-sigma_all = rho_all / rho_sl;
-% ⚡ Bolt Optimization: Pre-calculate scalar constant to avoid intermediate array allocation
-const_Pa_factor = Pa_sl .* eta_prop;
-Pa_h_all = const_Pa_factor .* sigma_all;
+
+% ⚡ Bolt Optimization: Combine scalar constants before array multiplication.
+% This avoids calculating the intermediate sigma_all array and replaces
+% two O(N) array operations (division then multiplication) with a single
+% O(N) array multiplication, saving memory and compute cycles.
+const_combined = (Pa_sl * eta_prop) / rho_sl;
+Pa_h_all = const_combined .* rho_all;
+
 V_stall_all = stall_speed(W, rho_all, S, CL_max);
 
 % ⚡ Bolt Optimization: Vectorize the Rate of Climb calculation across all altitudes
